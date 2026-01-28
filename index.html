@@ -42,18 +42,55 @@
     <strong>AYSİMA MEDİKAL</strong>
   </header>
 
-  <main>
-    <h1>Hoş geldiniz</h1>
-    <div class="box">
-      <p>
-        Aysima Medikal, medikal sarf ve sağlık ürünlerinde
-        güvenilir çözümler sunar.
-      </p>
-      <p>
-        Site yapım aşamasındadır.
-      </p>
-    </div>
-  </main>
+ <main>
+  <h1>Ürünler</h1>
+  <div id="product-list"></div>
+</main>
 
-</body>
-</html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const supabaseUrl = "https://eqpioawtdwkaeuxpfspt.supabase.co";
+  const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+  async function loadProducts() {
+    const { data: products, error } = await supabase
+      .from("products")
+      .select(`
+        id,
+        name,
+        product_variants (
+          variant_value,
+          price,
+          stock
+        )
+      `)
+      .eq("is_active", true);
+
+    if (error) {
+      document.getElementById("product-list").innerText = "Ürünler yüklenemedi";
+      return;
+    }
+
+    const container = document.getElementById("product-list");
+    container.innerHTML = "";
+
+    products.forEach(product => {
+      let html = `<div style="border:1px solid #ddd;padding:15px;margin-bottom:15px;">
+        <strong>${product.name}</strong><br/>`;
+
+      product.product_variants.forEach(v => {
+        if (v.stock > 0) {
+          html += `• ${v.variant_value} - ${v.price} TL<br/>`;
+        } else {
+          html += `• ${v.variant_value} - <span style="color:red">TÜKENDİ</span><br/>`;
+        }
+      });
+
+      html += `</div>`;
+      container.innerHTML += html;
+    });
+  }
+
+  loadProducts();
+</script>
