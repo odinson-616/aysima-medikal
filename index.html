@@ -3,56 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AYSİMA MEDİKAL | Güvenilir Sağlık Çözümleri</title>
+  <title>AYSİMA MEDİKAL | Sağlıkta Güven</title>
   <style>
     :root { --bordo: #7b1e2b; --gri-arka: #f7f7f7; --text: #333; }
     body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--gri-arka); color: var(--text); overflow-x: hidden; }
     
-    /* Header & Navigation */
-    header { background-color: var(--bordo); color: white; padding: 12px 5%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    .header-left { display: flex; align-items: center; gap: 15px; }
+    header { background-color: var(--bordo); color: white; padding: 12px 3%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .header-left { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
     
-    /* Hamburger Menu Button */
-    .menu-btn { cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 8px; transition: 0.3s; }
-    .menu-btn:hover { background: rgba(255,255,255,0.2); }
-    
-    header img { height: 40px; background: white; border-radius: 4px; padding: 2px; }
-    .cart-trigger { cursor: pointer; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; display: flex; align-items: center; }
-    .cart-count { background: white; color: var(--bordo); padding: 2px 7px; border-radius: 50%; font-size: 12px; font-weight: bold; margin-left: 8px; }
+    /* Arama Kutusu */
+    .search-container { flex-grow: 1; max-width: 500px; margin: 0 20px; position: relative; }
+    .search-container input { width: 100%; padding: 10px 15px; border-radius: 20px; border: none; outline: none; font-size: 14px; }
 
-    /* Left Sidebar (Category Menu) */
-    #sidebar { position: fixed; left: -300px; top: 0; width: 280px; height: 100%; background: white; z-index: 2001; transition: 0.4s; box-shadow: 5px 0 15px rgba(0,0,0,0.1); padding: 25px; }
+    .menu-btn { cursor: pointer; font-size: 24px; background: rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    header img { height: 35px; background: white; border-radius: 4px; padding: 2px; }
+    .cart-trigger { cursor: pointer; position: relative; }
+    .cart-count { position: absolute; top: -8px; right: -10px; background: white; color: var(--bordo); padding: 2px 6px; border-radius: 50%; font-size: 11px; font-weight: bold; }
+
+    /* Paneller */
+    #sidebar, #cart-panel, #product-modal { position: fixed; background: white; z-index: 2001; transition: 0.4s; box-shadow: 0 0 20px rgba(0,0,0,0.2); }
+    #sidebar { left: -300px; top: 0; width: 280px; height: 100%; padding: 25px; }
     #sidebar.open { left: 0; }
-    .sidebar-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; margin-bottom: 20px; }
-    .category-list { list-style: none; padding: 0; }
-    .category-list li { padding: 15px; cursor: pointer; border-radius: 8px; font-size: 15px; margin-bottom: 5px; transition: 0.2s; border-left: 4px solid transparent; }
-    .category-list li:hover { background: #fff5f6; color: var(--bordo); }
-    .category-list li.active { background: #fff5f6; color: var(--bordo); font-weight: 600; border-left-color: var(--bordo); }
-
-    /* Overlay (Menü açılınca arkayı karartma) */
+    #cart-panel { right: -400px; top: 0; width: 350px; height: 100%; padding: 25px; display: flex; flex-direction: column; }
+    #cart-panel.open { right: 0; }
     #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2000; }
     #overlay.active { display: block; }
 
-    /* Main Content */
-    .container { max-width: 1300px; margin: 25px auto; padding: 0 20px; }
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
-    
-    /* Ürün Kartı Tasarımı */
-    .product-card { background: white; border-radius: 12px; border: 1px solid #eee; display: flex; flex-direction: column; overflow: hidden; transition: 0.3s; padding-bottom: 15px; }
-    .product-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-    .img-container { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #aaa; }
-    .card-body { padding: 15px; flex-grow: 1; }
-    .product-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #222; }
-    .variant-selector { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 8px; }
-    .v-option { border: 1.5px solid #ddd; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; background: white; }
-    .v-option.selected { background: var(--bordo); color: white; border-color: var(--bordo); }
-    .price-display { font-size: 22px; font-weight: 800; color: var(--bordo); margin: 10px 0; display: block; }
-    .btn-add-cart { width: 100%; background: var(--bordo); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+    /* Ürün Detay Modalı */
+    #product-modal { top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); width: 90%; max-width: 800px; border-radius: 15px; display: none; padding: 30px; }
+    #product-modal.open { display: block; transform: translate(-50%, -50%) scale(1); }
 
-    /* Right Sidebar (Cart) */
-    #cart-panel { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 2001; transition: 0.4s; padding: 25px; display: flex; flex-direction: column; }
-    #cart-panel.open { right: 0; }
-    .cart-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+    .container { max-width: 1200px; margin: 25px auto; padding: 0 20px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .product-card { background: white; border-radius: 10px; border: 1px solid #eee; overflow: hidden; transition: 0.3s; cursor: pointer; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+    .img-placeholder { width: 100%; aspect-ratio: 1/1; background: #f0f0f0; display: flex; align-items: center; justify-content: center; color: #999; font-size: 12px; }
+
+    .card-body { padding: 15px; }
+    .v-option { border: 1px solid #ddd; padding: 5px 10px; border-radius: 5px; font-size: 12px; margin: 2px; cursor: pointer; background: white; }
+    .v-option.selected { background: var(--bordo); color: white; border-color: var(--bordo); }
+    .price-display { font-size: 20px; font-weight: 800; color: var(--bordo); margin: 10px 0; display: block; }
+    .btn-add-cart { width: 100%; background: var(--bordo); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+    .category-list { list-style: none; padding: 0; }
+    .category-list li { padding: 12px; cursor: pointer; border-radius: 5px; margin-bottom: 5px; }
+    .category-list li.active { background: #fff5f6; color: var(--bordo); font-weight: bold; }
+    
+    @media (max-width: 600px) { .search-container { display: none; } }
   </style>
 </head>
 <body>
@@ -60,9 +57,9 @@
   <div id="overlay" onclick="closeMenus()"></div>
 
   <div id="sidebar">
-    <div class="sidebar-header">
-      <h2 style="margin:0; font-size: 20px; color: var(--bordo);">Kategoriler</h2>
-      <span style="cursor:pointer; font-size: 30px;" onclick="toggleSidebar()">×</span>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <h3 style="color:var(--bordo); margin:0;">Kategoriler</h3>
+      <span style="font-size:30px; cursor:pointer;" onclick="toggleSidebar()">×</span>
     </div>
     <ul class="category-list" id="category-menu">
       <li class="active" onclick="location.reload()">Tüm Ürünler</li>
@@ -70,29 +67,34 @@
   </div>
 
   <div id="cart-panel">
-    <div class="sidebar-header">
-      <h2 style="margin:0; font-size: 20px;">Sepetim</h2>
-      <span style="cursor:pointer; font-size: 30px;" onclick="toggleCart()">×</span>
+    <h3>Sepetim</h3>
+    <div id="cart-items" style="flex-grow:1; overflow-y:auto;"></div>
+    <div style="border-top:2px solid #eee; padding-top:15px;">
+      <div style="text-align:right; font-size:18px; font-weight:bold; margin-bottom:15px;">Toplam: <span id="cart-total">0.00</span> TL</div>
+      <button style="width:100%; background:#27ae60; color:white; border:none; padding:15px; border-radius:10px; font-weight:bold; cursor:pointer;">Ödemeye Geç</button>
     </div>
-    <div class="cart-items" id="cart-items"></div>
-    <div style="font-size: 18px; font-weight: bold; text-align: right; margin-bottom: 15px;">Toplam: <span id="cart-total">0.00</span> TL</div>
-    <button style="width:100%; background:#27ae60; color:white; border:none; padding:14px; border-radius:8px; font-weight:bold; cursor:pointer;">Siparişi Tamamla</button>
   </div>
 
   <header>
     <div class="header-left">
       <div class="menu-btn" onclick="toggleSidebar()">☰</div>
       <img src="logo.png" alt="Logo">
-      <span style="font-weight: 700; font-size: 18px; letter-spacing: 1px;">AYSİMA MEDİKAL</span>
+      <span style="font-weight:700; font-size:16px;">AYSİMA</span>
     </div>
+    
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Ürün ara..." onkeyup="searchProducts()">
+    </div>
+
     <div class="cart-trigger" onclick="toggleCart()">
-      🛒 <span class="cart-count" id="cart-count">0</span>
+      <span style="font-size:24px;">🛒</span>
+      <span class="cart-count" id="cart-count">0</span>
     </div>
   </header>
 
   <div class="container">
-    <h2 id="page-title" style="margin-bottom: 25px;">Tüm Ürünler</h2>
-    <div class="product-grid" id="product-list">Yükleniyor...</div>
+    <h2 id="page-title">Tüm Ürünler</h2>
+    <div class="product-grid" id="product-list"></div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -100,6 +102,7 @@
     const supabaseUrl = "https://eqpioawtdwkaeuxpfspt.supabase.co";
     const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    let allProducts = [];
     let cart = JSON.parse(localStorage.getItem('aysima_cart')) || [];
 
     async function init() {
@@ -107,12 +110,7 @@
       cats?.forEach(cat => {
         const li = document.createElement("li");
         li.textContent = cat.name;
-        li.onclick = () => {
-          document.querySelectorAll('.category-list li').forEach(el => el.classList.remove('active'));
-          li.classList.add('active');
-          loadProducts(cat.id, cat.name);
-          toggleSidebar(); // Seçince menüyü kapat
-        };
+        li.onclick = () => { loadProducts(cat.id, cat.name); toggleSidebar(); };
         document.getElementById("category-menu").appendChild(li);
       });
       loadProducts();
@@ -121,89 +119,88 @@
 
     async function loadProducts(catId = null, catName = "Tüm Ürünler") {
       document.getElementById("page-title").textContent = catName;
-      const container = document.getElementById("product-list");
-      container.innerHTML = "Yükleniyor...";
       let query = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
       if(catId) query = query.eq("category_id", catId);
-      const { data: products } = await query;
-      container.innerHTML = "";
+      const { data } = await query;
+      allProducts = data || [];
+      renderProducts(allProducts);
+    }
 
-      products?.forEach(p => {
+    function renderProducts(list) {
+      const container = document.getElementById("product-list");
+      container.innerHTML = "";
+      list.forEach(p => {
+        const variants = p.product_variants.filter(v => v.is_active);
+        const defV = variants[0];
         const card = document.createElement("div");
         card.className = "product-card";
-        const variants = p.product_variants.filter(v => v.is_active);
-        const defV = variants.find(v => v.stock > 0) || variants[0];
-
         card.innerHTML = `
-          <div class="img-container">Görsel Hazırlanıyor</div>
+          <div class="img-placeholder">Görsel Hazırlanıyor</div>
           <div class="card-body">
-            <div class="product-title">${p.name}</div>
-            <div class="variant-selector">
-              ${variants.map(v => `<button class="v-option ${v.id === defV.id ? 'selected' : ''}" data-price="${v.price}" data-id="${v.id}" data-name="${v.variant_value}">${v.variant_value}</button>`).join('')}
+            <div style="font-weight:600; height:40px;">${p.name}</div>
+            <div style="margin:10px 0;">
+              ${variants.map(v => `<button class="v-option ${v.id === defV.id ? 'selected' : ''}" onclick="selectV(this, '${v.price}', '${v.id}', '${v.variant_value}')">${v.variant_value}</button>`).join('')}
             </div>
             <span class="price-display">${defV.price} TL</span>
-            <button class="btn-add-cart" data-v-id="${defV.id}" data-v-name="${defV.variant_value}" data-v-price="${defV.price}">Sepete Ekle</button>
+            <button class="btn-add-cart" onclick="addToCart('${p.id}', '${p.name}', this)" data-v-id="${defV.id}" data-v-name="${defV.variant_value}" data-v-price="${defV.price}">Sepete Ekle</button>
           </div>
         `;
-
-        card.querySelectorAll('.v-option').forEach(btn => {
-          btn.onclick = () => {
-            card.querySelectorAll('.v-option').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            const pr = btn.getAttribute('data-price');
-            card.querySelector('.price-display').textContent = pr + " TL";
-            const add = card.querySelector('.btn-add-cart');
-            add.setAttribute('data-v-id', btn.getAttribute('data-id'));
-            add.setAttribute('data-v-name', btn.getAttribute('data-name'));
-            add.setAttribute('data-v-price', pr);
-          };
-        });
-
-        card.querySelector('.btn-add-cart').onclick = function() {
-          const vId = this.getAttribute('data-v-id');
-          const vName = this.getAttribute('data-v-name');
-          const vPrice = parseFloat(this.getAttribute('data-v-price'));
-          const existing = cart.find(i => i.vId === vId);
-          if(existing) existing.qty += 1; else cart.push({ pId: p.id, pName: p.name, vId, vName, vPrice, qty: 1 });
-          saveCart(); toggleCart(true);
-        };
         container.appendChild(card);
       });
     }
 
-    // Arayüz Kontrolleri
-    function toggleSidebar() {
-      document.getElementById("sidebar").classList.toggle("open");
-      document.getElementById("overlay").classList.toggle("active");
+    function searchProducts() {
+      const term = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
+      renderProducts(filtered);
     }
 
-    function toggleCart(open = null) {
+    window.selectV = (btn, price, id, name) => {
+      event.stopPropagation();
+      const card = btn.closest(".product-card");
+      card.querySelectorAll(".v-option").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      card.querySelector(".price-display").textContent = price + " TL";
+      const addBtn = card.querySelector(".btn-add-cart");
+      addBtn.setAttribute("data-v-id", id);
+      addBtn.setAttribute("data-v-price", price);
+      addBtn.setAttribute("data-v-name", name);
+    };
+
+    function addToCart(pId, pName, btn) {
+      event.stopPropagation();
+      const vId = btn.getAttribute("data-v-id");
+      const vName = btn.getAttribute("data-v-name");
+      const vPrice = parseFloat(btn.getAttribute("data-v-price"));
+      const existing = cart.find(i => i.vId === vId);
+      if(existing) existing.qty += 1; else cart.push({ pId, pName, vId, vName, vPrice, qty: 1 });
+      saveCart(); toggleCart(true);
+    }
+
+    function toggleSidebar() { document.getElementById("sidebar").classList.toggle("open"); document.getElementById("overlay").classList.toggle("active"); }
+    function toggleCart(o = null) { 
       const p = document.getElementById("cart-panel");
-      const o = document.getElementById("overlay");
-      if(open === true) { p.classList.add("open"); o.classList.add("active"); }
-      else if(open === false) { p.classList.remove("open"); o.classList.remove("active"); }
-      else { p.classList.toggle("open"); o.classList.toggle("active"); }
+      if(o === true) p.classList.add("open"); else p.classList.toggle("open");
+      document.getElementById("overlay").classList.toggle("active", p.classList.contains("open"));
     }
-
-    function closeMenus() {
-      document.getElementById("sidebar").classList.remove("open");
-      document.getElementById("cart-panel").classList.remove("open");
-      document.getElementById("overlay").classList.remove("active");
-    }
-
+    function closeMenus() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("cart-panel").classList.remove("open"); document.getElementById("overlay").classList.remove("active"); }
     function saveCart() { localStorage.setItem('aysima_cart', JSON.stringify(cart)); updateCartUI(); }
     function updateCartUI() {
       const list = document.getElementById("cart-items");
-      const count = document.getElementById("cart-count");
-      const total = document.getElementById("cart-total");
-      list.innerHTML = ""; let sum = 0; let qty = 0;
+      let sum = 0; let qty = 0;
+      list.innerHTML = "";
       cart.forEach((item, idx) => {
         sum += item.vPrice * item.qty; qty += item.qty;
-        list.innerHTML += `<div class="cart-item"><div><strong>${item.pName}</strong><br><small>${item.vName} x ${item.qty}</small></div><div>${(item.vPrice * item.qty).toFixed(2)} TL <button onclick="removeFromCart(${idx})" style="color:red; border:none; background:none; cursor:pointer;">🗑️</button></div></div>`;
+        list.innerHTML += `<div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size:14px;">
+          <div>${item.pName} (${item.vName}) x${item.qty}</div>
+          <div>${(item.vPrice*item.qty).toFixed(2)} TL <button onclick="removeFromCart(${idx})" style="border:none; color:red; background:none; cursor:pointer;">🗑️</button></div>
+        </div>`;
       });
-      count.textContent = qty; total.textContent = sum.toFixed(2);
+      document.getElementById("cart-count").textContent = qty;
+      document.getElementById("cart-total").textContent = sum.toFixed(2);
     }
-    function removeFromCart(idx) { cart.splice(idx, 1); saveCart(); }
+    function removeFromCart(i) { cart.splice(i, 1); saveCart(); }
+
     init();
   </script>
 </body>
