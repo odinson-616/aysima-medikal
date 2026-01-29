@@ -5,18 +5,15 @@ async function loadProducts() {
         const { data, error } = await window.supabase
             .from('products')
             .select('*, product_variants(*)')
-            .eq('is_active', true)
-            .order('created_at', { ascending: false });
+            .eq('is_active', true);
 
         if (error) throw error;
 
         window.APP.products = data || [];
         renderProducts(window.APP.products);
-        console.log('✅ Ürünler başarıyla render edildi');
     } catch (err) {
         console.error('❌ Ürün yükleme hatası:', err.message);
-        const grid = document.getElementById('product-grid');
-        if (grid) grid.innerHTML = '<p>Ürünler şu an yüklenemedi: ' + err.message + '</p>';
+        document.getElementById('product-grid').innerHTML = 'Hata: ' + err.message;
     }
 }
 
@@ -25,7 +22,7 @@ function renderProducts(products) {
     if (!grid) return;
 
     if (!products || products.length === 0) {
-        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Ürün bulunamadı</p>';
+        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Ürün bulunamadı.</p>';
         return;
     }
 
@@ -46,12 +43,4 @@ function renderProducts(products) {
             </div>
         </div>`;
     }).join('');
-}
-
-// Arama Fonksiyonu
-function doSearch(query) {
-    const filtered = window.APP.products.filter(p => 
-        p.name.toLowerCase().includes(query.toLowerCase())
-    );
-    renderProducts(filtered);
 }
