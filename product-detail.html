@@ -5,23 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ürün Detayı | AYSİMA MEDİKAL</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        .detail-wrapper { max-width: 1100px; margin: 40px auto; padding: 20px; display: flex; gap: 50px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .detail-img { flex: 1; text-align: center; }
+        .detail-img img { max-width: 100%; max-height: 500px; object-fit: contain; border-radius: 8px; }
+        .detail-info { flex: 1; display: flex; flex-direction: column; }
+        .detail-title { font-size: 28px; color: #333; margin-top: 0; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; }
+        .detail-price { font-size: 36px; font-weight: 800; color: #7b1e2b; margin: 20px 0; }
+        .detail-desc { color: #666; line-height: 1.8; font-size: 16px; margin-bottom: 30px; }
+        .back-btn { display: inline-block; margin-bottom: 20px; color: #7b1e2b; text-decoration: none; font-weight: bold; cursor: pointer; }
+        .buy-btn { background: #7b1e2b; color: white; border: none; padding: 18px; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .buy-btn:hover { background: #5a151f; transform: translateY(-2px); }
+        @media (max-width: 768px) { .detail-wrapper { flex-direction: column; } }
+    </style>
 </head>
 <body>
-    <header style="background:#fff; padding:15px 5%; display:flex; align-items:center; border-bottom:2px solid #eee;">
-        <div class="header-left" style="cursor:pointer;" onclick="window.location.href='index.html'">
-            <span style="font-size:22px; font-weight:800; color:#7b1e2b;">← GERİ DÖN</span>
+    <header style="background:#fff; padding:15px 5%; border-bottom:2px solid #eee;">
+        <div onclick="window.location.href='index.html'" style="cursor:pointer; display:flex; align-items:center; gap:10px;">
+            <span style="font-size:22px; font-weight:800; color:#7b1e2b;">AYSİMA MEDİKAL</span>
         </div>
     </header>
 
-    <div id="product-detail-container" style="max-width:1000px; margin:50px auto; padding:0 20px; display:flex; gap:40px; flex-wrap:wrap;">
-        <div style="flex:1; min-width:300px;">
-            <img id="detail-img" src="" alt="" style="width:100%; border-radius:8px; border:1px solid #eee;">
+    <div class="detail-wrapper">
+        <div class="detail-img">
+            <a href="index.html" class="back-btn">← Alışverişe Dön</a>
+            <img id="p-img" src="https://via.placeholder.com/500" alt="Ürün">
         </div>
-        <div style="flex:1; min-width:300px;">
-            <h1 id="detail-title" style="color:#333; margin-top:0;">Yükleniyor...</h1>
-            <p id="detail-desc" style="color:#666; line-height:1.6; font-size:18px;"></p>
-            <div id="detail-price" style="font-size:32px; font-weight:800; color:#7b1e2b; margin:20px 0;"></div>
-            <button id="add-to-cart-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:20px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:18px;">SEPETE EKLE</button>
+        <div class="detail-info">
+            <h1 id="p-name" class="detail-title">Ürün Yükleniyor...</h1>
+            <div id="p-desc" class="detail-desc">Lütfen bekleyin, ürün bilgileri getiriliyor...</div>
+            <div id="p-price" class="detail-price">0.00 ₺</div>
+            <button id="p-btn" class="buy-btn">SEPETE EKLE</button>
         </div>
     </div>
 
@@ -29,36 +43,46 @@
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script>
-        async function loadProductDetail() {
-            const params = new URLSearchParams(window.location.search);
-            const productId = params.get('id');
+        // Sayfa yüklendiğinde çalışacak ana fonksiyon
+        async function getProductDetail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
 
-            if (!productId) { window.location.href = 'index.html'; return; }
-
-            const { data: product, error } = await window.supabase
-                .from('products')
-                .select('*')
-                .eq('id', productId)
-                .single();
-
-            if (error || !product) {
-                document.getElementById('product-detail-container').innerHTML = "<h2>Ürün bulunamadı.</h2>";
+            if (!productId) {
+                window.location.href = 'index.html';
                 return;
             }
 
-            document.title = `${product.name} | AYSİMA MEDİKAL`;
-            document.getElementById('detail-img').src = product.image;
-            document.getElementById('detail-title').textContent = product.name;
-            document.getElementById('detail-desc').textContent = product.description;
-            document.getElementById('detail-price').textContent = product.price.toFixed(2) + " ₺";
-            
-            // Sepete ekle butonu işlevi (Cart.js yüklü olmadığı için basit hali)
-            document.getElementById('add-to-cart-btn').onclick = () => {
-                alert('Ürün sepete eklendi!');
-                // Buraya gerçek sepet mantığını sonra bağlayabiliriz
-            };
+            try {
+                // Supabase'den ID'ye göre ürünü çek
+                const { data: product, error } = await window.supabase
+                    .from('products')
+                    .select('*')
+                    .eq('id', productId)
+                    .single();
+
+                if (error || !product) throw error;
+
+                // Bilgileri ekrana yerleştir
+                document.getElementById('p-name').textContent = product.name;
+                document.getElementById('p-desc').textContent = product.description || "Bu ürün için açıklama bulunmuyor.";
+                document.getElementById('p-price').textContent = product.price.toFixed(2) + " ₺";
+                document.getElementById('p-img').src = product.image || product.image_url;
+                
+                // Sepete ekle butonuna basınca (LocalStorage üzerinden basit mantık)
+                document.getElementById('p-btn').onclick = function() {
+                    alert(product.name + " sepete eklendi!");
+                    // Not: Burada ana sayfadaki cart.js mantığını kullanmak istersen
+                    // cart.js dosyasını buraya da import etmen gerekir.
+                };
+
+            } catch (err) {
+                console.error("Hata:", err);
+                document.getElementById('p-name').textContent = "Ürün Bulunamadı";
+            }
         }
-        window.onload = loadProductDetail;
+
+        window.onload = getProductDetail;
     </script>
 </body>
 </html>
