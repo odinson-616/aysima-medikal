@@ -1,68 +1,90 @@
-// ============================================
-// PRODUCTS FUNCTIONS
-// ============================================
-
-/** Supabase'den ürünleri çeken fonksiyon */
+/** Ürünleri ve Kategorileri Supabase'den Çek */
 async function loadProducts() {
     try {
-        console.log('📦 Ürünler çekiliyor...');
+        console.log('📦 Veriler çekiliyor...');
         
-        // İlişki hatasını önlemek için sadece products tablosundan çekiyoruz
-        const { data, error } = await window.supabase
+        // 1. Ürünleri Çek
+        const { data: products, error: pError } = await window.supabase
             .from('products')
             .select('*') 
             .eq('is_active', true)
             .order('created_at', { ascending: false });
 
-        if (error) throw error;
+        if (pError) throw pError;
+        window.APP.products = products || [];
 
-        console.log('✅ Veri çekildi:', data);
-        window.APP.products = data || [];
-        
-        // Ekrana basma fonksiyonunu tetikle
+        // 2. Kategorileri Çek
+        const { data: categories, error: cError } = await window.supabase
+            .from('categories')
+            .select('*')
+            .order('name');
+
+        if (cError) throw cError;
+
+        // Ekrana bas
+        renderCategories(categories || []);
         renderProducts(window.APP.products);
 
     } catch (err) {
-        console.error('❌ Ürün yükleme hatası:', err.message);
+        console.error('❌ Yükleme hatası:', err.message);
         const grid = document.getElementById('product-grid');
-        if (grid) grid.innerHTML = `<p style="color:red; text-align:center; padding:20px;">Hata: ${err.message}</p>`;
+        if (grid) grid.innerHTML = `<p style="color:red; text-align:center;">Hata: ${err.message}</p>`;
     }
 }
 
-/** Ürünleri HTML içine basan fonksiyon (Eksik olan kısım buydu) */
+/** Kategorileri Sidebar'a Yaz */
+function renderCategories(categories) {
+    const catList = document.getElementById('category-list');
+    if (!catList) return;
+
+    catList.innerHTML = `
+        <li class="cat-item all-products" onclick="filterByCategory(null, 'Tüm Ürünler')">
+            Tüm Ürünler
+        </li>
+    ` + categories.map(cat => `
+        <li class="cat-item" onclick="filterByCategory('${cat.id}', '${cat.name}')">
+            ${cat.name} <span>▶</span>
+        </li>
+    `).join('');
+}
+
+/** Kategori Filtreleme */
+function filterByCategory(catId, catName) {
+    document.getElementById('page-name').textContent = catName;
+    
+    const filtered = catId 
+        ? window.APP.products.filter(p => p.category_id === catId)
+        : window.APP.products;
+    
+    renderProducts(filtered);
+}
+
+/** Ürünleri Grid İçine Bas */
 function renderProducts(products) {
     const grid = document.getElementById('product-grid');
+    const countDisplay = document.getElementById('product-count');
     if (!grid) return;
 
+    if (countDisplay) countDisplay.textContent = `${products.length} ürün bulundu`;
+
     if (!products || products.length === 0) {
-        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999; grid-column: 1/-1;">Henüz ürün bulunmuyor.</p>';
+        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999; grid-column: 1/-1;">Bu kategoride henüz ürün bulunmuyor.</p>';
         return;
     }
 
     grid.innerHTML = products.map(product => {
-        // Veritabanındaki sütun isimlerine göre (image veya image_url) kontrol et
         const productImage = product.image_url || product.image || 'https://via.placeholder.com/300?text=Gorsel+Yok';
         const productPrice = product.price || 0;
 
         return `
-        <div class="product-card" style="background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; gap: 10px;">
-            <div style="height: 180px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                <img src="${productImage}" alt="${product.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+        <div class="product-card">
+            <div class="product-img-container">
+                <img src="${productImage}" alt="${product.name}">
             </div>
-            
-            <h3 style="margin: 5px 0; font-size: 16px; color: #333; height: 40px; overflow: hidden; line-height: 1.3;">
-                ${product.name}
-            </h3>
-            
-            <div style="margin-top: auto;">
-                <span style="font-size: 18px; font-weight: 800; color: #7b1e2b; display: block; margin-bottom: 10px;">
-                    ${productPrice.toFixed(2)} ₺
-                </span>
-                
-                <button class="add-cart-btn" onclick="addToCart('${product.id}')" 
-                    style="width: 100%; background: #7b1e2b; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s;">
-                    SEPETE EKLE
-                </button>
+            <h3 class="product-title">${product.name}</h3>
+            <div class="product-footer">
+                <span class="price">${productPrice.toFixed(2)} ₺</span>
+                <button class="add-cart-btn" onclick="addToCart('${product.id}')">SEPETE EKLE</button>
             </div>
         </div>
         `;
@@ -72,7 +94,6 @@ function renderProducts(products) {
 /** Arama Fonksiyonu */
 function doSearch(query) {
     if (!window.APP.products) return;
-    
     const filtered = window.APP.products.filter(p => 
         p.name.toLowerCase().includes(query.toLowerCase())
     );
