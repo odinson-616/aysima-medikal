@@ -1,81 +1,79 @@
-// js/products.js - Ürün gösterimi
-async function loadProducts(cid = null, cname = 'Tüm Ürünler') {
+// ============================================
+// PRODUCTS FUNCTIONS
+// ============================================
+/**
+*/
+async function loadProducts() {
 try {
-document.getElementById('page-name').textContent = cname;
+showLoading(true);
+const { data, error } = await window.supabase
+.from('products')
+.select('*')
+.order('created_at', { ascending: false });
+if (error) {
+showNotification('Ürünler yüklenemedi: ' + error.message, 'error');
+return;
+}
+window.APP.products = data || [];
+renderProducts(window.APP.products);
+} catch (err) {
+showNotification('Hata: ' + err.message, 'error');
+} finally {
+showLoading(false);
+}
+}
+/**
+*/
+function renderProducts(products) {
 const grid = document.getElementById('product-grid');
-grid.innerHTML = 'Ürünler hazırlanıyor...';
-let q = supabase.from('products').select('*, product_variants(*)').eq('is_active', true);
-if(cid) q = q.eq('category_id', cid);
-const { data, error } = await q;
-if(error) throw error;
-APP.masterData = data || [];
-renderProducts(APP.masterData);
-} catch(e) {
-console.error('Ürün yükleme hatası:', e);
-document.getElementById('product-grid').innerHTML = 'Ürünler yüklenemedi.';
-}
-}
-function renderProducts(list) {
-const container = document.getElementById('product-grid');
-if(list.length === 0) {
-container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:#999;">Ürün bulunamadı.</div>';
+if (!products || products.length === 0) {
+grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Ürün bulunamadı</p>';
 return;
 }
-container.innerHTML = '';
-list.forEach(p => {
-const vars = p.product_variants.filter(v => v.is_active);
-const def = vars[0] || { price: 0, variant_value: '-', id: 'null', stock: 0 };
-const card = document.createElement('div');
-card.className = 'card';
-card.innerHTML = `
-<div class="product-image">Görsel</div>
-<div class="product-name">${escapeHtml(p.name)}</div>
-<div class="variants-container">
-${vars.map(v => `
-<button class="v-btn ${v.id === def.id ? 'selected' : ''}"
-onclick="updateCard(this, '${v.price}', '${v.id}', '${escapeHtml(v.variant_value)}', ${v.stock})"
-title="${escapeHtml(v.variant_value)}">
-${escapeHtml(v.variant_value)}
-`).join('')}
-</div>
-<div style="margin-top:auto;">
-<div class="price-display">${def.price} ₺</div>
-<button class="buy-btn" ${def.stock <= 0 ? 'disabled' : ''}
-onclick="addToCart('${escapeHtml(p.id)}', '${escapeHtml(p.name)}', this)"
-data-v-id="${def.id}"
-data-v-price="${def.price}"
-data-v-name="${escapeHtml(def.variant_value)}">
-${def.stock <= 0 ? 'TÜKENDİ' : 'SEPETE EKLE'}
-</button>
-</div>
-`;
-container.appendChild(card);
-});
+grid.innerHTML = products.map(product => `
+<img src="${product.image}" alt="${product.name}">
+${product.discount ? `<span class="discount">%${product.discount}</span>` : ''}
+<h3>${product.name}</h3>
+<p class="product-description">${product.description || 'Açıklama yok'}</p>
+${product.original_price ? `<span class="original-price">${formatPrice(product.original_price)}</span>` : ''}
+<span class="price">${formatPrice(product.price)}</span>
+${'⭐'.repeat(Math.floor(product.rating || 4))} (${product.reviews || 0} yorum)
+<button class="add-cart-btn" onclick="addToCart(${product.id})">
+<button class="favorite-btn" onclick="toggleFavorite(${product.id})">
+`).join('');
 }
-function doSearch(t) {
-if(t.trim() === '') {
-renderProducts(APP.masterData);
-} else {
-renderProducts(APP.masterData.filter(p => p.name.toLowerCase().includes(t.toLowerCase())));
-}
-}
-async function loadCategories() {
-try {
-const { data: cats, error } = await supabase.from('categories').select('*');
-if(error) {
-console.error('Kategori yükleme hatası:', error);
+/**
+*/
+function doSearch(query) {
+if (!query.trim()) {
+renderProducts(window.APP.products);
 return;
 }
-const navbar = document.getElementById('navbar');
-cats?.forEach(c => {
-const a = document.createElement('a');
-a.className = 'nav-link';
-a.textContent = c.name.toUpperCase();
-a.onclick = () => loadProducts(c.id, c.name);
-navbar.appendChild(a);
-});
-loadProducts();
-} catch(e) {
-console.error('Kategori hatası:', e);
+const filtered = window.APP.products.filter(product =>
+product.name.toLowerCase().includes(query.toLowerCase()) ||
+product.description.toLowerCase().includes(query.toLowerCase()) ||
+product.category.toLowerCase().includes(query.toLowerCase())
+);
+renderProducts(filtered);
 }
+/**
+*/
+function toggleFavorite(productId) {
+if (!window.APP.currentUser) {
+showNotification('Lütfen önce giriş yapın!', 'error');
+openAuth();
+return;
 }
+showNotification('Favorilere eklendi! ❤️', 'success');
+}
+/**
+*/
+function filterByCategory(category) {
+if (!category) {
+renderProducts(window.APP.products);
+return;
+}
+const filtered = window.APP.products.filter(p => p.category === category);
+renderProducts(filtered);
+}
+console.log('✅ Products loaded successfully');
