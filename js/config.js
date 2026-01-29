@@ -2,7 +2,7 @@
 // SUPABASE CONFIGURATION
 // ============================================
 const SUPABASE_URL = 'https://eqpioawtdwkaeuxpfspt.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA' ;
+const SUPABASE_ANON_KEY = 'sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA';
 // Initialize Supabase
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ============================================
