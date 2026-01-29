@@ -3,54 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AYSİMA MEDİKAL | Ürünler</title>
+  <title>AYSİMA MEDİKAL | Güvenilir Sağlık Çözümleri</title>
   <style>
-    :root { --bordo: #7b1e2b; --gri: #f4f4f4; }
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--gri); display: flex; flex-direction: column; min-height: 100vh; }
+    :root { --bordo: #7b1e2b; --gri-arka: #f7f7f7; --text: #333; }
+    body { margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--gri-arka); color: var(--text); }
     
-    header { background-color: var(--bordo); color: white; padding: 15px 30px; display: flex; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    header img { height: 45px; margin-right: 15px; background: white; border-radius: 4px; padding: 2px; }
+    /* Header */
+    header { background-color: var(--bordo); color: white; padding: 12px 5%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .logo-area { display: flex; align-items: center; gap: 12px; }
+    header img { height: 40px; background: white; border-radius: 4px; padding: 2px; }
 
-    .layout { display: flex; flex: 1; max-width: 1200px; margin: 0 auto; width: 100%; padding: 20px; gap: 20px; }
+    /* Layout */
+    .container { display: flex; max-width: 1300px; margin: 25px auto; padding: 0 20px; gap: 25px; }
     
-    /* Yan Menü */
-    aside { width: 250px; background: white; padding: 20px; border-radius: 8px; height: fit-content; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    aside h3 { color: var(--bordo); margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-    .category-list { list-style: none; padding: 0; }
-    .category-list li { padding: 10px; cursor: pointer; border-radius: 4px; transition: 0.2s; }
+    /* Sidebar */
+    aside { width: 260px; background: white; border-radius: 12px; padding: 20px; height: fit-content; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 90px; }
+    aside h3 { font-size: 16px; margin-bottom: 15px; color: var(--bordo); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+    .category-list { list-style: none; padding: 0; margin: 0; }
+    .category-list li { padding: 12px; cursor: pointer; border-radius: 8px; font-size: 14px; transition: all 0.2s; border-left: 3px solid transparent; margin-bottom: 4px; }
     .category-list li:hover { background: #fff5f6; color: var(--bordo); }
-    .category-list li.active { background: var(--bordo); color: white; }
+    .category-list li.active { background: #fff5f6; color: var(--bordo); border-left-color: var(--bordo); font-weight: 600; }
 
-    /* Ürün Alanı */
+    /* Product Grid */
     main { flex: 1; }
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-    .product-card { background: white; border-radius: 8px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #eee; }
-    .product-name { font-size: 1.1rem; font-weight: bold; color: var(--bordo); margin-bottom: 10px; display: block; }
-    .variant-box { background: #fafafa; padding: 8px; border-radius: 4px; margin-top: 5px; font-size: 0.85rem; border-left: 3px solid #ddd; }
-    .price { font-weight: bold; color: #333; float: right; }
-    .status-badge { font-size: 0.7rem; padding: 2px 6px; border-radius: 10px; text-transform: uppercase; }
-    .status-ok { background: #e6f4ea; color: #1e7e34; }
-    .status-none { background: #fce8e6; color: #d93025; }
+    .grid-header { margin-bottom: 20px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    
+    /* Trendyol Style Card */
+    .product-card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #eee; transition: box-shadow 0.3s; display: flex; flex-direction: column; cursor: pointer; }
+    .product-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+    
+    .img-container { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; }
+    .img-container img { max-width: 80%; max-height: 80%; object-fit: contain; }
+    .no-image { font-size: 11px; color: #aaa; text-align: center; }
+
+    .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
+    .brand { font-size: 12px; color: #888; text-transform: uppercase; font-weight: 600; }
+    .product-title { font-size: 14px; font-weight: 500; margin: 5px 0 10px 0; color: #222; line-height: 1.4; height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    
+    .variants-area { margin-top: auto; border-top: 1px solid #f5f5f5; padding-top: 10px; }
+    .variant-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px; }
+    .v-price { font-weight: 700; color: var(--bordo); }
+    .v-out { color: #d93025; font-size: 11px; font-weight: 600; }
+
+    .btn-detail { width: 100%; background: white; border: 1px solid var(--bordo); color: var(--bordo); padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-top: 12px; cursor: pointer; transition: 0.2s; }
+    .btn-detail:hover { background: var(--bordo); color: white; }
+
+    @media (max-width: 768px) { .container { flex-direction: column; } aside { width: auto; position: static; } }
   </style>
 </head>
 <body>
 
   <header>
-    <img src="logo.png" alt="Logo">
-    <div style="font-size: 1.3rem; font-weight: bold;">AYSİMA MEDİKAL</div>
+    <div class="logo-area">
+      <img src="logo.png" alt="Logo">
+      <span style="font-weight: 700; letter-spacing: 1px;">AYSİMA MEDİKAL</span>
+    </div>
   </header>
 
-  <div class="layout">
+  <div class="container">
     <aside>
       <h3>Kategoriler</h3>
       <ul class="category-list" id="category-menu">
-        <li class="active" onclick="loadProducts(null)">Tüm Ürünler</li>
-        </ul>
+        <li class="active" onclick="location.reload()">Tüm Ürünler</li>
+      </ul>
     </aside>
 
     <main>
-      <h2 id="category-title">Tüm Ürünler</h2>
-      <div class="product-grid" id="product-list">Yükleniyor...</div>
+      <div class="grid-header">
+        <h2 id="category-title" style="margin:0; font-size: 20px;">Tüm Ürünler</h2>
+      </div>
+      <div class="product-grid" id="product-list">
+        </div>
     </main>
   </div>
 
@@ -60,7 +84,6 @@
     const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 1. Kategorileri Yükle
     async function loadCategories() {
       const { data } = await _supabase.from("categories").select("*");
       const menu = document.getElementById("category-menu");
@@ -76,41 +99,43 @@
       });
     }
 
-    // 2. Ürünleri Yükle (Kategoriye göre filtreli)
     async function loadProducts(categoryId = null, categoryName = "Tüm Ürünler") {
       document.getElementById("category-title").textContent = categoryName;
-      let query = _supabase.from("products").select(`*, product_variants(*)`).eq("is_active", true);
-      
-      if (categoryId) {
-        query = query.eq("category_id", categoryId);
-      }
-
-      const { data: products, error } = await query;
-
       const container = document.getElementById("product-list");
+      container.innerHTML = "Yükleniyor...";
+
+      let query = _supabase.from("products").select(`*, product_variants(*)`).eq("is_active", true);
+      if (categoryId) query = query.eq("category_id", categoryId);
+
+      const { data: products } = await query;
       container.innerHTML = "";
 
       products?.forEach(product => {
         let variantsHtml = "";
-        // Varyantları fiyata göre sırala
-        const sortedVariants = product.product_variants.sort((a, b) => a.price - b.price);
+        const mainVariant = product.product_variants.sort((a,b) => a.price - b.price)[0];
         
-        sortedVariants.forEach(v => {
-          const isAvailable = v.stock > 0;
+        product.product_variants.forEach(v => {
           variantsHtml += `
-            <div class="variant-box">
+            <div class="variant-line">
               <span>${v.variant_value}</span>
-              ${isAvailable 
-                ? `<span class="price">${v.price} TL</span>` 
-                : `<span class="price" style="color:red">TÜKENDİ</span>`}
+              ${v.stock > 0 ? `<span class="v-price">${v.price} TL</span>` : `<span class="v-out">TÜKENDİ</span>`}
             </div>`;
         });
 
+        // Görsel alanı - İlerde image_url eklendiğinde buradan çekilecek
+        const imageHtml = `<div class="img-container"><div class="no-image">Görsel Hazırlanıyor<br>Aysima Medikal</div></div>`;
+
         container.innerHTML += `
           <div class="product-card">
-            <span class="product-name">${product.name}</span>
-            <small style="color:#666">${product.brand || ''}</small>
-            <div style="margin-top:10px">${variantsHtml}</div>
+            ${imageHtml}
+            <div class="card-body">
+              <span class="brand">${product.brand || 'AYSİMA'}</span>
+              <span class="product-title">${product.name}</span>
+              <div class="variants-area">
+                ${variantsHtml}
+              </div>
+              <button class="btn-detail">Ürünü İncele</button>
+            </div>
           </div>`;
       });
     }
