@@ -1,103 +1,54 @@
-/** Ürünleri ve Kategorileri Supabase'den Çek */
 async function loadProducts() {
     try {
-        console.log('📦 Veriler çekiliyor...');
-        
-        // 1. Ürünleri Çek
         const { data: products, error: pError } = await window.supabase
-            .from('products')
-            .select('*') 
-            .eq('is_active', true)
-            .order('created_at', { ascending: false });
-
-        if (pError) throw pError;
-        window.APP.products = products || [];
-
-        // 2. Kategorileri Çek
+            .from('products').select('*').eq('is_active', true).order('created_at', { ascending: false });
+        
         const { data: categories, error: cError } = await window.supabase
-            .from('categories')
-            .select('*')
-            .order('name');
+            .from('categories').select('*').order('name');
 
-        if (cError) throw cError;
+        if (pError || cError) throw (pError || cError);
 
-        // Ekrana bas
+        window.APP.products = products || [];
         renderCategories(categories || []);
         renderProducts(window.APP.products);
-
     } catch (err) {
-        console.error('❌ Yükleme hatası:', err.message);
-        const grid = document.getElementById('product-grid');
-        if (grid) grid.innerHTML = `<p style="color:red; text-align:center;">Hata: ${err.message}</p>`;
+        console.error("Hata:", err.message);
     }
 }
 
-/** Kategorileri Sidebar'a Yaz */
 function renderCategories(categories) {
-    const catList = document.getElementById('category-list');
-    if (!catList) return;
-
-    catList.innerHTML = `
-        <li class="cat-item all-products" onclick="filterByCategory(null, 'Tüm Ürünler')">
-            Tüm Ürünler
-        </li>
-    ` + categories.map(cat => `
-        <li class="cat-item" onclick="filterByCategory('${cat.id}', '${cat.name}')">
-            ${cat.name} <span>▶</span>
+    const list = document.getElementById('category-list');
+    if (!list) return;
+    list.innerHTML = `<li onclick="renderProducts(window.APP.products)" style="padding:12px 15px; border-bottom:1px solid #f9f9f9; cursor:pointer; font-weight:bold; color:#7b1e2b;">Tümünü Gör</li>`;
+    list.innerHTML += categories.map(cat => `
+        <li onclick="filterByCategory('${cat.id}', '${cat.name}')" class="cat-item" style="padding:12px 15px; border-bottom:1px solid #f9f9f9; cursor:pointer; font-size:14px; transition:0.2s;">
+            ${cat.name}
         </li>
     `).join('');
 }
 
-/** Kategori Filtreleme */
-function filterByCategory(catId, catName) {
-    document.getElementById('page-name').textContent = catName;
-    
-    const filtered = catId 
-        ? window.APP.products.filter(p => p.category_id === catId)
-        : window.APP.products;
-    
+function filterByCategory(id, name) {
+    document.getElementById('page-name').textContent = name;
+    const filtered = window.APP.products.filter(p => p.category_id === id);
     renderProducts(filtered);
 }
 
-/** Ürünleri Grid İçine Bas */
 function renderProducts(products) {
     const grid = document.getElementById('product-grid');
-    const countDisplay = document.getElementById('product-count');
     if (!grid) return;
-
-    if (countDisplay) countDisplay.textContent = `${products.length} ürün bulundu`;
-
-    if (!products || products.length === 0) {
-        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999; grid-column: 1/-1;">Bu kategoride henüz ürün bulunmuyor.</p>';
-        return;
-    }
-
-    grid.innerHTML = products.map(product => {
-        const productImage = product.image_url || product.image || 'https://via.placeholder.com/300?text=Gorsel+Yok';
-        const productPrice = product.price || 0;
-
-        return `
-        <div class="product-card">
-            <div class="product-img-container">
-                <img src="${productImage}" alt="${product.name}">
-            </div>
-            <h3 class="product-title">${product.name}</h3>
-            <div class="product-footer">
-                <span class="price">${productPrice.toFixed(2)} ₺</span>
-                <button class="add-cart-btn" onclick="addToCart('${product.id}')">SEPETE EKLE</button>
-            </div>
+    document.getElementById('product-count').textContent = `${products.length} ürün bulundu`;
+    
+    grid.innerHTML = products.map(p => `
+        <div class="product-card" style="background:white; border:1px solid #eee; border-radius:8px; padding:15px; transition:0.3s; display:flex; flex-direction:column;">
+            <img src="${p.image || p.image_url}" style="width:100%; height:160px; object-fit:contain; margin-bottom:10px;">
+            <h3 style="font-size:14px; margin:0 0 10px 0; height:38px; overflow:hidden;">${p.name}</h3>
+            <div style="font-size:18px; font-weight:800; color:#7b1e2b; margin-top:auto;">${p.price.toFixed(2)} ₺</div>
+            <button onclick="addToCart('${p.id}')" style="margin-top:10px; background:#7b1e2b; color:white; border:none; padding:8px; border-radius:4px; cursor:pointer; font-weight:bold;">SEPETE EKLE</button>
         </div>
-        `;
-    }).join('');
+    `).join('');
 }
 
-/** Arama Fonksiyonu */
-function doSearch(query) {
-    if (!window.APP.products) return;
-    const filtered = window.APP.products.filter(p => 
-        p.name.toLowerCase().includes(query.toLowerCase())
-    );
-    renderProducts(filtered);
+function doSearch(q) {
+    const f = window.APP.products.filter(p => p.name.toLowerCase().includes(q.toLowerCase()));
+    renderProducts(f);
 }
-
-console.log('✅ Products script yüklendi');
