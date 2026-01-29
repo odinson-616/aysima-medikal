@@ -1,28 +1,24 @@
-// ============================================
-// MAIN APPLICATION
-// ============================================
+// js/main.js
 console.log('🚀 Uygulama başlatılıyor...');
-// Sayfadan yüklendikten sonra başlat
+
 document.addEventListener('DOMContentLoaded', async function() {
-console.log('📄 index loaded');
-try {
-// 1. Mevcut kullanıcıyı kontrol et
-await checkCurrentUser();
-// 2. Ürünleri yükle
-await loadProducts();
-// 3. Sepeti güncelle (DOĞRU İSİM!)
-updateCart();
-console.log('✅ Uygulama başarıyla yüklendi!');
-} catch (err) {
-console.error('❌ Uygulama yükleme hatası:', err);
-showNotification('Uygulama yüklenemedi: ' + err.message, 'error');
-}
+    console.log('📄 Sayfa yüklendi, veriler çekiliyor...');
+    try {
+        // 1. Ürünleri yükle (Kritik: Önce veriler gelmeli)
+        await loadProducts();
+        
+        // 2. Sepeti güncelle (cart.js içinde updateCart fonksiyonun olmalı)
+        if (typeof updateCart === 'function') {
+            updateCart();
+        }
+
+        console.log('✅ Uygulama başarıyla yüklendi!');
+    } catch (err) {
+        console.error('❌ Uygulama yükleme hatası:', err);
+    }
 });
-// Sayfa kapatılmadan önce verileri kaydet
+
+// Verileri kaydetme (Kapanışta)
 window.addEventListener('beforeunload', function() {
-setLocalStorage('cart', window.APP.cart);
-if (window.APP.currentUser) {
-setLocalStorage('user', window.APP.currentUser);
-}
+    localStorage.setItem('aysima_cart', JSON.stringify(window.APP.cart));
 });
-console.log('✅ Main loaded successfully');
