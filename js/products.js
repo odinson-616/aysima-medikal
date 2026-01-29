@@ -10,7 +10,6 @@ console.log('📦 Ürünler yükleniyor...');
 const { data, error } = await window.supabase
 .from('products')
 .select('*')
-.eq('is_active', true) // Sadece aktif ürünler
 .order('created_at', { ascending: false });
 if (error) {
 console.error('❌ Ürün yükleme hatası:', error);
