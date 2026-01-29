@@ -3,82 +3,89 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AYSİMA MEDİKAL</title>
+  <title>AYSİMA MEDİKAL | Profesyonel Sağlık Çözümleri</title>
   <style>
-    :root { --bordo: #7b1e2b; --gri-arka: #f7f7f7; --text: #333; }
-    body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--gri-arka); color: var(--text); overflow-x: hidden; }
+    :root { --primary: #0066cc; --secondary: #f39c12; --bordo: #7b1e2b; --light-bg: #f8f9fa; }
+    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff; color: #333; }
+
+    /* Üst Duyuru Barı */
+    .top-notice { background: var(--bordo); color: white; text-align: center; padding: 8px; font-size: 13px; font-weight: bold; }
+
+    /* Ana Header Alanı */
+    header { padding: 20px 5%; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid #eee; }
+    .logo { font-size: 24px; font-weight: 800; color: var(--bordo); text-decoration: none; min-width: 150px; }
     
-    /* Header & Arama */
-    header { background-color: var(--bordo); color: white; padding: 10px 3%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
-    .header-left { display: flex; align-items: center; gap: 15px; }
-    .menu-btn { cursor: pointer; font-size: 24px; background: rgba(255,255,255,0.1); width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .search-container { flex-grow: 1; max-width: 500px; margin: 0 20px; }
-    .search-container input { width: 100%; padding: 10px 15px; border-radius: 20px; border: none; outline: none; }
+    .search-bar { flex-grow: 1; max-width: 600px; display: flex; position: relative; }
+    .search-bar input { width: 100%; padding: 12px 20px; border: 2px solid #ddd; border-radius: 5px 0 0 5px; outline: none; transition: 0.3s; }
+    .search-bar input:focus { border-color: var(--bordo); }
+    .search-btn { background: var(--bordo); color: white; border: none; padding: 0 25px; border-radius: 0 5px 5px 0; cursor: pointer; }
 
-    /* Sidebar & Overlay */
-    #sidebar { position: fixed; left: -300px; top: 0; width: 280px; height: 100%; background: white; z-index: 2001; transition: 0.3s; box-shadow: 5px 0 15px rgba(0,0,0,0.1); padding: 25px; }
-    #sidebar.open { left: 0; }
-    #cart-panel { position: fixed; right: -400px; top: 0; width: 320px; height: 100%; background: white; z-index: 2001; transition: 0.3s; padding: 20px; display: flex; flex-direction: column; box-shadow: -5px 0 15px rgba(0,0,0,0.1); }
-    #cart-panel.open { right: 0; }
-    #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2000; }
-    #overlay.active { display: block; }
+    .header-icons { display: flex; gap: 20px; align-items: center; }
+    .icon-box { text-align: center; cursor: pointer; color: #555; position: relative; text-decoration: none; }
+    .icon-box span { display: block; font-size: 11px; margin-top: 3px; }
+    .badge { position: absolute; top: -5px; right: 5px; background: var(--secondary); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
 
-    /* Ürün Kartları */
-    .main-container { max-width: 1300px; margin: 25px auto; padding: 0 20px; }
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-    .product-card { background: white; border-radius: 12px; border: 1px solid #eee; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
-    .product-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-    .img-box { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; color: #ccc; font-size: 11px; }
+    /* Yatay Kategori Menüsü */
+    .nav-menu { background: #fdfdfd; border-bottom: 2px solid #eee; overflow-x: auto; white-space: nowrap; display: flex; justify-content: center; padding: 0 5%; }
+    .nav-item { padding: 15px 20px; color: #444; text-decoration: none; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; border-bottom: 3px solid transparent; }
+    .nav-item:hover, .nav-item.active { color: var(--bordo); border-bottom-color: var(--bordo); }
+
+    /* Ürün Alanı */
+    .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 25px; }
+
+    /* Ürün Kartı */
+    .product-card { border: 1px solid #eee; border-radius: 8px; transition: 0.3s; padding: 15px; display: flex; flex-direction: column; position: relative; }
+    .product-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); transform: translateY(-3px); }
+    .img-wrap { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; border-radius: 5px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; }
+    .brand { color: #999; font-size: 11px; text-transform: uppercase; margin-bottom: 5px; }
+    .title { font-weight: 600; font-size: 14px; height: 40px; overflow: hidden; margin-bottom: 10px; }
     
-    .card-body { padding: 15px; flex-grow: 1; }
-    .product-title { font-weight: 600; height: 40px; margin-bottom: 10px; font-size: 15px; }
-    .v-option { border: 1.5px solid #ddd; padding: 5px 10px; border-radius: 6px; cursor: pointer; background: white; font-size: 12px; margin-right: 5px; transition: 0.2s; }
-    .v-option.selected { background: var(--bordo); color: white; border-color: var(--bordo); }
-    .price-display { font-size: 20px; font-weight: 800; color: var(--bordo); margin: 12px 0; display: block; }
-    .btn-add { width: 100%; background: var(--bordo); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .variant-btns { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; }
+    .v-btn { border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; background: white; }
+    .v-btn.active { border-color: var(--bordo); background: #fff5f6; color: var(--bordo); }
+    
+    .price { font-size: 20px; font-weight: 800; color: var(--bordo); margin-bottom: 15px; }
+    .add-btn { background: var(--bordo); color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .add-btn:hover { opacity: 0.9; }
 
-    .cart-item { border-bottom: 1px solid #eee; padding: 10px 0; font-size: 14px; }
+    /* Mobil Düzenlemeler */
+    @media (max-width: 768px) {
+      header { flex-direction: column; padding: 15px; }
+      .search-bar { order: 3; width: 100%; margin: 10px 0; }
+      .nav-menu { justify-content: flex-start; }
+      .product-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .price { font-size: 17px; }
+    }
   </style>
 </head>
 <body>
 
-  <div id="overlay" onclick="closeAll()"></div>
-
-  <div id="sidebar">
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-      <h3 style="margin:0; color:var(--bordo);">Kategoriler</h3>
-      <span style="font-size:30px; cursor:pointer;" onclick="toggleSidebar()">×</span>
-    </div>
-    <ul style="list-style:none; padding:0;" id="category-menu">
-      <li style="padding:12px; cursor:pointer;" onclick="location.reload()">Tüm Ürünler</li>
-    </ul>
-  </div>
-
-  <div id="cart-panel">
-    <h3>Sepetim</h3>
-    <div id="cart-items" style="flex-grow:1; overflow-y:auto;"></div>
-    <div style="padding-top:15px; border-top:2px solid #eee;">
-      <div style="text-align:right; font-weight:bold; font-size:18px; margin-bottom:10px;">Toplam: <span id="total-price">0.00</span> TL</div>
-      <button style="width:100%; background:#27ae60; color:white; border:none; padding:12px; border-radius:8px; font-weight:bold; cursor:pointer;">Siparişi Tamamla</button>
-    </div>
-  </div>
+  <div class="top-notice">15.000 TL ÜZERİ ALIŞVERİŞLERDE ÜCRETSİZ KARGO!</div>
 
   <header>
-    <div class="header-left">
-      <div class="menu-btn" onclick="toggleSidebar()">☰</div>
-      <img src="logo.png" alt="Logo" style="height:35px; background:white; padding:2px; border-radius:4px;">
-      <span style="font-weight:700;">AYSİMA</span>
+    <a href="#" class="logo">AYSİMA MEDİKAL</a>
+    
+    <div class="search-bar">
+      <input type="text" id="searchInp" placeholder="Aradığınız ürünü yazınız..." onkeyup="handleSearch(this.value)">
+      <button class="search-btn">🔍</button>
     </div>
-    <div class="search-container">
-      <input type="text" placeholder="Ürün ara..." onkeyup="search(this.value)">
-    </div>
-    <div style="cursor:pointer; position:relative;" onclick="toggleCart()">
-      🛒 <span id="cart-count" style="position:absolute; top:-10px; right:-10px; background:white; color:var(--bordo); border-radius:50%; padding:2px 6px; font-size:10px; font-weight:bold;">0</span>
+
+    <div class="header-icons">
+      <div class="icon-box">👤<span>Giriş Yap</span></div>
+      <div class="icon-box" onclick="alert('Sepet açılıyor...')">
+        🛒<span class="badge" id="cart-count">0</span>
+        <span>Sepetim</span>
+      </div>
     </div>
   </header>
 
-  <div class="main-container">
-    <h2 id="page-title">Tüm Ürünler</h2>
+  <nav class="nav-menu" id="cat-nav">
+    <div class="nav-item active" onclick="location.reload()">TÜM ÜRÜNLER</div>
+    </nav>
+
+  <div class="container">
+    <h2 id="cat-title" style="font-size: 20px; border-left: 5px solid var(--bordo); padding-left: 15px; margin-bottom: 25px;">Tüm Ürünler</h2>
     <div class="product-grid" id="product-list">Yükleniyor...</div>
   </div>
 
@@ -88,118 +95,69 @@
     const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
     let allProducts = [];
-    let cart = JSON.parse(localStorage.getItem('aysima_cart')) || [];
 
-    async function init() {
+    async function start() {
+      // Kategorileri çek ve yatay menüye diz
       const { data: cats } = await _supabase.from("categories").select("*");
       cats?.forEach(c => {
-        const li = document.createElement("li");
-        li.style.cssText = "padding:12px; cursor:pointer;";
-        li.textContent = c.name;
-        li.onclick = () => { loadProducts(c.id, c.name); toggleSidebar(); };
-        document.getElementById("category-menu").appendChild(li);
+        const item = document.createElement("div");
+        item.className = "nav-item";
+        item.textContent = c.name.toUpperCase();
+        item.onclick = () => {
+          document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+          item.classList.add('active');
+          load(c.id, c.name);
+        };
+        document.getElementById("cat-nav").appendChild(item);
       });
-      loadProducts();
-      updateCartUI();
+      load();
     }
 
-    async function loadProducts(catId = null, name = "Tüm Ürünler") {
-      document.getElementById("page-title").textContent = name;
-      let query = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
-      if(catId) query = query.eq("category_id", catId);
-      const { data } = await query;
+    async function load(catId = null, name = "Tüm Ürünler") {
+      document.getElementById("cat-title").textContent = name;
+      let q = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
+      if(catId) q = q.eq("category_id", catId);
+      const { data } = await q;
       allProducts = data || [];
       render(allProducts);
     }
 
     function render(list) {
-      const container = document.getElementById("product-list");
-      container.innerHTML = "";
+      const grid = document.getElementById("product-list");
+      grid.innerHTML = "";
       list.forEach(p => {
-        const variants = p.product_variants.filter(v => v.is_active);
-        const defV = variants[0] || {price: 0, variant_value: '-', id: ''};
+        const vars = p.product_variants.filter(v => v.is_active);
+        const def = vars[0] || {price: 0, variant_value: '-'};
         
         const card = document.createElement("div");
         card.className = "product-card";
         card.innerHTML = `
-          <div class="img-box">Görsel Hazırlanıyor</div>
-          <div class="card-body">
-            <div class="product-title">${p.name}</div>
-            <div class="variant-area">
-              ${variants.map(v => `<button class="v-option ${v.id === defV.id ? 'selected' : ''}" 
-                  onclick="updateCard(this, '${v.price}', '${v.id}', '${v.variant_value}')">${v.variant_value}</button>`).join('')}
-            </div>
-            <span class="price-display">${defV.price} TL</span>
-            <button class="btn-add" 
-              onclick="addToCart('${p.id}', '${p.name}', this)" 
-              data-v-id="${defV.id}" 
-              data-v-name="${defV.variant_value}" 
-              data-v-price="${defV.price}">Sepete Ekle</button>
+          <div class="img-wrap">Görsel</div>
+          <div class="brand">Aysima Medikal</div>
+          <div class="title">${p.name}</div>
+          <div class="variant-btns">
+            ${vars.map(v => `<button class="v-btn ${v.id===def.id?'active':''}" onclick="change(this, '${v.price}')">${v.variant_value}</button>`).join('')}
           </div>
+          <div class="price">${def.price} TL</div>
+          <button class="add-btn">SEPETE EKLE</button>
         `;
-        container.appendChild(card);
+        grid.appendChild(card);
       });
     }
 
-    // ÇÖZÜM: Varyant Seçilince Kartı Güncelleyen Fonksiyon
-    window.updateCard = (btn, price, vId, vName) => {
+    function change(btn, price) {
       const card = btn.closest(".product-card");
-      // Butonların rengini değiştir
-      card.querySelectorAll(".v-option").forEach(b => b.classList.remove("selected"));
-      btn.classList.add("selected");
-      // Fiyatı değiştir
-      card.querySelector(".price-display").textContent = price + " TL";
-      // Sepete ekle butonundaki veriyi değiştir (En kritik yer!)
-      const addBtn = card.querySelector(".btn-add");
-      addBtn.setAttribute("data-v-id", vId);
-      addBtn.setAttribute("data-v-name", vName);
-      addBtn.setAttribute("data-v-price", price);
+      card.querySelectorAll(".v-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      card.querySelector(".price").textContent = price + " TL";
     }
 
-    function addToCart(pId, pName, btn) {
-      const vId = btn.getAttribute("data-v-id");
-      const vName = btn.getAttribute("data-v-name");
-      const vPrice = parseFloat(btn.getAttribute("data-v-price"));
-      
-      const existing = cart.find(item => item.vId === vId);
-      if(existing) existing.qty += 1;
-      else cart.push({ pId, pName, vId, vName, vPrice, qty: 1 });
-      
-      saveCart();
-      toggleCart(true);
+    function handleSearch(val) {
+      const filtered = allProducts.filter(p => p.name.toLowerCase().includes(val.toLowerCase()));
+      render(filtered);
     }
 
-    function saveCart() { localStorage.setItem('aysima_cart', JSON.stringify(cart)); updateCartUI(); }
-    
-    function updateCartUI() {
-      const list = document.getElementById("cart-items");
-      let sum = 0; let qty = 0;
-      list.innerHTML = "";
-      cart.forEach((item, idx) => {
-        sum += item.vPrice * item.qty; qty += item.qty;
-        list.innerHTML += `<div class="cart-item">
-          <div><strong>${item.pName}</strong> (${item.vName})</div>
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span>${item.qty} adet - ${(item.vPrice*item.qty).toFixed(2)} TL</span>
-            <button onclick="remove(${idx})" style="border:none; color:red; background:none; cursor:pointer;">🗑️</button>
-          </div>
-        </div>`;
-      });
-      document.getElementById("cart-count").textContent = qty;
-      document.getElementById("total-price").textContent = sum.toFixed(2);
-    }
-
-    function remove(i) { cart.splice(i, 1); saveCart(); }
-    function search(t) { render(allProducts.filter(p => p.name.toLowerCase().includes(t.toLowerCase()))); }
-    function toggleSidebar() { document.getElementById("sidebar").classList.toggle("open"); document.getElementById("overlay").classList.toggle("active"); }
-    function toggleCart(open = null) { 
-      const p = document.getElementById("cart-panel");
-      if(open === true) p.classList.add("open"); else p.classList.toggle("open");
-      document.getElementById("overlay").classList.toggle("active", p.classList.contains("open"));
-    }
-    function closeAll() { document.getElementById("sidebar").classList.remove("open"); document.getElementById("cart-panel").classList.remove("open"); document.getElementById("overlay").classList.remove("active"); }
-
-    init();
+    start();
   </script>
 </body>
 </html>
