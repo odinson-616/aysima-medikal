@@ -1,87 +1,152 @@
-// js/cart.js - Sepet işlemleri
-function toggleCart(show) {
-document.getElementById('cart-sidebar').classList.toggle('open', show);
-document.getElementById('overlay').classList.toggle('active', show);
-}
-function updateCard(btn, price, vid, vname, stock) {
-const card = btn.closest('.card');
-card.querySelectorAll('.v-btn').forEach(b => b.classList.remove('selected'));
-btn.classList.add('selected');
-card.querySelector('.price-display').textContent = price + ' ₺';
-const buyBtn = card.querySelector('.buy-btn');
-buyBtn.setAttribute('data-v-id', vid);
-buyBtn.setAttribute('data-v-price', price);
-buyBtn.setAttribute('data-v-name', vname);
-if(stock <= 0) {
-buyBtn.disabled = true;
-buyBtn.textContent = 'TÜKENDİ';
-} else {
-buyBtn.disabled = false;
-buyBtn.textContent = 'SEPETE EKLE';
-}
-}
-function addToCart(pid, pname, btn) {
-const vid = btn.getAttribute('data-v-id');
-const vprice = parseFloat(btn.getAttribute('data-v-price'));
-const vname = btn.getAttribute('data-v-name');
-if (!vid || vid === 'null') {
-alert('Lütfen bir varyant seçin.');
+// ============================================
+// CART FUNCTIONS
+// ============================================
+/**
+*/
+function addToCart(productId) {
+const product = window.APP.products.find(p => p.id === productId);
+if (!product) {
+showNotification('Ürün bulunamadı!', 'error');
 return;
 }
-const existing = APP.cart.find(i => i.vid === vid && i.pid === pid);
-if (existing) {
-existing.qty++;
+const existingItem = window.APP.cart.find(item => item.id === productId);
+if (existingItem) {
+existingItem.quantity += 1;
 } else {
-APP.cart.push({ pid, pname, vid, vname, vprice, qty: 1 });
+window.APP.cart.push({
+id: product.id,
+name: product.name,
+price: product.price,
+image: product.image,
+quantity: 1
+});
 }
-APP.saveCart();
-updateCartUI();
-toggleCart(true);
+updateCart();
+showNotification(`${product.name} sepete eklendi!`, 'success');
 }
-function updateCartUI() {
-const itemsDiv = document.getElementById('cart-items');
-let total = 0, count = 0;
-if(APP.cart.length === 0) {
-itemsDiv.innerHTML = '<div class="empty-cart">Sepetiniz boş</div>';
-document.getElementById('checkout-btn').disabled = true;
-document.getElementById('cart-count').textContent = '0';
-return;
+/**
+*/
+function removeFromCart(productId) {
+window.APP.cart = window.APP.cart.filter(item => item.id !== productId);
+updateCart();
+showNotification('Ürün sepetten çıkarıldı!', 'success');
 }
-itemsDiv.innerHTML = '';
-APP.cart.forEach((item, idx) => {
-total += item.vprice * item.qty;
-count += item.qty;
-itemsDiv.innerHTML += `
-<div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #f4f4f4; padding-bottom:10px;">
-<div>
-<b style="font-size:14px; display:block; margin-bottom:4px;">${escapeHtml(item.pname)}</b>
-<small style="color:#999;">${escapeHtml(item.vname)} x ${item.qty}</small>
-</div>
-<div style="text-align:right;">
-<div style="font-weight:bold; margin-bottom:5px; color:var(--bordo);">${(item.vprice * item.qty).toFixed(2)} ₺</div>
-<button onclick="removeFromCart(${idx})" style="color:var(--danger); border:none; background:none; cursor:pointer; font-size:12px; text-decoration:underline;">Kaldır</button>
-</div>
+/**
+*/
+function updateQuantity(productId, quantity) {
+const item = window.APP.cart.find(item => item.id === productId);
+if (!item) return;
+if (quantity <= 0) {
+removeFromCart(productId);
+} else {
+item.quantity = quantity;
+updateCart();
+}
+}
+/**
+*/
+function updateCart() {
+// Sepeti local storage'a kaydet
+setLocalStorage('cart', window.APP.cart);
+// Sepet sayısını güncelle
+const cartCount = document.getElementById('cart-count');
+cartCount.textContent = window.APP.cart.reduce((sum, item) => sum + item.quantity, 0);
+// Sepet öğelerini göster
+renderCartItems();
+// Toplam fiyatı hesapla
+calculateCartTotal();
+}
+/**
+*/
+function renderCartItems() {
+const cartItemsDiv = document.getElementById('cart-items');
+if (window.APP.cart.length === 0) {
+cartItemsDiv.innerHTML = `
+<div style="padding: 20px; text-align: center; color: #999;">
+<p>Sepetiniz boş</p>
 </div>
 `;
-});
+return;
+}
+cartItemsDiv.innerHTML = window.APP.cart.map(item => `
+<img src="${item.image}" alt="${item.name}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+<div style="font-weight: bold; font-size: 14px;">${item.name}</div>
+<div style="color: var(--bordo); font-weight: bold; font-size: 14px;">${formatPrice(item.price)}</div>
+<button style="width: 25px; height: 25px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 3px;" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
+<input type="number" value="${item.quantity}" min="1" onchange="updateQuantity(${item.id}, parseInt(this.value))" style="width: 35px; text-align: center; border: 1px solid #ddd; padding: 5px; border-radius: 3px;">
+<button style="width: 25px; height: 25px; border: 1px solid #ddd; background: white; cursor: pointer; border-radius: 3px;" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+<button style="color: #f44336; cursor: pointer; background: none; border: none; font-size: 18px;" onclick="removeFromCart(${item.id})">×</button>
+`).join('');
+}
+/**
+*/
+function calculateCartTotal() {
+const total = window.APP.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 document.getElementById('cart-total').textContent = total.toFixed(2);
-document.getElementById('cart-count').textContent = count;
-document.getElementById('checkout-btn').disabled = false;
 }
-function removeFromCart(idx) {
-APP.cart.splice(idx, 1);
-APP.saveCart();
-updateCartUI();
+/**
+*/
+function toggleCart(show) {
+const overlay = document.getElementById('overlay');
+const sidebar = document.getElementById('cart-sidebar');
+if (show) {
+overlay.style.display = 'block';
+sidebar.style.transform = 'translateX(0)';
+document.body.style.overflow = 'hidden';
+} else {
+overlay.style.display = 'none';
+sidebar.style.transform = 'translateX(100%)';
+document.body.style.overflow = 'auto';
 }
-function handleCheckout() {
-if(!APP.currentUser) {
-alert('Lütfen önce giriş yapın!');
+}
+/**
+*/
+async function handleCheckout() {
+if (!window.APP.currentUser) {
+showNotification('Lütfen önce giriş yapın!', 'error');
 openAuth();
 return;
 }
-if(APP.cart.length === 0) {
-alert('Sepetiniz boş!');
+if (window.APP.cart.length === 0) {
+showNotification('Sepetiniz boş!', 'error');
 return;
 }
-alert('Ödeme sistemi kısa sürede aktif olacak!');
+try {
+const checkoutBtn = document.getElementById('checkout-btn');
+checkoutBtn.disabled = true;
+checkoutBtn.textContent = 'İşleniyor...';
+const total = window.APP.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+// Siparişi veritabanına kaydet
+const { data, error } = await window.supabase.from('orders').insert({
+user_id: window.APP.currentUser.id,
+items: window.APP.cart,
+total: total,
+status: 'pending',
+created_at: new Date().toISOString()
+});
+if (error) {
+showNotification('Sipariş verilemedi: ' + error.message, 'error');
+return;
 }
+// Sepeti temizle
+window.APP.cart = [];
+updateCart();
+toggleCart(false);
+showNotification('Siparişiniz başarıyla alındı! ✅', 'success');
+} catch (err) {
+showNotification('Hata: ' + err.message, 'error');
+} finally {
+const checkoutBtn = document.getElementById('checkout-btn');
+checkoutBtn.disabled = false;
+checkoutBtn.textContent = 'Siparişi Tamamla';
+}
+}
+// Sayfa yüklendiğinde sepeti yükle
+window.addEventListener('DOMContentLoaded', () => {
+const savedCart = getLocalStorage('cart');
+if (savedCart) {
+window.APP.cart = savedCart;
+updateCart();
+}
+});
+console.log('✅ Cart loaded successfully');
