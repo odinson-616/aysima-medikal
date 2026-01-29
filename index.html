@@ -6,50 +6,58 @@
   <title>AYSİMA MEDİKAL | Güvenilir Sağlık Çözümleri</title>
   <style>
     :root { --bordo: #7b1e2b; --gri-arka: #f7f7f7; --text: #333; }
-    body { margin: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background-color: var(--gri-arka); color: var(--text); }
+    body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--gri-arka); color: var(--text); }
     
-    /* Header */
+    /* Header & Sepet İkonu */
     header { background-color: var(--bordo); color: white; padding: 12px 5%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .logo-area { display: flex; align-items: center; gap: 12px; }
     header img { height: 40px; background: white; border-radius: 4px; padding: 2px; }
+    .cart-trigger { cursor: pointer; position: relative; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; transition: 0.3s; }
+    .cart-trigger:hover { background: rgba(255,255,255,0.2); }
+    .cart-count { background: white; color: var(--bordo); padding: 2px 7px; border-radius: 50%; font-size: 12px; font-weight: bold; margin-left: 5px; }
 
     /* Layout */
     .container { display: flex; max-width: 1300px; margin: 25px auto; padding: 0 20px; gap: 25px; }
     
     /* Sidebar */
     aside { width: 260px; background: white; border-radius: 12px; padding: 20px; height: fit-content; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 90px; }
-    aside h3 { font-size: 16px; margin-bottom: 15px; color: var(--bordo); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
     .category-list { list-style: none; padding: 0; margin: 0; }
-    .category-list li { padding: 12px; cursor: pointer; border-radius: 8px; font-size: 14px; transition: all 0.2s; border-left: 3px solid transparent; margin-bottom: 4px; }
-    .category-list li:hover { background: #fff5f6; color: var(--bordo); }
-    .category-list li.active { background: #fff5f6; color: var(--bordo); border-left-color: var(--bordo); font-weight: 600; }
+    .category-list li { padding: 12px; cursor: pointer; border-radius: 8px; font-size: 14px; transition: 0.2s; margin-bottom: 4px; }
+    .category-list li.active { background: #fff5f6; color: var(--bordo); font-weight: 600; border-left: 3px solid var(--bordo); }
 
-    /* Product Grid */
+    /* Ürün Kartları */
     main { flex: 1; }
-    .grid-header { margin-bottom: 20px; }
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+    .product-card { background: white; border-radius: 10px; border: 1px solid #eee; display: flex; flex-direction: column; transition: 0.3s; }
+    .product-card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
     
-    /* Trendyol Style Card */
-    .product-card { background: white; border-radius: 10px; overflow: hidden; border: 1px solid #eee; transition: box-shadow 0.3s; display: flex; flex-direction: column; cursor: pointer; }
-    .product-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+    .img-container { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #aaa; text-align: center; }
+
+    .card-body { padding: 15px; flex-grow: 1; }
+    .product-title { font-size: 15px; font-weight: 600; margin: 5px 0; color: #222; }
     
-    .img-container { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; position: relative; }
-    .img-container img { max-width: 80%; max-height: 80%; object-fit: contain; }
-    .no-image { font-size: 11px; color: #aaa; text-align: center; }
+    /* Varyant Seçimi Styles */
+    .variant-selector { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 5px; }
+    .v-option { border: 1px solid #ddd; padding: 5px 10px; border-radius: 5px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+    .v-option:hover { border-color: var(--bordo); }
+    .v-option.selected { background: var(--bordo); color: white; border-color: var(--bordo); }
+    .v-option.out { opacity: 0.5; cursor: not-allowed; background: #eee; }
 
-    .card-body { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; }
-    .brand { font-size: 12px; color: #888; text-transform: uppercase; font-weight: 600; }
-    .product-title { font-size: 14px; font-weight: 500; margin: 5px 0 10px 0; color: #222; line-height: 1.4; height: 40px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-    
-    .variants-area { margin-top: auto; border-top: 1px solid #f5f5f5; padding-top: 10px; }
-    .variant-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px; }
-    .v-price { font-weight: 700; color: var(--bordo); }
-    .v-out { color: #d93025; font-size: 11px; font-weight: 600; }
+    .price-display { font-size: 18px; font-weight: 800; color: var(--bordo); margin: 10px 0; }
+    .btn-add-cart { width: 100%; background: var(--bordo); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn-add-cart:disabled { background: #ccc; cursor: not-allowed; }
 
-    .btn-detail { width: 100%; background: white; border: 1px solid var(--bordo); color: var(--bordo); padding: 8px; border-radius: 6px; font-size: 13px; font-weight: 600; margin-top: 12px; cursor: pointer; transition: 0.2s; }
-    .btn-detail:hover { background: var(--bordo); color: white; }
+    /* Sepet Paneli (Slide-out) */
+    #cart-panel { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 2000; transition: 0.4s; padding: 25px; display: flex; flex-direction: column; }
+    #cart-panel.open { right: 0; }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; margin-bottom: 15px; }
+    .cart-items { flex-grow: 1; overflow-y: auto; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+    .cart-footer { margin-top: 20px; border-top: 2px solid #f4f4f4; padding-top: 15px; }
+    .total-price { font-size: 20px; font-weight: bold; text-align: right; margin-bottom: 15px; }
+    .btn-checkout { width: 100%; background: #27ae60; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
 
-    @media (max-width: 768px) { .container { flex-direction: column; } aside { width: auto; position: static; } }
+    @media (max-width: 768px) { .container { flex-direction: column; } aside { width: auto; } #cart-panel { width: 100%; right: -100%; } }
   </style>
 </head>
 <body>
@@ -57,24 +65,35 @@
   <header>
     <div class="logo-area">
       <img src="logo.png" alt="Logo">
-      <span style="font-weight: 700; letter-spacing: 1px;">AYSİMA MEDİKAL</span>
+      <span style="font-weight: 700;">AYSİMA MEDİKAL</span>
+    </div>
+    <div class="cart-trigger" onclick="toggleCart()">
+      🛒 Sepetim <span class="cart-count" id="cart-count">0</span>
     </div>
   </header>
 
+  <div id="cart-panel">
+    <div class="cart-header">
+      <h2 style="margin:0; font-size: 18px;">Sepetiniz</h2>
+      <span style="cursor:pointer; font-size: 24px;" onclick="toggleCart()">×</span>
+    </div>
+    <div class="cart-items" id="cart-items">
+      </div>
+    <div class="cart-footer">
+      <div class="total-price">Toplam: <span id="cart-total">0.00</span> TL</div>
+      <button class="btn-checkout" onclick="alert('Ödeme sistemi yakında eklenecek! Önce üyelik sistemini kuracağız.')">Siparişi Tamamla</button>
+    </div>
+  </div>
+
   <div class="container">
     <aside>
-      <h3>Kategoriler</h3>
       <ul class="category-list" id="category-menu">
         <li class="active" onclick="location.reload()">Tüm Ürünler</li>
       </ul>
     </aside>
 
     <main>
-      <div class="grid-header">
-        <h2 id="category-title" style="margin:0; font-size: 20px;">Tüm Ürünler</h2>
-      </div>
-      <div class="product-grid" id="product-list">
-        </div>
+      <div class="product-grid" id="product-list">Yükleniyor...</div>
     </main>
   </div>
 
@@ -84,64 +103,164 @@
     const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    async function loadCategories() {
-      const { data } = await _supabase.from("categories").select("*");
-      const menu = document.getElementById("category-menu");
-      data?.forEach(cat => {
+    let cart = JSON.parse(localStorage.getItem('aysima_cart')) || [];
+
+    // 1. Ürünleri ve Kategorileri Yükle
+    async function init() {
+      const { data: cats } = await _supabase.from("categories").select("*");
+      cats?.forEach(cat => {
         const li = document.createElement("li");
         li.textContent = cat.name;
-        li.onclick = () => {
-          document.querySelectorAll('.category-list li').forEach(el => el.classList.remove('active'));
-          li.classList.add('active');
-          loadProducts(cat.id, cat.name);
-        };
-        menu.appendChild(li);
+        li.onclick = () => loadProducts(cat.id);
+        document.getElementById("category-menu").appendChild(li);
       });
+      loadProducts();
+      updateCartUI();
     }
 
-    async function loadProducts(categoryId = null, categoryName = "Tüm Ürünler") {
-      document.getElementById("category-title").textContent = categoryName;
+    async function loadProducts(catId = null) {
       const container = document.getElementById("product-list");
       container.innerHTML = "Yükleniyor...";
-
-      let query = _supabase.from("products").select(`*, product_variants(*)`).eq("is_active", true);
-      if (categoryId) query = query.eq("category_id", categoryId);
-
+      
+      let query = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
+      if(catId) query = query.eq("category_id", catId);
+      
       const { data: products } = await query;
       container.innerHTML = "";
 
-      products?.forEach(product => {
-        let variantsHtml = "";
-        const mainVariant = product.product_variants.sort((a,b) => a.price - b.price)[0];
+      products?.forEach(p => {
+        const card = document.createElement("div");
+        card.className = "product-card";
         
-        product.product_variants.forEach(v => {
-          variantsHtml += `
-            <div class="variant-line">
-              <span>${v.variant_value}</span>
-              ${v.stock > 0 ? `<span class="v-price">${v.price} TL</span>` : `<span class="v-out">TÜKENDİ</span>`}
-            </div>`;
+        // İlk varyantı varsayılan seç
+        let selectedVariant = p.product_variants.find(v => v.stock > 0) || p.product_variants[0];
+
+        const updateCardPrice = (variant, cardElement) => {
+          cardElement.querySelector(".price-display").textContent = `${variant.price} TL`;
+          cardElement.querySelector(".btn-add-cart").disabled = variant.stock <= 0;
+          cardElement.querySelector(".btn-add-cart").textContent = variant.stock > 0 ? "Sepete Ekle" : "Tükendi";
+        };
+
+        let variantsButtons = p.product_variants.map(v => `
+          <div class="v-option ${v.id === selectedVariant.id ? 'selected' : ''} ${v.stock <= 0 ? 'out' : ''}" 
+               onclick="selectVariant(this, '${v.id}', ${v.price}, ${v.stock})">
+            ${v.variant_value}
+          </div>
+        `).join('');
+
+        card.innerHTML = `
+          <div class="img-container">Görsel Hazırlanıyor</div>
+          <div class="card-body">
+            <div class="product-title">${p.name}</div>
+            <div class="variant-selector">${variantsButtons}</div>
+            <div class="price-display">${selectedVariant.price} TL</div>
+            <button class="btn-add-cart" ${selectedVariant.stock <= 0 ? 'disabled' : ''} 
+                    onclick="addToCart('${p.id}', '${p.name}')">
+              ${selectedVariant.stock > 0 ? 'Sepete Ekle' : 'Tükendi'}
+            </button>
+          </div>
+        `;
+        
+        // Varyant seçme fonksiyonunu karta özel tanımla
+        card.querySelectorAll('.v-option').forEach(opt => {
+          opt.addEventListener('click', function() {
+            if(this.classList.contains('out')) return;
+            card.querySelectorAll('.v-option').forEach(el => el.classList.remove('selected'));
+            this.classList.add('selected');
+            const newPrice = this.getAttribute('data-price');
+            card.querySelector('.price-display').textContent = this.innerText.split('-')[1] || this.innerText; // Basitleştirilmiş
+            // Seçili varyant ID'sini saklamak için butonun üstüne yazalım
+            card.querySelector('.btn-add-cart').setAttribute('data-v-id', this.getAttribute('data-id'));
+          });
         });
 
-        // Görsel alanı - İlerde image_url eklendiğinde buradan çekilecek
-        const imageHtml = `<div class="img-container"><div class="no-image">Görsel Hazırlanıyor<br>Aysima Medikal</div></div>`;
+        // Butona ilk varyant ID'sini ata
+        card.querySelector('.btn-add-cart').setAttribute('data-v-id', selectedVariant.id);
+        card.querySelector('.btn-add-cart').setAttribute('data-v-name', selectedVariant.variant_value);
+        card.querySelector('.btn-add-cart').setAttribute('data-v-price', selectedVariant.price);
 
-        container.innerHTML += `
-          <div class="product-card">
-            ${imageHtml}
-            <div class="card-body">
-              <span class="brand">${product.brand || 'AYSİMA'}</span>
-              <span class="product-title">${product.name}</span>
-              <div class="variants-area">
-                ${variantsHtml}
-              </div>
-              <button class="btn-detail">Ürünü İncele</button>
-            </div>
-          </div>`;
+        container.appendChild(card);
       });
     }
 
-    loadCategories();
-    loadProducts();
+    // Varyant Seçimi Yardımcı Fonksiyon
+    window.selectVariant = (el, id, price, stock) => {
+      if(stock <= 0) return;
+      const card = el.closest('.product-card');
+      card.querySelectorAll('.v-option').forEach(opt => opt.classList.remove('selected'));
+      el.classList.add('selected');
+      card.querySelector('.price-display').textContent = `${price} TL`;
+      const btn = card.querySelector('.btn-add-cart');
+      btn.setAttribute('data-v-id', id);
+      btn.setAttribute('data-v-price', price);
+      btn.setAttribute('data-v-name', el.textContent.trim());
+    };
+
+    // 2. Sepet İşlemleri
+    function addToCart(pId, pName) {
+      const btn = event.target;
+      const vId = btn.getAttribute('data-v-id');
+      const vName = btn.getAttribute('data-v-name');
+      const vPrice = parseFloat(btn.getAttribute('data-v-price'));
+
+      const existing = cart.find(item => item.vId === vId);
+      if(existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ pId, pName, vId, vName, vPrice, qty: 1 });
+      }
+      
+      saveCart();
+      toggleCart(true); // Sepeti aç
+    }
+
+    function saveCart() {
+      localStorage.setItem('aysima_cart', JSON.stringify(cart));
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const list = document.getElementById("cart-items");
+      const count = document.getElementById("cart-count");
+      const total = document.getElementById("cart-total");
+      
+      list.innerHTML = "";
+      let totalSum = 0;
+      let totalQty = 0;
+
+      cart.forEach((item, index) => {
+        totalSum += item.vPrice * item.qty;
+        totalQty += item.qty;
+        list.innerHTML += `
+          <div class="cart-item">
+            <div>
+              <strong>${item.pName}</strong><br>
+              <small>${item.vName} x ${item.qty}</small>
+            </div>
+            <div>
+              ${(item.vPrice * item.qty).toFixed(2)} TL
+              <button onclick="removeFromCart(${index})" style="margin-left:10px; color:red; border:none; background:none; cursor:pointer;">🗑️</button>
+            </div>
+          </div>
+        `;
+      });
+
+      count.textContent = totalQty;
+      total.textContent = totalSum.toFixed(2);
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      saveCart();
+    }
+
+    function toggleCart(forceOpen = false) {
+      const panel = document.getElementById("cart-panel");
+      if(forceOpen) panel.classList.add("open");
+      else panel.classList.toggle("open");
+    }
+
+    init();
   </script>
 </body>
 </html>
