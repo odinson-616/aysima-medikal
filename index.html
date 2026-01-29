@@ -12,17 +12,19 @@
 --border: #e1e4e8;
 --success: #27ae60;
 --danger: #e74c3c;
+--warning: #f39c12;
 --text-dark: #2c3e50;
+--text-light: #7f8c8d;
 }
 * { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
 body {
-margin: 0;
 font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
 background-color: var(--arka-plan);
 overflow-x: hidden;
 color: var(--text-dark);
 }
-/* Header Tasarımı */
+/* ===== HEADER ===== */
 header {
 background: #fff;
 padding: 12px 5%;
@@ -41,18 +43,14 @@ align-items: center;
 gap: 12px;
 text-decoration: none;
 min-width: 200px;
+cursor: pointer;
 }
-.header-left img {
-height: 50px;
-width: auto;
-object-fit: contain;
-}
+.header-left img { height: 50px; width: auto; object-fit: contain; }
 .brand-name {
 font-size: 20px;
 font-weight: 800;
 color: var(--bordo);
 letter-spacing: -0.5px;
-text-decoration: none;
 }
 .search-box {
 flex-grow: 1;
@@ -88,8 +86,67 @@ transition: opacity 0.2s;
 .header-right {
 display: flex;
 align-items: center;
-gap: 20px;
+gap: 15px;
+min-width: 350px;
+justify-content: flex-end;
 }
+/* User Menu */
+.user-menu { position: relative; }
+.user-btn {
+background: transparent;
+border: 2px solid var(--bordo);
+color: var(--bordo);
+padding: 8px 16px;
+border-radius: 20px;
+cursor: pointer;
+font-weight: 600;
+font-size: 14px;
+transition: all 0.2s;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.user-btn:hover {
+background: var(--bordo);
+color: white;
+}
+.user-dropdown {
+position: absolute;
+top: 100%;
+right: 0;
+background: white;
+border: 1px solid var(--border);
+border-radius: 8px;
+box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+min-width: 200px;
+margin-top: 10px;
+display: none;
+z-index: 2000;
+}
+.user-dropdown.active { display: block; }
+.user-dropdown a,
+.user-dropdown button {
+display: block;
+width: 100%;
+padding: 12px 16px;
+border: none;
+background: none;
+text-align: left;
+cursor: pointer;
+font-size: 14px;
+color: var(--text-dark);
+transition: background 0.2s;
+text-decoration: none;
+}
+.user-dropdown a:hover,
+.user-dropdown button:hover {
+background: var(--arka-plan);
+}
+.user-dropdown button.logout {
+color: var(--danger);
+border-top: 1px solid var(--border);
+}
+/* Cart Button */
 .cart-btn {
 background: var(--bordo);
 color: white;
@@ -109,7 +166,6 @@ position: relative;
 background: transparent;
 color: var(--bordo);
 }
-/* Sepet Sayısı Badge */
 #cart-count {
 background: var(--danger);
 color: white;
@@ -120,8 +176,146 @@ display: flex;
 align-items: center;
 justify-content: center;
 font-size: 12px;
+font-weight: bold;
 }
-/* Sepet Paneli */
+/* ===== AUTH MODAL ===== */
+#auth-modal {
+position: fixed;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+background: white;
+padding: 40px;
+border-radius: 12px;
+z-index: 3000;
+width: 90%;
+max-width: 420px;
+box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+display: none;
+animation: slideIn 0.3s ease;
+}
+#auth-modal.active { display: block; }
+@keyframes slideIn {
+from {
+opacity: 0;
+transform: translate(-50%, -55%);
+}
+to {
+opacity: 1;
+transform: translate(-50%, -50%);
+}
+}
+.auth-close {
+position: absolute;
+top: 15px;
+right: 15px;
+background: none;
+border: none;
+font-size: 28px;
+cursor: pointer;
+color: #999;
+transition: color 0.2s;
+}
+.auth-close:hover { color: var(--text-dark); }
+.auth-tabs {
+display: flex;
+gap: 10px;
+margin-bottom: 25px;
+border-bottom: 2px solid var(--border);
+}
+.auth-tab {
+flex: 1;
+padding: 12px;
+background: none;
+border: none;
+cursor: pointer;
+font-weight: 600;
+color: var(--text-light);
+border-bottom: 3px solid transparent;
+transition: all 0.2s;
+}
+.auth-tab.active {
+color: var(--bordo);
+border-bottom-color: var(--bordo);
+}
+.auth-form { display: none; }
+.auth-form.active { display: block; }
+.form-group {
+margin-bottom: 15px;
+}
+.form-group label {
+display: block;
+font-size: 12px;
+font-weight: 600;
+color: var(--text-dark);
+margin-bottom: 6px;
+}
+.form-group input {
+width: 100%;
+padding: 12px;
+border: 1px solid var(--border);
+border-radius: 6px;
+font-size: 14px;
+transition: border-color 0.2s;
+font-family: inherit;
+}
+.form-group input:focus {
+outline: none;
+border-color: var(--bordo);
+box-shadow: 0 0 0 3px rgba(123, 30, 43, 0.1);
+}
+.auth-btn {
+width: 100%;
+padding: 12px;
+background: var(--bordo);
+color: white;
+border: none;
+border-radius: 6px;
+font-weight: bold;
+cursor: pointer;
+font-size: 14px;
+transition: all 0.2s;
+margin-top: 10px;
+}
+.auth-btn:hover { opacity: 0.9; }
+.auth-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.auth-info {
+font-size: 12px;
+color: var(--text-light);
+text-align: center;
+margin-top: 15px;
+}
+.auth-info a {
+color: var(--bordo);
+text-decoration: none;
+font-weight: 600;
+cursor: pointer;
+}
+.auth-error {
+background: #fadbd8;
+border: 1px solid var(--danger);
+color: var(--danger);
+padding: 12px;
+border-radius: 6px;
+margin-bottom: 15px;
+font-size: 13px;
+display: none;
+}
+.auth-error.show { display: block; }
+/* ===== MODAL OVERLAY ===== */
+#auth-overlay {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0,0,0,0.5);
+display: none;
+z-index: 2999;
+backdrop-filter: blur(3px);
+}
+#auth-overlay.active { display: block; }
+/* ===== SEPET ===== */
 #cart-sidebar {
 position: fixed;
 right: -400px;
@@ -150,7 +344,7 @@ z-index: 2000;
 backdrop-filter: blur(3px);
 }
 #overlay.active { display: block; }
-/* Ürün Kartları */
+/* ===== ÜRÜNLER ===== */
 .content {
 max-width: 1300px;
 margin: 25px auto;
@@ -190,7 +384,6 @@ font-weight: 600;
 .product-name {
 font-weight: 600;
 font-size: 15px;
-height: auto;
 min-height: 42px;
 overflow: hidden;
 color: var(--text-dark);
@@ -252,30 +445,7 @@ background: #bdc3c7;
 cursor: not-allowed;
 transform: none;
 }
-/* WhatsApp Butonu */
-.wa-float {
-position: fixed;
-bottom: 25px;
-right: 25px;
-background: #25d366;
-width: 60px;
-height: 60px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-z-index: 1000;
-text-decoration: none;
-font-size: 32px;
-transition: all 0.3s;
-border: none;
-}
-.wa-float:hover {
-transform: scale(1.15);
-box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
-}
-/* Navigasyon */
+/* ===== NAVIGASYON ===== */
 nav {
 background: #fff;
 border-bottom: 1px solid var(--border);
@@ -301,24 +471,93 @@ border-bottom: 3px solid transparent;
 color: var(--bordo);
 border-bottom-color: var(--bordo);
 }
-/* Boş Sepet Durumu */
+/* ===== WHATSAPP ===== */
+.wa-float {
+position: fixed;
+bottom: 25px;
+right: 25px;
+background: #25d366;
+width: 60px;
+height: 60px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+z-index: 1000;
+text-decoration: none;
+font-size: 32px;
+transition: all 0.3s;
+border: none;
+}
+.wa-float:hover {
+transform: scale(1.15);
+box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
 .empty-cart {
 text-align: center;
 color: #999;
 padding: 40px 20px;
 font-size: 14px;
 }
-/* Responsive */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
 header { flex-wrap: wrap; }
-.search-box { max-width: 100%; margin: 10px 0 0 0; }
+.search-box { max-width: 100%; margin: 10px 0 0 0; flex-basis: 100%; }
+.header-right { flex-basis: 100%; margin-top: 10px; }
 .grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
 #cart-sidebar { width: 100%; right: -100%; }
+#auth-modal { max-width: 90%; }
 }
 </style>
 </head>
 <body>
+<!-- Auth Overlay -->
+<div id="auth-overlay" onclick="window.closeAuth()"></div>
+<!-- Auth Modal -->
+<div id="auth-modal">
+<button class="auth-close" onclick="window.closeAuth()">×</button>
+<div class="auth-tabs">
+<button class="auth-tab active" onclick="window.switchAuthTab('login')">Giriş Yap</button>
+<button class="auth-tab" onclick="window.switchAuthTab('signup')">Kayıt Ol</button>
+</div>
+<div id="auth-error" class="auth-error"></div>
+<!-- Login Form -->
+<form id="login-form" class="auth-form active" onsubmit="window.handleLogin(event)">
+<div class="form-group">
+<label>Email Adresi</label>
+<input type="email" id="login-email" required>
+</div>
+<div class="form-group">
+<label>Şifre</label>
+<input type="password" id="login-password" required>
+</div>
+<button type="submit" class="auth-btn" id="login-btn">Giriş Yap</button>
+</form>
+<!-- Signup Form -->
+<form id="signup-form" class="auth-form" onsubmit="window.handleSignup(event)">
+<div class="form-group">
+<label>Ad Soyad</label>
+<input type="text" id="signup-name" required>
+</div>
+<div class="form-group">
+<label>Email Adresi</label>
+<input type="email" id="signup-email" required>
+</div>
+<div class="form-group">
+<label>Şifre (min 6 karakter)</label>
+<input type="password" id="signup-password" minlength="6" required>
+</div>
+<div class="form-group">
+<label>Telefon</label>
+<input type="tel" id="signup-phone" required>
+</div>
+<button type="submit" class="auth-btn" id="signup-btn">Kayıt Ol</button>
+</form>
+</div>
+<!-- Cart Overlay -->
 <div id="overlay" onclick="window.toggleCart(false)"></div>
+<!-- Header -->
 <header>
 <a href="#" class="header-left" onclick="location.reload(); return false;">
 <img src="logo.png" alt="AYSİMA MEDİKAL">
@@ -329,19 +568,34 @@ header { flex-wrap: wrap; }
 <button onclick="window.doSearch(document.querySelector('.search-box input').value)">ARA</button>
 </div>
 <div class="header-right">
+<div class="user-menu">
+<button class="user-btn" id="user-btn" onclick="window.toggleUserMenu()">
+👤 <span id="user-display">Giriş Yap</span>
+</button>
+<div id="user-dropdown" class="user-dropdown">
+<a href="#" onclick="window.goToProfile()">Profilim</a>
+<a href="#" onclick="window.goToOrders()">Siparişlerim</a>
+<a href="#" onclick="window.goToAddresses()">Adreslerim</a>
+<button onclick="window.logout()" class="logout">Çıkış Yap</button>
+</div>
+</div>
 <button class="cart-btn" onclick="window.toggleCart(true)">
-🛒 Sepetim <span id="cart-count">0</span>
+🛒 Sepet <span id="cart-count">0</span>
 </button>
 </div>
 </header>
+<!-- Navigation -->
 <nav id="navbar">
 <a class="nav-link" onclick="location.reload(); return false;">TÜM ÜRÜNLER</a>
 </nav>
+<!-- Content -->
 <div class="content">
 <h2 id="page-name" style="font-size: 22px; margin-bottom: 25px; color: var(--text-dark);">Tüm Ürünler</h2>
 <div class="grid" id="product-grid">Ürünler yükleniyor...</div>
 </div>
-<a href="https://wa.me/905000000000" class="wa-float" target="_blank" title="WhatsApp'tan iletişime geç">📱</a>
+<!-- WhatsApp -->
+<a href="https://wa.me/905000000000" class="wa-float" target="_blank" title="WhatsApp'tan iletişime geç">💬</a>
+<!-- Cart Sidebar -->
 <div id="cart-sidebar">
 <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f4f4f4; padding-bottom:15px; margin-bottom:15px;">
 <h3 style="margin:0; font-size:18px;">Sepetim</h3>
@@ -355,7 +609,7 @@ onclick="window.toggleCart(false)" title="Sepeti kapat">×</button>
 <span><span id="cart-total">0.00</span> ₺</span>
 </div>
 <button id="checkout-btn" style="width:100%; background:var(--success); color:white; border:none; padding:15px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:16px; transition:0.2s;"
-onclick="window.checkout()" disabled>Siparişi Tamamla</button>
+onclick="window.handleCheckout()" disabled>Siparişi Tamamla</button>
 </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -363,38 +617,187 @@ onclick="window.checkout()" disabled>Siparişi Tamamla</button>
 const supabaseUrl = "https://eqpioawtdwkaeuxpfspt.supabase.co";
 const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
 const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+let currentUser = null;
 let masterData = [];
 let cart = JSON.parse(localStorage.getItem('aysima_cart')) || [];
-// Sepet aç/kapat
-window.toggleCart = (show) => {
-document.getElementById("cart-sidebar").classList.toggle("open", show);
-document.getElementById("overlay").classList.toggle("active", show);
+// ===== AUTH FUNCTIONS =====
+window.openAuth = () => {
+document.getElementById('auth-modal').classList.add('active');
+document.getElementById('auth-overlay').classList.add('active');
 };
-// Varyant seç
-window.updateCard = (btn, price, vid, vname, stock) => {
-const card = btn.closest(".card");
-card.querySelectorAll(".v-btn").forEach(b => b.classList.remove("selected"));
-btn.classList.add("selected");
-card.querySelector(".price-display").textContent = price + " ₺";
-const buyBtn = card.querySelector(".buy-btn");
-buyBtn.setAttribute("data-v-id", vid);
-buyBtn.setAttribute("data-v-price", price);
-buyBtn.setAttribute("data-v-name", vname);
-if(stock <= 0) {
-buyBtn.disabled = true;
-buyBtn.textContent = "TÜKENDİ";
-} else {
-buyBtn.disabled = false;
-buyBtn.textContent = "SEPETE EKLE";
+window.closeAuth = () => {
+document.getElementById('auth-modal').classList.remove('active');
+document.getElementById('auth-overlay').classList.remove('active');
+window.clearAuthErrors();
+};
+window.switchAuthTab = (tab) => {
+document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+event.target.classList.add('active');
+document.getElementById(tab + '-form').classList.add('active');
+window.clearAuthErrors();
+};
+window.showAuthError = (message) => {
+const errorDiv = document.getElementById('auth-error');
+errorDiv.textContent = message;
+errorDiv.classList.add('show');
+};
+window.clearAuthErrors = () => {
+document.getElementById('auth-error').classList.remove('show');
+};
+window.handleLogin = async (e) => {
+e.preventDefault();
+window.clearAuthErrors();
+const email = document.getElementById('login-email').value;
+const password = document.getElementById('login-password').value;
+const btn = document.getElementById('login-btn');
+btn.disabled = true;
+btn.textContent = 'Giriş yapılıyor...';
+try {
+const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+if(error) {
+window.showAuthError('Email veya şifre hatalı!');
+btn.disabled = false;
+btn.textContent = 'Giriş Yap';
+return;
+}
+currentUser = data.user;
+localStorage.setItem('aysima_user', JSON.stringify(currentUser));
+window.updateUserUI();
+window.closeAuth();
+alert('Hoş geldiniz!');
+} catch(e) {
+console.error('Login hatası:', e);
+window.showAuthError('Bir hata oluştu. Lütfen tekrar deneyin.');
+} finally {
+btn.disabled = false;
+btn.textContent = 'Giriş Yap';
 }
 };
-// Sepete ekle
+window.handleSignup = async (e) => {
+e.preventDefault();
+window.clearAuthErrors();
+const name = document.getElementById('signup-name').value;
+const email = document.getElementById('signup-email').value;
+const password = document.getElementById('signup-password').value;
+const phone = document.getElementById('signup-phone').value;
+const btn = document.getElementById('signup-btn');
+btn.disabled = true;
+btn.textContent = 'Kayıt yapılıyor...';
+try {
+const { data: signupData, error: signupError } = await _supabase.auth.signUp({
+email,
+password,
+options: {
+data: { full_name: name, phone: phone }
+}
+});
+if(signupError) {
+window.showAuthError(signupError.message);
+btn.disabled = false;
+btn.textContent = 'Kayıt Ol';
+return;
+}
+// User profilini users tablosuna ekle
+const { error: profileError } = await _supabase.from('users').insert([{
+id: signupData.user.id,
+email: email,
+full_name: name,
+phone: phone
+}]);
+if(profileError) throw profileError;
+currentUser = signupData.user;
+localStorage.setItem('aysima_user', JSON.stringify(currentUser));
+window.updateUserUI();
+window.closeAuth();
+alert('Kayıt başarılı! Hoş geldiniz.');
+} catch(e) {
+console.error('Signup hatası:', e);
+window.showAuthError('Kayıt başarısız. Bu email zaten kullanılıyor olabilir.');
+} finally {
+btn.disabled = false;
+btn.textContent = 'Kayıt Ol';
+}
+};
+window.toggleUserMenu = () => {
+document.getElementById('user-dropdown').classList.toggle('active');
+};
+window.logout = () => {
+if(confirm('Çıkış yapmak istediğinize emin misiniz?')) {
+currentUser = null;
+localStorage.removeItem('aysima_user');
+_supabase.auth.signOut();
+window.updateUserUI();
+document.getElementById('user-dropdown').classList.remove('active');
+location.reload();
+}
+};
+window.updateUserUI = () => {
+const userDisplay = document.getElementById('user-display');
+const userBtn = document.getElementById('user-btn');
+if(currentUser) {
+const email = currentUser.email.split('@')[0];
+userDisplay.textContent = email;
+userBtn.style.borderColor = 'var(--success)';
+userBtn.style.color = 'var(--success)';
+} else {
+userDisplay.textContent = 'Giriş Yap';
+userBtn.style.borderColor = 'var(--bordo)';
+userBtn.style.color = 'var(--bordo)';
+}
+};
+window.goToProfile = () => {
+if(!currentUser) {
+window.openAuth();
+return;
+}
+alert('Profil sayfası hazırlanıyor...');
+document.getElementById('user-dropdown').classList.remove('active');
+};
+window.goToOrders = () => {
+if(!currentUser) {
+window.openAuth();
+return;
+}
+alert('Siparişlerim sayfası hazırlanıyor...');
+document.getElementById('user-dropdown').classList.remove('active');
+};
+window.goToAddresses = () => {
+if(!currentUser) {
+window.openAuth();
+return;
+}
+alert('Adreslerim sayfası hazırlanıyor...');
+document.getElementById('user-dropdown').classList.remove('active');
+};
+// ===== CART FUNCTIONS =====
+window.toggleCart = (show) => {
+document.getElementById('cart-sidebar').classList.toggle('open', show);
+document.getElementById('overlay').classList.toggle('active', show);
+};
+window.updateCard = (btn, price, vid, vname, stock) => {
+const card = btn.closest('.card');
+card.querySelectorAll('.v-btn').forEach(b => b.classList.remove('selected'));
+btn.classList.add('selected');
+card.querySelector('.price-display').textContent = price + ' ₺';
+const buyBtn = card.querySelector('.buy-btn');
+buyBtn.setAttribute('data-v-id', vid);
+buyBtn.setAttribute('data-v-price', price);
+buyBtn.setAttribute('data-v-name', vname);
+if(stock <= 0) {
+buyBtn.disabled = true;
+buyBtn.textContent = 'TÜKENDİ';
+} else {
+buyBtn.disabled = false;
+buyBtn.textContent = 'SEPETE EKLE';
+}
+};
 window.addToCart = (pid, pname, btn) => {
-const vid = btn.getAttribute("data-v-id");
-const vprice = parseFloat(btn.getAttribute("data-v-price"));
-const vname = btn.getAttribute("data-v-name");
-if (!vid || vid === "null") {
-alert("Lütfen bir varyant seçin.");
+const vid = btn.getAttribute('data-v-id');
+const vprice = parseFloat(btn.getAttribute('data-v-price'));
+const vname = btn.getAttribute('data-v-name');
+if (!vid || vid === 'null') {
+alert('Lütfen bir varyant seçin.');
 return;
 }
 const existing = cart.find(i => i.vid === vid && i.pid === pid);
@@ -407,33 +810,31 @@ localStorage.setItem('aysima_cart', JSON.stringify(cart));
 window.updateCartUI();
 window.toggleCart(true);
 };
-// Sepet UI güncelle
 window.updateCartUI = () => {
-const itemsDiv = document.getElementById("cart-items");
+const itemsDiv = document.getElementById('cart-items');
 let total = 0, count = 0;
 if(cart.length === 0) {
 itemsDiv.innerHTML = '<div class="empty-cart">Sepetiniz boş</div>';
-document.getElementById("checkout-btn").disabled = true;
+document.getElementById('checkout-btn').disabled = true;
+document.getElementById('cart-count').textContent = '0';
 return;
 }
-itemsDiv.innerHTML = "";
+itemsDiv.innerHTML = '';
 cart.forEach((item, idx) => {
 total += item.vprice * item.qty;
 count += item.qty;
 itemsDiv.innerHTML += `
 `;
 });
-document.getElementById("cart-total").textContent = total.toFixed(2);
-document.getElementById("cart-count").textContent = count;
-document.getElementById("checkout-btn").disabled = false;
+document.getElementById('cart-total').textContent = total.toFixed(2);
+document.getElementById('cart-count').textContent = count;
+document.getElementById('checkout-btn').disabled = false;
 };
-// Sepetten çıkar
 window.remove = (i) => {
 cart.splice(i, 1);
 localStorage.setItem('aysima_cart', JSON.stringify(cart));
 window.updateCartUI();
 };
-// Ara
 window.doSearch = (t) => {
 if(t.trim() === '') {
 renderProducts(masterData);
@@ -441,81 +842,91 @@ renderProducts(masterData);
 renderProducts(masterData.filter(p => p.name.toLowerCase().includes(t.toLowerCase())));
 }
 };
-// Sipariş tamamla
-window.checkout = () => {
-if(cart.length === 0) {
-alert("Sepetiniz boş!");
+window.handleCheckout = () => {
+if(!currentUser) {
+alert('Lütfen önce giriş yapın!');
+window.openAuth();
 return;
 }
-alert("Sipariş işlemleri kısa sürede aktifleştirilecektir. Teşekkür ederiz!");
-// TODO: Burada ödeme sistemi entegrasyonu yapılacak
+if(cart.length === 0) {
+alert('Sepetiniz boş!');
+return;
+}
+// TODO: Ödeme sayfasına yönlendir
+alert('Ödeme sistemi kısa sürede aktif olacak!');
 };
-// Başlat
+// ===== PRODUCT FUNCTIONS =====
 async function init() {
 try {
-const { data: cats, error } = await _supabase.from("categories").select("*");
+// Kaydedilmiş kullanıcı varsa yükle
+const saved = localStorage.getItem('aysima_user');
+if(saved) {
+currentUser = JSON.parse(saved);
+// TODO: Kullanıcı hala valid mi kontrol et
+}
+window.updateUserUI();
+window.updateCartUI();
+const { data: cats, error } = await _supabase.from('categories').select('*');
 if(error) {
-console.error("Kategori yükleme hatası:", error);
-document.getElementById("product-grid").innerHTML = "Ürünler yüklenemedi. Lütfen sayfayı yenileyin.";
+console.error('Kategori yükleme hatası:', error);
+document.getElementById('product-grid').innerHTML = 'Ürünler yüklenemedi.';
 return;
 }
 cats?.forEach(c => {
-const a = document.createElement("a");
-a.className = "nav-link";
+const a = document.createElement('a');
+a.className = 'nav-link';
 a.textContent = c.name.toUpperCase();
 a.onclick = () => fetchProducts(c.id, c.name);
-document.getElementById("navbar").appendChild(a);
+document.getElementById('navbar').appendChild(a);
 });
 fetchProducts();
-window.updateCartUI();
 } catch(e) {
-console.error("Başlatma hatası:", e);
+console.error('Başlatma hatası:', e);
 }
 }
-async function fetchProducts(cid = null, cname = "Tüm Ürünler") {
+async function fetchProducts(cid = null, cname = 'Tüm Ürünler') {
 try {
-document.getElementById("page-name").textContent = cname;
-const grid = document.getElementById("product-grid");
-grid.innerHTML = "Ürünler hazırlanıyor...";
-let q = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
-if(cid) q = q.eq("category_id", cid);
+document.getElementById('page-name').textContent = cname;
+const grid = document.getElementById('product-grid');
+grid.innerHTML = 'Ürünler hazırlanıyor...';
+let q = _supabase.from('products').select('*, product_variants(*)').eq('is_active', true);
+if(cid) q = q.eq('category_id', cid);
 const { data, error } = await q;
 if(error) throw error;
 masterData = data || [];
 renderProducts(masterData);
 } catch(e) {
-console.error("Ürün yükleme hatası:", e);
-document.getElementById("product-grid").innerHTML = "Ürünler yüklenemedi.";
+console.error('Ürün yükleme hatası:', e);
+document.getElementById('product-grid').innerHTML = 'Ürünler yüklenemedi.';
 }
 }
 function renderProducts(list) {
-const container = document.getElementById("product-grid");
+const container = document.getElementById('product-grid');
 if(list.length === 0) {
 container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:40px; color:#999;">Ürün bulunamadı.</div>';
 return;
 }
-container.innerHTML = "";
+container.innerHTML = '';
 list.forEach(p => {
 const vars = p.product_variants.filter(v => v.is_active);
 const def = vars[0] || { price: 0, variant_value: '-', id: 'null', stock: 0 };
-const card = document.createElement("div");
-card.className = "card";
+const card = document.createElement('div');
+card.className = 'card';
 card.innerHTML = `
 `;
 container.appendChild(card);
 });
 }
-// XSS koruması
 function escapeHtml(text) {
-const map = {
-'&': '&amp;',
-'<': '&lt;',
-'>': '&gt;',
-'"': '&quot;',
-"'": '&#039;'
-};
+const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
 return text.replace(/[&<>"']/g, m => map[m]);
 }
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+if(!e.target.closest('.user-menu')) {
+document.getElementById('user-dropdown').classList.remove('active');
+}
+});
 init();
 </script>
 </body>
