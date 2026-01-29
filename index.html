@@ -35,10 +35,12 @@
     .v-option:hover { border-color: var(--bordo); }
     .v-option.selected { background: var(--bordo); color: white; border-color: var(--bordo); }
 
-    .price-display { font-size: 22px; font-weight: 800; color: var(--bordo); margin: 15px 0; display: block; }
+    /* Fiyat Kutusu Stili */
+    .price-display { font-size: 22px; font-weight: 800; color: var(--bordo); margin: 15px 0; display: block; height: 30px; }
     .btn-add-cart { width: 100%; background: var(--bordo); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; }
     .btn-add-cart:hover { filter: brightness(1.2); }
 
+    /* Sepet Paneli */
     #cart-panel { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 2000; transition: 0.4s; padding: 25px; display: flex; flex-direction: column; }
     #cart-panel.open { right: 0; }
     .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; }
@@ -105,7 +107,6 @@
         const productCard = document.createElement("div");
         productCard.className = "product-card";
         
-        // Stokta olan ilk varyantı varsayılan seç
         const activeVariants = p.product_variants.filter(v => v.is_active);
         const defaultVariant = activeVariants.find(v => v.stock > 0) || activeVariants[0];
 
@@ -121,7 +122,7 @@
           <div class="card-body">
             <div class="product-title">${p.name}</div>
             <div class="variant-selector">${variantsHtml}</div>
-            <span class="price-display">${defaultVariant.price} TL</span>
+            <span class="price-display" id="price-tag-${p.id}">${defaultVariant.price} TL</span>
             <button class="btn-add-cart" 
                     onclick="addToCart('${p.id}', '${p.name}', this)"
                     data-v-id="${defaultVariant.id}" 
@@ -135,16 +136,19 @@
       });
     }
 
-    // Varyant değiştiğinde fiyatı ve butondaki veriyi güncelleyen fonksiyon
+    // DÜZELTİLEN FONKSİYON
     window.updateVariant = (btn, price, vId, vName) => {
       const card = btn.closest('.product-card');
+      
+      // Butonların görselini güncelle
       card.querySelectorAll('.v-option').forEach(opt => opt.classList.remove('selected'));
       btn.classList.add('selected');
       
-      // Fiyatı güncelle
-      card.querySelector('.price-display').textContent = `${price} TL`;
+      // SADECE fiyatın yazdığı span'ı bul ve GÜNCELLE
+      const priceTag = card.querySelector('.price-display');
+      priceTag.textContent = `${price} TL`;
       
-      // Sepete ekle butonundaki gizli verileri güncelle
+      // Gizli verileri güncelle
       const addBtn = card.querySelector('.btn-add-cart');
       addBtn.setAttribute('data-v-id', vId);
       addBtn.setAttribute('data-v-name', vName);
