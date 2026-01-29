@@ -12,7 +12,6 @@ const APP = {
 currentUser: JSON.parse(localStorage.getItem('aysima_user')) || null,
 masterData: [],
 cart: JSON.parse(localStorage.getItem('aysima_cart')) || [],
-// Local storage'a kaydet
 saveUser: function(user) {
 this.currentUser = user;
 localStorage.setItem('aysima_user', JSON.stringify(user));
