@@ -228,6 +228,7 @@ console.error('Kullanıcı kontrol hatası:', err);
 }
 /**
 */
+if (window.supabase && window.supabase.auth) {
 window.supabase.auth.onAuthStateChange((event, session) => {
 if (session && session.user) {
 window.APP.currentUser = session.user;
@@ -236,4 +237,7 @@ updateUserUI();
 window.APP.currentUser = null;
 }
 });
+} else {
+console.warn('⚠️ Supabase auth yüklenmedi!');
+}
 console.log('✅ Auth loaded successfully');
