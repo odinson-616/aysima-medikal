@@ -1,101 +1,65 @@
-// ============================================
-// PRODUCTS FUNCTIONS
-// ============================================
 async function loadProducts() {
-try {
-showLoading(true);
-console.log('📦 Ürünler yükleniyor...');
-const { data, error } = await window.supabase
-.from('products')
-.select('*')
-.order('created_at', { ascending: false });
-if (error) {
-console.error('❌ Ürün yükleme hatası:', error);
-showNotification('Ürünler yüklenemedi: ' + error.message, 'error');
-return;
+    try {
+        if (typeof showLoading === 'function') showLoading(true);
+        console.log('📦 Ürünler yükleniyor...');
+
+        // Varyantları da çekmek için select güncellendi
+        const { data, error } = await window.supabase
+            .from('products')
+            .select('*, product_variants(*)')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('❌ Ürün yükleme hatası:', error);
+            if (typeof showNotification === 'function') showNotification('Ürünler yüklenemedi: ' + error.message, 'error');
+            return;
+        }
+
+        console.log('✅ Ürünler yüklendi:', data);
+        window.APP.products = data || [];
+        renderProducts(window.APP.products);
+
+    } catch (err) {
+        console.error('❌ Hata:', err);
+    } finally {
+        if (typeof showLoading === 'function') showLoading(false);
+    }
 }
-console.log('✅ Ürünler yüklendi:', data);
-if (!data || data.length === 0) {
-console.warn('⚠️ Hiç ürün bulunamadı!');
-}
-window.APP.products = data || [];
-renderProducts(window.APP.products);
-} catch (err) {
-console.error('❌ Hata:', err);
-showNotification('Hata: ' + err.message, 'error');
-} finally {
-showLoading(false);
-}
-}
-/**
-*/
+
 function renderProducts(products) {
-const grid = document.getElementById('product-grid');
-if (!products || products.length === 0) {
-grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">Ürün bulunamadı</p>';
-return;
+    const grid = document.getElementById('product-grid');
+    if (!grid) return;
+
+    if (!products || products.length === 0) {
+        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #999; grid-column: 1/-1;">Ürün bulunamadı</p>';
+        return;
+    }
+
+    grid.innerHTML = products.map(product => {
+        // Varsayılan varyanttan fiyat al (Varyant yoksa product.price kullan)
+        const activeV = product.product_variants ? product.product_variants[0] : null;
+        const price = activeV ? activeV.price : (product.price || 0);
+        const image = product.image_url || 'https://via.placeholder.com/300?text=Gorsel+Yok';
+
+        return `
+        <div class="product-card" style="background: #fff; border: 1px solid #eee; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; position: relative;">
+            <div style="height: 180px; overflow: hidden; margin-bottom: 10px;">
+                <img src="${image}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: contain;">
+            </div>
+            
+            ${product.discount > 0 ? `<span style="position: absolute; top: 10px; right: 10px; background: #7b1e2b; color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold;">-${product.discount}%</span>` : ''}
+            
+            <h3 style="margin: 5px 0; font-size: 15px; color: #333; height: 40px; overflow: hidden;">${product.name}</h3>
+            
+            <div style="margin: 10px 0;">
+                <span style="font-size: 18px; font-weight: 800; color: #7b1e2b;">${price} TL</span>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-top: auto;">
+                <button onclick="addToCart('${product.id}')" style="flex: 3; background: #7b1e2b; color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px;">SEPETE EKLE</button>
+                <button onclick="toggleFavorite('${product.id}')" style="flex: 1; background: #f4f4f4; border: none; padding: 10px; border-radius: 4px; cursor: pointer;">❤️</button>
+            </div>
+        </div>
+        `;
+    }).join('');
 }
-console.log('🎨 Rendering ürünler:', products.length);
-grid.innerHTML = products.map(product => {
-const productId = product.id;
-const productName = product.name || 'İsimsiz Ürün';
-const productPrice = product.price || 0;
-const productImage = product.image || 'https://via.placeholder.com/300?text=NoImage';
-const productDesc = product.description || 'Açıklama yok';
-const discount = product.discount || 0;
-const rating = product.rating || 4;
-const reviews = product.reviews || 0;
-// Rating yıldızlarını oluştur
-const stars = '⭐'.repeat(Math.min(rating, 5));
-return `
-<img src="${productImage}" alt="${productName}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px;">
-${discount > 0 ? `<span class="discount" style="position: absolute; top: 10px; right: 10px; background: var(--bordo); color: white; padding: 5px 10px; border-radius: 4px; font-weight: bold;">-${discount}%</span>` : ''}
-<h3 style="margin: 12px 0 8px; font-size: 16px; color: var(--text-dark);">${productName}</h3>
-<p class="product-description" style="margin: 8px 0; font-size: 13px; color: #666; height: 40px; overflow: hidden;">${productDesc}</p>
-<span class="price" style="font-size: 18px; font-weight: bold; color: var(--bordo);">${formatPrice(productPrice)}</span>
-<span>${stars}</span>
-<span>(${reviews} yorum)</span>
-<button class="add-cart-btn" onclick="addToCart('${productId}')" style="flex: 1; background: var(--success); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold;">
-<button class="favorite-btn" onclick="toggleFavorite('${productId}')" style="flex: 1; background: var(--bordo); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer;">
-`;
-}).join('');
-}
-/**
-*/
-function doSearch(query) {
-if (!query.trim()) {
-renderProducts(window.APP.products);
-return;
-}
-const filtered = window.APP.products.filter(product =>
-(product.name && product.name.toLowerCase().includes(query.toLowerCase())) ||
-(product.description && product.description.toLowerCase().includes(query.toLowerCase())) ||
-(product.category && product.category.toLowerCase().includes(query.toLowerCase()))
-);
-console.log(`🔍 Arama sonuçları (${query}):`, filtered.length);
-renderProducts(filtered);
-}
-/**
-*/
-function toggleFavorite(productId) {
-if (!window.APP.currentUser) {
-showNotification('Lütfen önce giriş yapın!', 'error');
-openAuth();
-return;
-}
-showNotification('Favorilere eklendi! ❤️', 'success');
-}
-/**
-*/
-function filterByCategory(category) {
-if (!category) {
-renderProducts(window.APP.products);
-return;
-}
-const filtered = window.APP.products.filter(p =>
-p.category && p.category.toLowerCase() === category.toLowerCase()
-);
-console.log(`📂 Kategori filtresi (${category}):`, filtered.length);
-renderProducts(filtered);
-}
-console.log('✅ Products loaded successfully');
