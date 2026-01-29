@@ -2,124 +2,87 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AYSİMA MEDİKAL | Sağlık Marketiniz</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        /* Kritik CSS Düzeltmeleri */
+        /* Sepetin açılmasını sağlayan kritik CSS eklemeleri */
         #cart-sidebar.open { right: 0 !important; }
         #overlay.active { display: block !important; }
+        
+        /* Auth modal ve overlay için temel görünürlük kuralları */
         #auth-modal.active { display: block !important; }
         #auth-overlay.active { display: block !important; }
-
-        /* Mobil Uyumluluk İçin Ek CSS */
-        @media (max-width: 768px) {
-            header {
-                flex-wrap: wrap;
-                padding: 10px !important;
-            }
-            .header-left span {
-                font-size: 16px !important;
-            }
-            .search-box {
-                order: 3;
-                width: 100%;
-                max-width: none !important;
-                margin: 10px 0 0 0 !important;
-            }
-            .main-layout {
-                flex-direction: column;
-                padding: 0 10px !important;
-            }
-            aside {
-                width: 100% !important;
-                margin-bottom: 20px;
-            }
-            #product-grid {
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 10px !important;
-            }
-            #cart-sidebar {
-                width: 100% !important;
-            }
-        }
     </style>
 </head>
 <body>
     <div id="auth-overlay" onclick="closeAuth()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2999;"></div>
-    
-    <div id="auth-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:25px; border-radius:12px; z-index:3000; width:90%; max-width:400px; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
-        <button onclick="closeAuth()" style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:24px; cursor:pointer;">&times;</button>
-        
+    <div id="auth-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:30px; border-radius:12px; z-index:3000; width:90%; max-width:400px; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+        <button onclick="closeAuth()" style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:24px; cursor:pointer;">×</button>
         <div class="auth-tabs" style="display:flex; margin-bottom:20px; border-bottom:1px solid #eee;">
-            <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')" style="flex:1; padding:10px; border:none; background:none; cursor:pointer; font-weight:bold; border-bottom:2px solid #7b1e2b; color:#7b1e2b;">Giriş Yap</button>
+            <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')" style="flex:1; padding:10px; border:none; background:none; cursor:pointer; font-weight:bold; border-bottom:2px solid #7b1e2b;">Giriş Yap</button>
             <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1; padding:10px; border:none; background:none; cursor:pointer; color:#999;">Kayıt Ol</button>
         </div>
-
         <form id="login-form" onsubmit="handleLogin(event)">
-            <input type="email" id="login-email" placeholder="Email" required style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
-            <input type="password" id="login-password" placeholder="Şifre" required style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
-            <button type="submit" class="auth-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:12px; border-radius:6px; font-weight:bold; cursor:pointer;">GİRİŞ YAP</button>
+            <input type="email" id="login-email" placeholder="Email" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
+            <input type="password" id="login-password" placeholder="Şifre" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px;">
+            <button type="submit" class="auth-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;">GİRİŞ YAP</button>
         </form>
-
         <form id="signup-form" onsubmit="handleSignup(event)" style="display:none;">
-            <input type="text" id="signup-name" placeholder="Ad Soyad" required style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
-            <input type="email" id="signup-email" placeholder="Email" required style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
-            <input type="password" id="signup-password" placeholder="Şifre (min 6)" required style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px;">
-            <button type="submit" class="auth-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:12px; border-radius:6px; font-weight:bold; cursor:pointer;">KAYIT OL</button>
+            <input type="text" id="signup-name" placeholder="Ad Soyad" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
+            <input type="email" id="signup-email" placeholder="Email" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
+            <input type="password" id="signup-password" placeholder="Şifre (min 6)" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px;">
+            <button type="submit" class="auth-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;">KAYIT OL</button>
         </form>
-
-        <div id="auth-status" style="margin-top:15px; font-size:13px; text-align:center; min-height: 20px;"></div>
+        <div id="auth-status" style="margin-top:10px; font-size:13px; text-align:center;"></div>
     </div>
 
-    <header>
-        <div class="header-left" onclick="location.reload()">
-            <img src="logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/45?text=AYS'" style="height:45px;">
-            <span class="brand-name" style="font-size:22px; font-weight:800; color:#7b1e2b;">AYSİMA MEDİKAL</span>
+    <header style="background:#fff; padding:15px 5%; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #eee; position:sticky; top:0; z-index:1000;">
+        <div class="header-left" style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="location.reload()">
+            <img src="logo.png" alt="Logo" style="height:45px;">
+            <span style="font-size:22px; font-weight:800; color:#7b1e2b;">AYSİMA MEDİKAL</span>
         </div>
-        
-        <div class="search-box">
-            <input type="text" placeholder="Ürün ara..." onkeyup="doSearch(this.value)">
-            <button onclick="doSearch(document.querySelector('.search-box input').value)">ARA</button>
+        <div class="search-box" style="flex:1; max-width:500px; margin:0 20px; display:flex;">
+            <input type="text" placeholder="Ürün ara..." onkeyup="doSearch(this.value)" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px 0 0 4px; outline:none;">
+            <button style="background:#7b1e2b; color:white; border:none; padding:0 20px; border-radius:0 4px 4px 0; cursor:pointer; font-weight:bold;">ARA</button>
         </div>
-
-        <div class="header-right">
-            <button onclick="openAuth()" id="user-display">👤 Giriş Yap</button>
-            <button onclick="toggleCart(true)">🛒 Sepet <span id="cart-count">0</span></button>
+        <div class="header-right" style="display:flex; gap:15px; align-items:center;">
+            <button onclick="openAuth()" id="user-display" style="background:none; border:2px solid #7b1e2b; color:#7b1e2b; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">👤 Giriş Yap</button>
+            <button onclick="toggleCart(true)" style="background:#7b1e2b; color:white; border:none; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">🛒 Sepet <span id="cart-count">0</span></button>
         </div>
     </header>
 
-    <div id="overlay" onclick="toggleCart(false)"></div>
-    <div id="cart-sidebar">
+    <div id="overlay" onclick="toggleCart(false)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000;"></div>
+    <div id="cart-sidebar" style="position:fixed; right:-400px; top:0; width:350px; height:100%; background:white; z-index:2001; transition:0.3s ease-in-out; padding:20px; display:flex; flex-direction:column; box-shadow:-5px 0 15px rgba(0,0,0,0.1);">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px;">
             <h2 style="margin:0; font-size:20px;">Sepetim</h2>
-            <button onclick="toggleCart(false)" style="background:none; border:none; font-size:28px; cursor:pointer;">&times;</button>
+            <button onclick="toggleCart(false)" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
         </div>
-        <div id="cart-items" style="flex:1; overflow-y:auto; padding:15px 0;">
+        <div id="cart-items" style="flex:1; overflow-y:auto; padding:20px 0;">
             </div>
-        <div style="border-top:2px solid #eee; padding-top:20px;">
-            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:18px; margin-bottom:15px;">
+        <div style="border-top:1px solid #eee; padding-top:20px;">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:18px; margin-bottom:20px;">
                 <span>Toplam:</span>
-                <span id="cart-total">0.00</span> ₺
+                <span><span id="cart-total">0.00</span> ₺</span>
             </div>
-            <button id="checkout-btn" onclick="handleCheckout()" style="width:100%; background:#7b1e2b; color:white; border:none; padding:15px; border-radius:8px; font-weight:bold; cursor:pointer;">SİPARİŞİ TAMAMLA</button>
+            <button id="checkout-btn" onclick="handleCheckout()" style="width:100%; background:#7b1e2b; color:white; border:none; padding:15px; border-radius:4px; font-weight:bold; cursor:pointer;">SİPARİŞİ TAMAMLA</button>
         </div>
     </div>
 
-    <div class="main-layout">
-        <aside>
-            <div style="background:#7b1e2b; color:white; padding:15px; font-weight:bold; border-radius:8px 8px 0 0;">☰ TÜM KATEGORİLER</div>
-            <ul id="category-list">
+    <div class="main-layout" style="display:flex; max-width:1400px; margin:20px auto; padding:0 20px; gap:20px;">
+        <aside style="width:260px; flex-shrink:0;">
+            <div style="background:#7b1e2b; color:white; padding:12px; font-weight:bold; border-radius:4px 4px 0 0;">☰ TÜM KATEGORİLER</div>
+            <ul id="category-list" style="list-style:none; padding:0; margin:0; background:white; border:1px solid #eee; border-top:none;">
                 <li style="padding:15px; color:#999;">Yükleniyor...</li>
             </ul>
         </aside>
 
-        <main>
+        <main style="flex:1;">
             <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; margin-bottom:20px; padding-bottom:10px;">
-                <h2 id="page-name" style="margin:0; font-size:18px; color:#333;">Tüm Ürünler</h2>
-                <span id="product-count" style="color:#777; font-size:13px;">0 ürün</span>
+                <h2 id="page-name" style="margin:0; font-size:20px;">Tüm Ürünler</h2>
+                <span id="product-count" style="color:#777; font-size:14px;">0 ürün</span>
             </div>
-            <div id="product-grid" class="grid">
+            <div id="product-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:20px;">
                 </div>
         </main>
     </div>
