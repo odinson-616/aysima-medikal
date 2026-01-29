@@ -3,84 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AYSİMA MEDİKAL | Sağlık Marketiniz</title>
+  <title>AYSİMA MEDİKAL | Güvenilir Sağlık Marketiniz</title>
   <style>
-    :root { --bordo: #7b1e2b; --arka-plan: #f4f6f9; --border: #e1e4e8; }
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--arka-plan); color: #333; overflow-x: hidden; }
+    :root { --bordo: #7b1e2b; --arka-plan: #f4f6f9; --border: #e1e4e8; --text: #333; }
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--arka-plan); color: var(--text); overflow-x: hidden; }
 
     /* Header & Nav */
-    .top-bar { background: #000; color: #fff; text-align: center; padding: 7px 0; font-size: 12px; }
+    .top-bar { background: #000; color: #fff; text-align: center; padding: 7px 0; font-size: 12px; font-weight: 600; }
     header { background: #fff; padding: 15px 5%; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
-    .logo { font-size: 24px; font-weight: 900; color: var(--bordo); text-decoration: none; }
-    .search-box { flex-grow: 1; max-width: 500px; margin: 0 20px; display: flex; }
-    .search-box input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px 0 0 4px; outline: none; }
-    .search-box button { background: var(--bordo); color: white; border: none; padding: 0 15px; border-radius: 0 4px 4px 0; cursor: pointer; }
-
-    /* Sepet Paneli (Sağdan Açılan) */
-    #cart-sidebar { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; z-index: 2001; transition: 0.4s; box-shadow: -5px 0 15px rgba(0,0,0,0.1); padding: 20px; display: flex; flex-direction: column; }
-    #cart-sidebar.open { right: 0; }
-    #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2000; }
-    #overlay.active { display: block; }
+    .logo { font-size: 26px; font-weight: 900; color: var(--bordo); text-decoration: none; letter-spacing: -1px; }
     
-    .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
-    .cart-badge { background: var(--bordo); color: white; border-radius: 50%; padding: 2px 7px; font-size: 11px; margin-left: 5px; }
+    .search-box { flex-grow: 1; max-width: 500px; margin: 0 30px; display: flex; }
+    .search-box input { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 4px 0 0 4px; outline: none; background: #f9f9f9; }
+    .search-box button { background: var(--bordo); color: white; border: none; padding: 0 20px; border-radius: 0 4px 4px 0; cursor: pointer; font-weight: bold; }
 
-    /* Ürün Kartları */
-    .content { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
+    .header-right { display: flex; gap: 25px; align-items: center; }
+    .cart-trigger { cursor: pointer; position: relative; text-align: center; color: #444; }
+    .cart-badge { position: absolute; top: -10px; right: -10px; background: var(--bordo); color: white; border-radius: 50%; padding: 2px 7px; font-size: 11px; font-weight: bold; }
+
+    /* Yan Sepet Paneli */
+    #cart-sidebar { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; z-index: 2001; transition: 0.4s; box-shadow: -5px 0 15px rgba(0,0,0,0.1); padding: 25px; display: flex; flex-direction: column; }
+    #cart-sidebar.open { right: 0; }
+    #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; z-index: 2000; backdrop-filter: blur(2px); }
+    #overlay.active { display: block; }
+
+    /* Ürün Kartı */
+    .content { max-width: 1400px; margin: 25px auto; padding: 0 20px; }
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-    .card { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 15px; display: flex; flex-direction: column; }
-    .v-btn { border: 1px solid #ddd; background: #fff; padding: 4px 8px; border-radius: 3px; font-size: 11px; cursor: pointer; margin-right: 5px; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 15px; display: flex; flex-direction: column; transition: 0.3s; }
+    .card:hover { border-color: var(--bordo); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    
+    .v-btn { border: 1px solid #ddd; background: #fff; padding: 5px 10px; border-radius: 3px; font-size: 12px; cursor: pointer; margin: 3px; font-weight: 600; }
     .v-btn.selected { border-color: var(--bordo); color: var(--bordo); background: #fff5f6; }
-    .price-area { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 15px; }
-    .price-val { font-size: 18px; font-weight: 800; color: var(--bordo); }
-    .buy-btn { background: var(--bordo); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    
+    .price-area { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px solid #f9f9f9; }
+    .price-val { font-size: 20px; font-weight: 800; color: var(--bordo); }
+    .buy-btn { background: var(--bordo); color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; }
+    .buy-btn:disabled { background: #ccc !important; cursor: not-allowed; }
 
-    nav { background: #fff; border-bottom: 1px solid var(--border); display: flex; justify-content: center; overflow-x: auto; }
-    .nav-link { padding: 15px; text-decoration: none; color: #555; font-size: 13px; font-weight: 700; }
+    nav { background: #fff; border-bottom: 1px solid var(--border); display: flex; justify-content: center; overflow-x: auto; white-space: nowrap; }
+    .nav-link { padding: 15px 25px; text-decoration: none; color: #555; font-size: 13px; font-weight: 700; text-transform: uppercase; }
   </style>
 </head>
 <body>
 
   <div id="overlay" onclick="toggleCart(false)"></div>
-  <div class="top-bar">GÜVENLİ MEDİKAL ALIŞVERİŞ MERKEZİ</div>
+  <div class="top-bar">STOKTAN AYNI GÜN TESLİMAT - AYSİMA GÜVENCESİYLE</div>
 
   <header>
     <a href="#" class="logo">AYSİMA</a>
     <div class="search-box">
-      <input type="text" placeholder="Ürün ara..." onkeyup="search(this.value)">
+      <input type="text" placeholder="Ürün veya kategori arayın..." onkeyup="search(this.value)">
       <button>ARA</button>
     </div>
-    <div style="cursor:pointer;" onclick="toggleCart(true)">
-      🛒 <span>SEPETİM</span><span class="cart-badge" id="cart-count">0</span>
+    <div class="header-right">
+      <div class="cart-trigger" onclick="toggleCart(true)">
+        <span style="font-size: 20px;">🛒</span>
+        <span class="cart-badge" id="cart-count">0</span>
+        <div style="font-size: 11px; font-weight: bold;">SEPETİM</div>
+      </div>
     </div>
   </header>
-
-  <div id="cart-sidebar">
-    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:10px;">
-      <h3 style="margin:0;">Sepetim</h3>
-      <span style="font-size:24px; cursor:pointer;" onclick="toggleCart(false)">×</span>
-    </div>
-    <div id="cart-items" style="flex-grow:1; overflow-y:auto; padding:10px 0;"></div>
-    <div style="border-top:2px solid #eee; padding-top:15px;">
-      <div style="text-align:right; font-size:18px; font-weight:bold;">Toplam: <span id="cart-total">0.00</span> TL</div>
-      <button style="width:100%; background:#27ae60; color:white; border:none; padding:12px; border-radius:4px; margin-top:10px; font-weight:bold; cursor:pointer;">Siparişi Tamamla</button>
-    </div>
-  </div>
 
   <nav id="navbar">
     <a href="#" class="nav-link" onclick="location.reload()">TÜM ÜRÜNLER</a>
   </nav>
 
   <div class="content">
-    <h2 id="page-name">Tüm Ürünler</h2>
+    <h2 id="page-name" style="font-size: 20px; border-left: 4px solid var(--bordo); padding-left: 10px; margin-bottom: 20px;">Tüm Ürünler</h2>
     <div class="grid" id="product-grid"></div>
+  </div>
+
+  <div id="cart-sidebar">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:2px solid #f4f4f4; padding-bottom:15px;">
+      <h3 style="margin:0;">Sepetiniz</h3>
+      <span style="font-size:30px; cursor:pointer;" onclick="toggleCart(false)">×</span>
+    </div>
+    <div id="cart-items" style="flex-grow:1; overflow-y:auto; padding:15px 0;"></div>
+    <div style="border-top:2px solid #eee; padding-top:20px;">
+      <div style="text-align:right; font-size:20px; font-weight:800; color:var(--bordo);">Toplam: <span id="cart-total">0.00</span> TL</div>
+      <button style="width:100%; background:#27ae60; color:white; border:none; padding:15px; border-radius:5px; margin-top:15px; font-weight:bold; cursor:pointer; font-size:16px;">Siparişi Tamamla</button>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     const supabaseUrl = "https://eqpioawtdwkaeuxpfspt.supabase.co";
     const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
-    const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
+    // KRİTİK DÜZELTME 1: window.supabase kullanımı
+    const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    
     let masterData = [];
     let cart = JSON.parse(localStorage.getItem('aysima_cart')) || [];
 
@@ -88,9 +100,8 @@
       const { data: cats } = await _supabase.from("categories").select("*");
       cats?.forEach(c => {
         const a = document.createElement("a");
-        a.className = "nav-link";
-        a.textContent = c.name.toUpperCase();
-        a.onclick = () => fetchProducts(c.id, c.name);
+        a.className = "nav-link"; a.href = "#"; a.textContent = c.name;
+        a.onclick = (e) => { e.preventDefault(); fetchProducts(c.id, c.name); };
         document.getElementById("navbar").appendChild(a);
       });
       fetchProducts();
@@ -111,41 +122,64 @@
       container.innerHTML = "";
       list.forEach(p => {
         const activeV = p.product_variants.filter(v => v.is_active);
-        const def = activeV[0] || {price: 0, variant_value: '-', id: ''};
+        const def = activeV[0] || {price: 0, variant_value: '-', id: '', stock: 0};
+        
+        // KRİTİK DÜZELTME 3: Stok kontrolü
+        const isOut = def.stock <= 0;
+
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-          <div style="height:150px; background:#f9f9f9; margin-bottom:10px; display:flex; align-items:center; justify-content:center; color:#ccc;">Görsel</div>
-          <div style="font-weight:600; font-size:14px; height:40px;">${p.name}</div>
-          <div style="margin:10px 0;">
-            ${activeV.map(v => `<button class="v-btn ${v.id===def.id?'selected':''}" onclick="updateCard(this, '${v.price}', '${v.id}', '${v.variant_value}')">${v.variant_value}</button>`).join('')}
+          <div style="height:160px; background:#fcfcfc; margin-bottom:12px; display:flex; align-items:center; justify-content:center; color:#ccc; font-size:12px; border-radius:4px;">Görsel Eklenecek</div>
+          <div style="font-weight:600; font-size:14px; height:40px; overflow:hidden;">${p.name}</div>
+          <div style="margin:12px 0; min-height:35px;">
+            ${activeV.map(v => `<button class="v-btn ${v.id===def.id?'selected':''}" onclick="updateCard(this, '${v.price}', '${v.id}', '${v.variant_value}', ${v.stock})">${v.variant_value}</button>`).join('')}
           </div>
           <div class="price-area">
             <span class="price-val">${def.price} TL</span>
-            <button class="buy-btn" onclick="addToCart('${p.id}', '${p.name}', this)" data-v-id="${def.id}" data-v-price="${def.price}" data-v-name="${def.variant_value}">EKLE</button>
+            <button class="buy-btn" 
+              ${isOut ? "disabled" : ""} 
+              onclick="addToCart('${p.id}', '${p.name}', this)" 
+              data-v-id="${def.id}" data-v-price="${def.price}" data-v-name="${def.variant_value}">
+              ${isOut ? "TÜKENDİ" : "EKLE"}
+            </button>
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    window.updateCard = (btn, price, vid, vname) => {
+    window.updateCard = (btn, price, vid, vname, stock) => {
       const card = btn.closest(".card");
       card.querySelectorAll(".v-btn").forEach(b => b.classList.remove("selected"));
       btn.classList.add("selected");
       card.querySelector(".price-val").textContent = price + " TL";
+      
       const buyBtn = card.querySelector(".buy-btn");
       buyBtn.setAttribute("data-v-id", vid);
       buyBtn.setAttribute("data-v-price", price);
       buyBtn.setAttribute("data-v-name", vname);
+      
+      // Dinamik stok kontrolü
+      if(stock <= 0) {
+        buyBtn.disabled = true; buyBtn.textContent = "TÜKENDİ";
+      } else {
+        buyBtn.disabled = false; buyBtn.textContent = "EKLE";
+      }
     }
 
+    // KRİTİK DÜZELTME 2 & 4: Boş varyant kontrolü ve doğru eşleşme
     function addToCart(pid, pname, btn) {
       const vid = btn.getAttribute("data-v-id");
+      if (!vid) { alert("Lütfen bir varyant seçiniz"); return; }
+      
       const vprice = parseFloat(btn.getAttribute("data-v-price"));
       const vname = btn.getAttribute("data-v-name");
-      const existing = cart.find(i => i.vid === vid);
-      if(existing) existing.qty++; else cart.push({ pid, pname, vid, vname, vprice, qty: 1 });
+
+      const existing = cart.find(i => i.vid === vid && i.pid === pid);
+      if (existing) existing.qty++; 
+      else cart.push({ pid, pname, vid, vname, vprice, qty: 1 });
+
       localStorage.setItem('aysima_cart', JSON.stringify(cart));
       updateCartUI();
       toggleCart(true);
@@ -159,9 +193,12 @@
         total += item.vprice * item.qty;
         count += item.qty;
         itemsDiv.innerHTML += `
-          <div class="cart-item">
-            <div><b>${item.pname}</b><br><small>${item.vname} x ${item.qty}</small></div>
-            <div>${(item.vprice * item.qty).toFixed(2)} TL <button onclick="remove(${idx})" style="color:red; border:none; background:none; cursor:pointer;">🗑️</button></div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #f9f9f9; padding-bottom:10px;">
+            <div><b style="font-size:13px;">${item.pname}</b><br><small style="color:#666;">${item.vname} x ${item.qty}</small></div>
+            <div style="text-align:right;">
+              <div style="font-weight:bold; font-size:14px;">${(item.vprice * item.qty).toFixed(2)} TL</div>
+              <button onclick="remove(${idx})" style="color:#ff4d4d; border:none; background:none; cursor:pointer; font-size:18px;">🗑</button>
+            </div>
           </div>`;
       });
       document.getElementById("cart-total").textContent = total.toFixed(2);
