@@ -5,7 +5,7 @@
 if (typeof window.supabase === 'undefined') {
 window.supabase = null;
 }
-const SUPABASE_URL ='sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA';
+const SUPABASE_URL = 'https://eqpioawtdwkaeuxpfspt.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA';
 // Initialize Supabase
 window.supabase = window.supabase || {
