@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ürün Detayı | AYSİMA MEDİKAL</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header style="background:#fff; padding:15px 5%; display:flex; align-items:center; border-bottom:2px solid #eee;">
+        <div class="header-left" style="cursor:pointer;" onclick="window.location.href='index.html'">
+            <span style="font-size:22px; font-weight:800; color:#7b1e2b;">← GERİ DÖN</span>
+        </div>
+    </header>
+
+    <div id="product-detail-container" style="max-width:1000px; margin:50px auto; padding:0 20px; display:flex; gap:40px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:300px;">
+            <img id="detail-img" src="" alt="" style="width:100%; border-radius:8px; border:1px solid #eee;">
+        </div>
+        <div style="flex:1; min-width:300px;">
+            <h1 id="detail-title" style="color:#333; margin-top:0;">Yükleniyor...</h1>
+            <p id="detail-desc" style="color:#666; line-height:1.6; font-size:18px;"></p>
+            <div id="detail-price" style="font-size:32px; font-weight:800; color:#7b1e2b; margin:20px 0;"></div>
+            <button id="add-to-cart-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:20px; border-radius:8px; font-weight:bold; cursor:pointer; font-size:18px;">SEPETE EKLE</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script>
+        async function loadProductDetail() {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get('id');
+
+            if (!productId) { window.location.href = 'index.html'; return; }
+
+            const { data: product, error } = await window.supabase
+                .from('products')
+                .select('*')
+                .eq('id', productId)
+                .single();
+
+            if (error || !product) {
+                document.getElementById('product-detail-container').innerHTML = "<h2>Ürün bulunamadı.</h2>";
+                return;
+            }
+
+            document.title = `${product.name} | AYSİMA MEDİKAL`;
+            document.getElementById('detail-img').src = product.image;
+            document.getElementById('detail-title').textContent = product.name;
+            document.getElementById('detail-desc').textContent = product.description;
+            document.getElementById('detail-price').textContent = product.price.toFixed(2) + " ₺";
+            
+            // Sepete ekle butonu işlevi (Cart.js yüklü olmadığı için basit hali)
+            document.getElementById('add-to-cart-btn').onclick = () => {
+                alert('Ürün sepete eklendi!');
+                // Buraya gerçek sepet mantığını sonra bağlayabiliriz
+            };
+        }
+        window.onload = loadProductDetail;
+    </script>
+</body>
+</html>
