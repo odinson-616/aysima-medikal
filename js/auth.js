@@ -1,157 +1,239 @@
-// js/auth.js - Giriş/Kayıt sistemi
-function openAuth() {
-document.getElementById('auth-modal').classList.add('active');
-document.getElementById('auth-overlay').classList.add('active');
-}
-function closeAuth() {
-document.getElementById('auth-modal').classList.remove('active');
-document.getElementById('auth-overlay').classList.remove('active');
-clearAuthErrors();
-}
-function switchAuthTab(tab) {
-document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-event.target.classList.add('active');
-document.getElementById(tab + '-form').classList.add('active');
-clearAuthErrors();
-}
-function showAuthError(message) {
-const errorDiv = document.getElementById('auth-error');
-errorDiv.textContent = message;
-errorDiv.classList.add('show');
-}
-function clearAuthErrors() {
-document.getElementById('auth-error').classList.remove('show');
-}
-async function handleLogin(e) {
-e.preventDefault();
-clearAuthErrors();
+// ============================================
+// AUTHENTICATION FUNCTIONS
+// ============================================
+/**
+*/
+async function handleLogin(event) {
+event.preventDefault();
 const email = document.getElementById('login-email').value;
 const password = document.getElementById('login-password').value;
-const btn = document.getElementById('login-btn');
-btn.disabled = true;
-btn.textContent = 'Giriş yapılıyor...';
-try {
-const { data, error } = await supabase.auth.signInWithPassword({
-email,
-});
-if(error) {
-showAuthError('Email veya şifre hatalı!');
-btn.disabled = false;
-btn.textContent = 'Giriş Yap';
+const errorDiv = document.getElementById('auth-error');
+const loginBtn = document.getElementById('login-btn');
+if (!email || !password) {
+errorDiv.textContent = 'Email ve şifre gerekli!';
 return;
 }
-APP.saveUser(data.user);
-updateUserUI();
+try {
+loginBtn.disabled = true;
+loginBtn.textContent = 'Giriş yapılıyor...';
+const { data, error } = await window.supabase.auth.signInWithPassword({
+email,
+});
+if (error) {
+errorDiv.textContent = error.message;
+return;
+}
+window.APP.currentUser = data.user;
+setLocalStorage('user', data.user);
+showNotification('Başarıyla giriş yaptınız!', 'success');
 closeAuth();
-alert('Hoş geldiniz!');
-document.getElementById('login-form').reset();
-} catch(e) {
-console.error('Login hatası:', e);
-showAuthError('Bir hata oluştu. Lütfen tekrar deneyin.');
+updateUserUI();
+} catch (err) {
+errorDiv.textContent = 'Giriş yapılamadı: ' + err.message;
 } finally {
-btn.disabled = false;
-btn.textContent = 'Giriş Yap';
+loginBtn.disabled = false;
+loginBtn.textContent = 'Giriş Yap';
 }
 }
-async function handleSignup(e) {
-e.preventDefault();
-clearAuthErrors();
+/**
+*/
+async function handleSignup(event) {
+event.preventDefault();
 const name = document.getElementById('signup-name').value;
 const email = document.getElementById('signup-email').value;
 const password = document.getElementById('signup-password').value;
 const phone = document.getElementById('signup-phone').value;
-const btn = document.getElementById('signup-btn');
-btn.disabled = true;
-btn.textContent = 'Kayıt yapılıyor...';
+const errorDiv = document.getElementById('auth-error');
+const signupBtn = document.getElementById('signup-btn');
+if (!name || !email || !password || !phone) {
+errorDiv.textContent = 'Tüm alanlar gerekli!';
+return;
+}
+if (password.length < 6) {
+errorDiv.textContent = 'Şifre en az 6 karakter olmalı!';
+return;
+}
+if (!isValidEmail(email)) {
+errorDiv.textContent = 'Geçerli bir email adresi girin!';
+return;
+}
+if (!isValidPhone(phone)) {
+errorDiv.textContent = 'Geçerli bir telefon numarası girin!';
+return;
+}
 try {
-const { data: signupData, error: signupError } = await supabase.auth.signUp({
+signupBtn.disabled = true;
+signupBtn.textContent = 'Kayıt yapılıyor...';
+const { data, error } = await window.supabase.auth.signUp({
 email,
 password,
 options: {
-data: { full_name: name, phone: phone }
+data: {
+name,
+}
 }
 });
-if(signupError) {
-showAuthError(signupError.message);
-btn.disabled = false;
-btn.textContent = 'Kayıt Ol';
+if (error) {
+errorDiv.textContent = error.message;
 return;
 }
-const { error: profileError } = await supabase.from('users').insert([{
-id: signupData.user.id,
-email: email,
-full_name: name,
-phone: phone
-}]);
-if(profileError) throw profileError;
-APP.saveUser(signupData.user);
-updateUserUI();
+window.APP.currentUser = data.user;
+setLocalStorage('user', data.user);
+showNotification('Başarıyla kayıt oldunuz!', 'success');
+// Profil tablosuna kullanıcı ekle
+await window.supabase.from('profiles').insert({
+id: data.user.id,
+name,
+email,
+phone,
+created_at: new Date().toISOString()
+});
 closeAuth();
-alert('Kayıt başarılı! Hoş geldiniz.');
-document.getElementById('signup-form').reset();
-} catch(e) {
-console.error('Signup hatası:', e);
-showAuthError('Kayıt başarısız. Bu email zaten kullanılıyor olabilir.');
-} finally {
-btn.disabled = false;
-btn.textContent = 'Kayıt Ol';
-}
-}
-function toggleUserMenu() {
-document.getElementById('user-dropdown').classList.toggle('active');
-}
-async function logout() {
-if(confirm('Çıkış yapmak istediğinize emin misiniz?')) {
-await supabase.auth.signOut();
-APP.currentUser = null;
-localStorage.removeItem('aysima_user');
 updateUserUI();
-document.getElementById('user-dropdown').classList.remove('active');
+} catch (err) {
+errorDiv.textContent = 'Kayıt yapılamadı: ' + err.message;
+} finally {
+signupBtn.disabled = false;
+signupBtn.textContent = 'Kayıt Ol';
+}
+}
+/**
+*/
+async function logout() {
+try {
+const { error } = await window.supabase.auth.signOut();
+if (error) {
+showNotification('Çıkış yapılamadı!', 'error');
+return;
+}
+window.APP.currentUser = null;
+window.APP.cart = [];
+removeLocalStorage('user');
+removeLocalStorage('cart');
+showNotification('Başarıyla çıkış yaptınız!', 'success');
+updateUserUI();
 location.reload();
+} catch (err) {
+showNotification('Hata: ' + err.message, 'error');
 }
 }
+/**
+*/
 function updateUserUI() {
-const userDisplay = document.getElementById('user-display');
 const userBtn = document.getElementById('user-btn');
-if(APP.currentUser) {
-const email = APP.currentUser.email.split('@')[0];
-userDisplay.textContent = email;
-userBtn.style.borderColor = 'var(--success)';
+const userDisplay = document.getElementById('user-display');
+const checkoutBtn = document.getElementById('checkout-btn');
+if (window.APP.currentUser) {
+const email = window.APP.currentUser.email;
+userDisplay.textContent = email.split('@')[0];
 userBtn.style.color = 'var(--success)';
+checkoutBtn.disabled = false;
 } else {
 userDisplay.textContent = 'Giriş Yap';
-userBtn.style.borderColor = 'var(--bordo)';
-userBtn.style.color = 'var(--bordo)';
+userBtn.style.color = 'inherit';
+checkoutBtn.disabled = true;
 }
 }
+/**
+*/
+function openAuth() {
+document.getElementById('auth-overlay').style.display = 'block';
+document.getElementById('auth-modal').style.display = 'block';
+}
+/**
+*/
+function closeAuth() {
+document.getElementById('auth-overlay').style.display = 'none';
+document.getElementById('auth-modal').style.display = 'none';
+document.getElementById('auth-error').textContent = '';
+document.getElementById('login-form').reset();
+document.getElementById('signup-form').reset();
+}
+/**
+*/
+function switchAuthTab(tab) {
+const loginForm = document.getElementById('login-form');
+const signupForm = document.getElementById('signup-form');
+const tabs = document.querySelectorAll('.auth-tab');
+tabs.forEach(t => t.classList.remove('active'));
+event.target.classList.add('active');
+if (tab === 'login') {
+loginForm.classList.add('active');
+signupForm.classList.remove('active');
+} else {
+loginForm.classList.remove('active');
+signupForm.classList.add('active');
+}
+document.getElementById('auth-error').textContent = '';
+}
+/**
+*/
+function toggleUserMenu() {
+const dropdown = document.getElementById('user-dropdown');
+dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+}
+/**
+*/
 function goToProfile() {
-if(!APP.currentUser) {
+if (!window.APP.currentUser) {
+showNotification('Lütfen önce giriş yapın!', 'error');
 openAuth();
 return;
 }
 alert('Profil sayfası hazırlanıyor...');
-document.getElementById('user-dropdown').classList.remove('active');
 }
+/**
+*/
 function goToOrders() {
-if(!APP.currentUser) {
+if (!window.APP.currentUser) {
+showNotification('Lütfen önce giriş yapın!', 'error');
 openAuth();
 return;
 }
-alert('Siparişlerim sayfası hazırlanıyor...');
-document.getElementById('user-dropdown').classList.remove('active');
+alert('Siparişler sayfası hazırlanıyor...');
 }
+/**
+*/
 function goToAddresses() {
-if(!APP.currentUser) {
+if (!window.APP.currentUser) {
+showNotification('Lütfen önce giriş yapın!', 'error');
 openAuth();
 return;
 }
-alert('Adreslerim sayfası hazırlanıyor...');
-document.getElementById('user-dropdown').classList.remove('active');
+alert('Adresler sayfası hazırlanıyor...');
 }
-document.addEventListener('click', (e) => {
-if(!e.target.closest('.user-menu')) {
-const dropdown = document.getElementById('user-dropdown');
-if(dropdown) dropdown.classList.remove('active');
+/**
+*/
+async function checkCurrentUser() {
+try {
+const { data, error } = await window.supabase.auth.getSession();
+if (error) {
+console.error('Session hatası:', error);
+return;
+}
+if (data.session && data.session.user) {
+window.APP.currentUser = data.session.user;
+setLocalStorage('user', data.session.user);
+updateUserUI();
+} else {
+const savedUser = getLocalStorage('user');
+if (savedUser) {
+window.APP.currentUser = savedUser;
+updateUserUI();
+}
+}
+} catch (err) {
+console.error('Kullanıcı kontrol hatası:', err);
+}
+}
+/**
+*/
+window.supabase.auth.onAuthStateChange((event, session) => {
+if (session && session.user) {
+window.APP.currentUser = session.user;
+updateUserUI();
+} else {
+window.APP.currentUser = null;
 }
 });
+console.log('✅ Auth loaded successfully');
