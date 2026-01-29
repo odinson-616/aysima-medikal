@@ -3,92 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="AYSİMA MEDİKAL - Kaliteli Sağlık Ürünleri">
     <title>AYSİMA MEDİKAL | Sağlık Marketiniz</title>
     <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-    <div id="auth-overlay" onclick="closeAuth()"></div>
-    <div id="auth-modal">
-        <button class="auth-close" onclick="closeAuth()">×</button>
-        <div class="auth-tabs">
-            <button class="auth-tab active" onclick="switchAuthTab('login')">Giriş Yap</button>
-            <button class="auth-tab" onclick="switchAuthTab('signup')">Kayıt Ol</button>
+    <div id="auth-overlay" onclick="closeAuth()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2999;"></div>
+    <div id="auth-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:30px; border-radius:12px; z-index:3000; width:90%; max-width:400px; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
+        <button onclick="closeAuth()" style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:24px; cursor:pointer;">×</button>
+        <div class="auth-tabs" style="display:flex; margin-bottom:20px; border-bottom:1px solid #eee;">
+            <button class="auth-tab active" onclick="switchAuthTab('login')" style="flex:1; padding:10px; border:none; background:none; cursor:pointer; font-weight:bold; border-bottom:2px solid #7b1e2b;">Giriş Yap</button>
+            <button class="auth-tab" onclick="switchAuthTab('signup')" style="flex:1; padding:10px; border:none; background:none; cursor:pointer; color:#999;">Kayıt Ol</button>
         </div>
-        <div id="auth-error" class="auth-error"></div>
-        <form id="login-form" class="auth-form active" onsubmit="handleLogin(event)">
-            <div class="form-group"><label>Email Adresi</label><input type="email" id="login-email" required></div>
-            <div class="form-group"><label>Şifre</label><input type="password" id="login-password" required></div>
-            <button type="submit" class="auth-btn" id="login-btn">Giriş Yap</button>
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <input type="email" id="login-email" placeholder="Email" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
+            <input type="password" id="login-password" placeholder="Şifre" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px;">
+            <button type="submit" class="auth-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;">GİRİŞ YAP</button>
         </form>
-        <form id="signup-form" class="auth-form" onsubmit="handleSignup(event)">
-            <div class="form-group"><label>Ad Soyad</label><input type="text" id="signup-name" required></div>
-            <div class="form-group"><label>Email Adresi</label><input type="email" id="signup-email" required></div>
-            <div class="form-group"><label>Şifre (min 6 karakter)</label><input type="password" id="signup-password" minlength="6" required></div>
-            <div class="form-group"><label>Telefon</label><input type="tel" id="signup-phone" required></div>
-            <button type="submit" class="auth-btn" id="signup-btn">Kayıt Ol</button>
+        <form id="signup-form" onsubmit="handleSignup(event)" style="display:none;">
+            <input type="text" id="signup-name" placeholder="Ad Soyad" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
+            <input type="email" id="signup-email" placeholder="Email" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
+            <input type="password" id="signup-password" placeholder="Şifre (min 6)" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px;">
+            <button type="submit" class="auth-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;">KAYIT OL</button>
         </form>
     </div>
 
-    <div id="overlay" onclick="toggleCart(false)"></div>
-
-    <header>
-        <a href="#" class="header-left" onclick="location.reload(); return false;">
-            <img src="logo.png" alt="AYSİMA MEDİKAL">
-            <span class="brand-name">AYSİMA MEDİKAL</span>
-        </a>
-        <div class="search-box">
-            <input type="text" placeholder="Aradığınız ürünü yazın..." onkeyup="doSearch(this.value)">
-            <button onclick="doSearch(document.querySelector('.search-box input').value)">ARA</button>
+    <header style="background:#fff; padding:15px 5%; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #eee; position:sticky; top:0; z-index:1000;">
+        <div class="header-left" style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="location.reload()">
+            <img src="logo.png" alt="Logo" style="height:45px;">
+            <span style="font-size:22px; font-weight:800; color:#7b1e2b;">AYSİMA MEDİKAL</span>
         </div>
-        <div class="header-right">
-            <div class="user-menu">
-                <button class="user-btn" id="user-btn" onclick="toggleUserMenu()">
-                    👤 <span id="user-display">Giriş Yap</span>
-                </button>
-                <div id="user-dropdown" class="user-dropdown">
-                    <a href="#" onclick="goToProfile()">Profilim</a>
-                    <a href="#" onclick="goToOrders()">Siparişlerim</a>
-                    <a href="#" onclick="goToAddresses()">Adreslerim</a>
-                    <button onclick="logout()" class="logout">Çıkış Yap</button>
-                </div>
-            </div>
-            <button class="cart-btn" onclick="toggleCart(true)">
-                🛒 Sepet <span id="cart-count">0</span>
-            </button>
+        <div class="search-box" style="flex:1; max-width:500px; margin:0 20px; display:flex;">
+            <input type="text" placeholder="Ürün ara..." onkeyup="doSearch(this.value)" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px 0 0 4px; outline:none;">
+            <button style="background:#7b1e2b; color:white; border:none; padding:0 20px; border-radius:0 4px 4px 0; cursor:pointer; font-weight:bold;">ARA</button>
+        </div>
+        <div class="header-right" style="display:flex; gap:15px; align-items:center;">
+            <button onclick="openAuth()" id="user-display" style="background:none; border:2px solid #7b1e2b; color:#7b1e2b; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">👤 Giriş Yap</button>
+            <button onclick="toggleCart(true)" style="background:#7b1e2b; color:white; border:none; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">🛒 Sepet <span id="cart-count">0</span></button>
         </div>
     </header>
 
-    <div class="main-container">
-        <aside class="category-sidebar">
-            <div class="sidebar-title">☰ TÜM KATEGORİLER</div>
-            <ul id="category-list">
-                <li class="cat-item loading">Kategoriler yükleniyor...</li>
+    <div class="main-layout" style="display:flex; max-width:1400px; margin:20px auto; padding:0 20px; gap:20px;">
+        <aside style="width:260px; flex-shrink:0;">
+            <div style="background:#7b1e2b; color:white; padding:12px; font-weight:bold; border-radius:4px 4px 0 0;">☰ TÜM KATEGORİLER</div>
+            <ul id="category-list" style="list-style:none; padding:0; margin:0; background:white; border:1px solid #eee; border-top:none;">
+                <li style="padding:15px; color:#999;">Yükleniyor...</li>
             </ul>
         </aside>
 
-        <main class="content-area">
-            <div class="page-header">
-                <h2 id="page-name">Tüm Ürünler</h2>
-                <span id="product-count">0 ürün bulundu</span>
+        <main style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; margin-bottom:20px; padding-bottom:10px;">
+                <h2 id="page-name" style="margin:0; font-size:20px;">Tüm Ürünler</h2>
+                <span id="product-count" style="color:#777; font-size:14px;">0 ürün</span>
             </div>
-            <div class="grid" id="product-grid">Ürünler yükleniyor...</div>
+            <div id="product-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:20px;">
+                </div>
         </main>
-    </div>
-
-    <a href="https://wa.me/905000000000" class="wa-float" target="_blank">💬</a>
-
-    <div id="cart-sidebar">
-        <div class="cart-header">
-            <h3>Sepetim</h3>
-            <button onclick="toggleCart(false)">×</button>
-        </div>
-        <div id="cart-items"></div>
-        <div class="cart-footer">
-            <div class="total-line"><span>Toplam:</span><span><span id="cart-total">0.00</span> ₺</span></div>
-            <button id="checkout-btn" onclick="handleCheckout()" disabled>Siparişi Tamamla</button>
-        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
