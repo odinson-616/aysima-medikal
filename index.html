@@ -3,176 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AYSİMA MEDİKAL | Güvenilir Sağlık Marketiniz</title>
-
+  <title>AYSİMA MEDİKAL</title>
   <style>
-    :root { --bordo:#7b1e2b; --bg:#f4f6f9; --border:#e1e4e8; }
-    body{margin:0;font-family:Segoe UI,sans-serif;background:var(--bg);color:#333}
+    :root { --bordo: #7b1e2b; --arka-plan: #f4f6f9; --border: #e1e4e8; }
+    body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--arka-plan); overflow-x: hidden; }
 
-    .top-bar{background:#000;color:#fff;text-align:center;padding:7px;font-size:12px}
-    header{background:#fff;padding:15px 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
-    .logo{font-size:26px;font-weight:900;color:var(--bordo);text-decoration:none}
+    /* Header & Nav */
+    header { background: #fff; padding: 15px 5%; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+    .logo { font-size: 24px; font-weight: 900; color: var(--bordo); text-decoration: none; }
+    .search-box { flex-grow: 1; max-width: 400px; margin: 0 20px; display: flex; }
+    .search-box input { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px 0 0 4px; outline: none; }
+    .search-box button { background: var(--bordo); color: white; border: none; padding: 0 15px; border-radius: 0 4px 4px 0; cursor: pointer; }
 
-    .search-box{flex:1;max-width:500px;margin:0 25px;display:flex}
-    .search-box input{width:100%;padding:12px;border:1px solid var(--border)}
-    .search-box button{background:var(--bordo);color:#fff;border:none;padding:0 20px;cursor:pointer}
+    /* Sepet Paneli */
+    #cart-sidebar { position: fixed; right: -400px; top: 0; width: 320px; height: 100%; background: white; z-index: 2001; transition: 0.4s; box-shadow: -5px 0 15px rgba(0,0,0,0.1); padding: 20px; display: flex; flex-direction: column; }
+    #cart-sidebar.open { right: 0; }
+    #overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 2000; }
+    #overlay.active { display: block; }
 
-    .cart-trigger{cursor:pointer;position:relative}
-    .cart-badge{position:absolute;top:-8px;right:-10px;background:var(--bordo);color:#fff;border-radius:50%;padding:2px 7px;font-size:11px}
+    /* Ürün Kartları */
+    .content { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 15px; display: flex; flex-direction: column; }
+    .v-btn { border: 1px solid #ddd; background: #fff; padding: 5px 8px; border-radius: 3px; font-size: 11px; cursor: pointer; margin: 2px; }
+    .v-btn.selected { border-color: var(--bordo); color: var(--bordo); background: #fff5f6; }
+    .price-val { font-size: 18px; font-weight: 800; color: var(--bordo); }
+    .buy-btn { background: var(--bordo); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+    .buy-btn:disabled { background: #ccc; cursor: not-allowed; }
 
-    nav{background:#fff;border-bottom:1px solid var(--border);display:flex;overflow-x:auto}
-    .nav-link{padding:15px 20px;font-size:13px;font-weight:700;color:#555;text-decoration:none}
+    /* WhatsApp Butonu */
+    .whatsapp-btn { position: fixed; bottom: 20px; right: 20px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 1000; text-decoration: none; transition: 0.3s; }
+    .whatsapp-btn:hover { transform: scale(1.1); }
 
-    .content{max-width:1400px;margin:25px auto;padding:0 20px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
-
-    .card{background:#fff;border:1px solid var(--border);padding:15px;display:flex;flex-direction:column}
-    .v-btn{border:1px solid #ddd;background:#fff;padding:5px 10px;font-size:12px;margin:3px;cursor:pointer}
-    .v-btn.selected{border-color:var(--bordo);color:var(--bordo)}
-    .v-btn:disabled{opacity:.4;cursor:not-allowed}
-
-    .price-area{margin-top:auto;display:flex;justify-content:space-between;align-items:center;padding-top:15px}
-    .price-val{font-size:18px;font-weight:800;color:var(--bordo)}
-    .buy-btn{background:var(--bordo);color:#fff;border:none;padding:10px 15px;cursor:pointer}
-    .buy-btn:disabled{background:#ccc}
-
-    #cart-sidebar{position:fixed;right:-360px;top:0;width:340px;height:100%;background:#fff;transition:.3s;z-index:20;padding:20px;display:flex;flex-direction:column}
-    #cart-sidebar.open{right:0}
-    #overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;z-index:19}
-    #overlay.active{display:block}
+    nav { background: #fff; border-bottom: 1px solid var(--border); display: flex; justify-content: center; overflow-x: auto; }
+    .nav-link { padding: 15px; text-decoration: none; color: #555; font-size: 13px; font-weight: 700; cursor: pointer; }
   </style>
 </head>
-
 <body>
 
-<div class="top-bar">STOKTAN AYNI GÜN TESLİMAT</div>
+  <div id="overlay" onclick="window.toggleCart(false)"></div>
 
-<header>
-  <a class="logo">AYSİMA</a>
-  <div class="search-box">
-    <input placeholder="Ürün ara..." onkeyup="search(this.value)">
-    <button>ARA</button>
+  <header>
+    <a href="#" class="logo">AYSİMA</a>
+    <div class="search-box">
+      <input type="text" placeholder="Ürün ara..." onkeyup="window.search(this.value)">
+    </div>
+    <div style="cursor:pointer;" onclick="window.toggleCart(true)">
+      🛒 SEPETİM <span id="cart-count" style="background:var(--bordo); color:white; padding:2px 6px; border-radius:50%; font-size:12px;">0</span>
+    </div>
+  </header>
+
+  <nav id="navbar">
+    <a class="nav-link" onclick="location.reload()">TÜM ÜRÜNLER</a>
+  </nav>
+
+  <div class="content">
+    <h2 id="page-name">Tüm Ürünler</h2>
+    <div class="grid" id="product-grid">Yükleniyor...</div>
   </div>
-  <div class="cart-trigger" onclick="toggleCart(true)">
-    🛒 <span class="cart-badge" id="cart-count">0</span>
+
+  <a href="https://wa.me/905000000000" class="whatsapp-btn" target="_blank">
+    <span style="line-height: 0;">🟢</span>
+  </a>
+
+  <div id="cart-sidebar">
+    <h3>Sepetim</h3>
+    <div id="cart-items" style="flex-grow:1; overflow-y:auto;"></div>
+    <div style="border-top:1px solid #eee; padding-top:10px;">
+      <b>Toplam: <span id="cart-total">0.00</span> TL</b>
+      <button style="width:100%; background:#27ae60; color:white; border:none; padding:12px; margin-top:10px; cursor:pointer; font-weight:bold;">Siparişi Tamamla</button>
+    </div>
   </div>
-</header>
 
-<nav id="navbar">
-  <a href="#" class="nav-link" onclick="location.reload()">TÜM ÜRÜNLER</a>
-</nav>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const supabaseUrl = "https://eqpioawtdwkaeuxpfspt.supabase.co";
+    const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
+    const _supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
-<div class="content">
-  <h2 id="page-name">Tüm Ürünler</h2>
-  <div class="grid" id="product-grid"></div>
-</div>
+    let masterData = [];
+    let cart = JSON.parse(localStorage.getItem('aysima_cart')) || [];
 
-<div id="overlay" onclick="toggleCart(false)"></div>
+    // FONKSİYONLARI WINDOW OBJESİNE BAĞLIYORUZ (Tıklama hatalarını bitirir)
+    window.toggleCart = (show) => {
+      document.getElementById("cart-sidebar").classList.toggle("open", show);
+      document.getElementById("overlay").classList.toggle("active", show);
+    };
 
-<div id="cart-sidebar">
-  <h3>Sepet</h3>
-  <div id="cart-items" style="flex:1"></div>
-  <b>Toplam: <span id="cart-total">0.00</span> TL</b>
-</div>
+    window.updateCard = (btn, price, vid, vname, stock) => {
+      const card = btn.closest(".card");
+      card.querySelectorAll(".v-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      card.querySelector(".price-val").textContent = price + " TL";
+      
+      const buyBtn = card.querySelector(".buy-btn");
+      buyBtn.setAttribute("data-v-id", vid);
+      buyBtn.setAttribute("data-v-price", price);
+      buyBtn.setAttribute("data-v-name", vname);
+      buyBtn.disabled = stock <= 0;
+      buyBtn.textContent = stock <= 0 ? "TÜKENDİ" : "EKLE";
+    };
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const supabaseUrl="https://eqpioawtdwkaeuxpfspt.supabase.co";
-const supabaseKey="sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
-const db=window.supabase.createClient(supabaseUrl,supabaseKey);
+    window.addToCart = (pid, pname, btn) => {
+      const vid = btn.getAttribute("data-v-id");
+      const vprice = parseFloat(btn.getAttribute("data-v-price"));
+      const vname = btn.getAttribute("data-v-name");
 
-let masterData=[];
-let cart=JSON.parse(localStorage.getItem("aysima_cart"))||[];
+      if (!vid) return alert("Hata: Varyant seçilemedi.");
 
-async function bootstrap(){
-  const {data:cats}=await db.from("categories").select("*").is("parent_id",null);
-  cats?.forEach(c=>{
-    const a=document.createElement("a");
-    a.className="nav-link";a.textContent=c.name;
-    a.onclick=e=>{e.preventDefault();fetchProducts(c.id,c.name)};
-    navbar.appendChild(a);
-  });
-  fetchProducts();
-  updateCartUI();
-}
+      const existing = cart.find(i => i.vid === vid && i.pid === pid);
+      if (existing) existing.qty++; 
+      else cart.push({ pid, pname, vid, vname, vprice, qty: 1 });
 
-async function fetchProducts(cid=null,name="Tüm Ürünler"){
-  page-name.textContent=name;
-  let q=db.from("products").select("*,product_variants(*)").eq("is_active",true);
-  if(cid) q=q.eq("category_id",cid);
-  const {data}=await q;
-  masterData=data||[];
-  render(masterData);
-}
+      localStorage.setItem('aysima_cart', JSON.stringify(cart));
+      window.updateCartUI();
+      window.toggleCart(true);
+    };
 
-function render(list){
-  product-grid.innerHTML="";
-  list.forEach(p=>{
-    const vars=p.product_variants.filter(v=>v.is_active);
-    if(!vars.length) return;
-    const d=vars[0];
-    const out=d.stock<=0;
+    window.updateCartUI = () => {
+      const itemsDiv = document.getElementById("cart-items");
+      let total = 0, count = 0;
+      itemsDiv.innerHTML = "";
+      cart.forEach((item, idx) => {
+        total += item.vprice * item.qty;
+        count += item.qty;
+        itemsDiv.innerHTML += `
+          <div style="border-bottom:1px solid #eee; padding:10px 0;">
+            <b>${item.pname}</b><br><small>${item.vname} x ${item.qty}</small>
+            <div style="display:flex; justify-content:space-between;">
+              <span>${(item.vprice * item.qty).toFixed(2)} TL</span>
+              <button onclick="window.remove(${idx})" style="color:red; border:none; background:none; cursor:pointer;">Sil</button>
+            </div>
+          </div>`;
+      });
+      document.getElementById("cart-total").textContent = total.toFixed(2);
+      document.getElementById("cart-count").textContent = count;
+    };
 
-    const card=document.createElement("div");
-    card.className="card";
-    card.innerHTML=`
-      <div style="height:140px;background:#f7f7f7;margin-bottom:10px"></div>
-      <b>${p.name}</b>
-      <div>${vars.map(v=>`
-        <button class="v-btn ${v.id===d.id?'selected':''}" ${v.stock<=0?'disabled':''}
-        onclick="selectVar(this,'${v.id}','${v.price}','${v.variant_value}',${v.stock})">${v.variant_value}</button>`).join("")}</div>
-      <div class="price-area">
-        <span class="price-val">${d.price} TL</span>
-        <button class="buy-btn" ${out?'disabled':''}
-          data-vid="${d.id}" data-price="${d.price}" data-name="${d.variant_value}" data-stock="${d.stock}"
-          onclick="addToCart('${p.id}','${p.name}',this)">
-          ${out?'TÜKENDİ':'EKLE'}
-        </button>
-      </div>`;
-    product-grid.appendChild(card);
-  });
-}
+    window.remove = (i) => { cart.splice(i, 1); localStorage.setItem('aysima_cart', JSON.stringify(cart)); window.updateCartUI(); };
+    window.search = (t) => { renderProducts(masterData.filter(p => p.name.toLowerCase().includes(t.toLowerCase()))); };
 
-window.selectVar=(b,id,price,name,stock)=>{
-  const c=b.closest(".card");
-  c.querySelectorAll(".v-btn").forEach(x=>x.classList.remove("selected"));
-  b.classList.add("selected");
-  c.querySelector(".price-val").textContent=price+" TL";
-  const btn=c.querySelector(".buy-btn");
-  btn.dataset.vid=id;btn.dataset.price=price;btn.dataset.name=name;btn.dataset.stock=stock;
-  btn.disabled=stock<=0;btn.textContent=stock<=0?"TÜKENDİ":"EKLE";
-}
+    async function bootstrap() {
+      const { data: cats } = await _supabase.from("categories").select("*");
+      cats?.forEach(c => {
+        const a = document.createElement("a");
+        a.className = "nav-link"; a.textContent = c.name.toUpperCase();
+        a.onclick = () => fetchProducts(c.id, c.name);
+        document.getElementById("navbar").appendChild(a);
+      });
+      fetchProducts();
+      window.updateCartUI();
+    }
 
-function addToCart(pid,pname,btn){
-  if(btn.dataset.stock<=0) return;
-  const v=cart.find(i=>i.pid===pid&&i.vid===btn.dataset.vid);
-  v?v.qty++:cart.push({pid,pname,vid:btn.dataset.vid,vname:btn.dataset.name,price:+btn.dataset.price,qty:1});
-  localStorage.setItem("aysima_cart",JSON.stringify(cart));
-  updateCartUI();toggleCart(true);
-}
+    async function fetchProducts(cid = null, cname = "Tüm Ürünler") {
+      document.getElementById("page-name").textContent = cname;
+      let query = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
+      if(cid) query = query.eq("category_id", cid);
+      const { data } = await query;
+      masterData = data || [];
+      renderProducts(masterData);
+    }
 
-function updateCartUI(){
-  cart-items.innerHTML="";
-  let t=0,c=0;
-  cart.forEach((i,idx)=>{
-    t+=i.price*i.qty;c+=i.qty;
-    cart-items.innerHTML+=`${i.pname} (${i.vname}) x${i.qty}<br>`;
-  });
-  cart-total.textContent=t.toFixed(2);
-  cart-count.textContent=c;
-}
+    function renderProducts(list) {
+      const container = document.getElementById("product-grid");
+      container.innerHTML = "";
+      list.forEach(p => {
+        const vars = p.product_variants.filter(v => v.is_active);
+        const def = vars[0] || {price: 0, variant_value: '-', id: '', stock: 0};
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <div style="height:120px; background:#f9f9f9; margin-bottom:10px; display:flex; align-items:center; justify-content:center;">Görsel</div>
+          <div style="font-weight:600; font-size:14px;">${p.name}</div>
+          <div style="margin:10px 0;">
+            ${vars.map(v => `<button class="v-btn ${v.id===def.id?'selected':''}" 
+              onclick="window.updateCard(this, '${v.price}', '${v.id}', '${v.variant_value}', ${v.stock})">${v.variant_value}</button>`).join('')}
+          </div>
+          <div style="margin-top:auto;">
+            <div class="price-val">${def.price} TL</div>
+            <button class="buy-btn" ${def.stock <= 0 ? "disabled" : ""} 
+              onclick="window.addToCart('${p.id}', '${p.name}', this)" 
+              data-v-id="${def.id}" data-v-price="${def.price}" data-v-name="${def.variant_value}">
+              ${def.stock <= 0 ? "TÜKENDİ" : "EKLE"}
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
 
-function toggleCart(s){
-  cart-sidebar.classList.toggle("open",s);
-  overlay.classList.toggle("active",s);
-}
-
-function search(t){
-  t=t.toLowerCase();
-  render(masterData.filter(p=>p.name.toLowerCase().includes(t)));
-}
-
-bootstrap();
-</script>
+    bootstrap();
+  </script>
 </body>
 </html>
