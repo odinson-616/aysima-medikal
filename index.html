@@ -8,56 +8,43 @@
     :root { --bordo: #7b1e2b; --gri-arka: #f7f7f7; --text: #333; }
     body { margin: 0; font-family: 'Inter', sans-serif; background-color: var(--gri-arka); color: var(--text); }
     
-    /* Header & Sepet İkonu */
     header { background-color: var(--bordo); color: white; padding: 12px 5%; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .logo-area { display: flex; align-items: center; gap: 12px; }
     header img { height: 40px; background: white; border-radius: 4px; padding: 2px; }
-    .cart-trigger { cursor: pointer; position: relative; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; transition: 0.3s; }
-    .cart-trigger:hover { background: rgba(255,255,255,0.2); }
-    .cart-count { background: white; color: var(--bordo); padding: 2px 7px; border-radius: 50%; font-size: 12px; font-weight: bold; margin-left: 5px; }
+    .cart-trigger { cursor: pointer; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px; transition: 0.3s; display: flex; align-items: center; }
+    .cart-count { background: white; color: var(--bordo); padding: 2px 7px; border-radius: 50%; font-size: 12px; font-weight: bold; margin-left: 8px; }
 
-    /* Layout */
     .container { display: flex; max-width: 1300px; margin: 25px auto; padding: 0 20px; gap: 25px; }
-    
-    /* Sidebar */
-    aside { width: 260px; background: white; border-radius: 12px; padding: 20px; height: fit-content; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 90px; }
+    aside { width: 250px; background: white; border-radius: 12px; padding: 20px; height: fit-content; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .category-list { list-style: none; padding: 0; margin: 0; }
     .category-list li { padding: 12px; cursor: pointer; border-radius: 8px; font-size: 14px; transition: 0.2s; margin-bottom: 4px; }
     .category-list li.active { background: #fff5f6; color: var(--bordo); font-weight: 600; border-left: 3px solid var(--bordo); }
 
-    /* Ürün Kartları */
     main { flex: 1; }
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-    .product-card { background: white; border-radius: 10px; border: 1px solid #eee; display: flex; flex-direction: column; transition: 0.3s; }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; }
+    .product-card { background: white; border-radius: 10px; border: 1px solid #eee; display: flex; flex-direction: column; transition: 0.3s; padding-bottom: 15px; overflow: hidden; }
     .product-card:hover { box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
     
-    .img-container { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #aaa; text-align: center; }
+    .img-container { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #aaa; border-bottom: 1px solid #f0f0f0; }
 
     .card-body { padding: 15px; flex-grow: 1; }
-    .product-title { font-size: 15px; font-weight: 600; margin: 5px 0; color: #222; }
+    .product-title { font-size: 16px; font-weight: 600; margin-bottom: 10px; color: #222; }
     
-    /* Varyant Seçimi Styles */
-    .variant-selector { margin: 10px 0; display: flex; flex-wrap: wrap; gap: 5px; }
-    .v-option { border: 1px solid #ddd; padding: 5px 10px; border-radius: 5px; font-size: 12px; cursor: pointer; transition: 0.2s; }
+    .variant-selector { margin: 15px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+    .v-option { border: 1.5px solid #ddd; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: 0.2s; background: white; }
     .v-option:hover { border-color: var(--bordo); }
     .v-option.selected { background: var(--bordo); color: white; border-color: var(--bordo); }
-    .v-option.out { opacity: 0.5; cursor: not-allowed; background: #eee; }
 
-    .price-display { font-size: 18px; font-weight: 800; color: var(--bordo); margin: 10px 0; }
-    .btn-add-cart { width: 100%; background: var(--bordo); color: white; border: none; padding: 10px; border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; }
-    .btn-add-cart:disabled { background: #ccc; cursor: not-allowed; }
+    .price-display { font-size: 22px; font-weight: 800; color: var(--bordo); margin: 15px 0; display: block; }
+    .btn-add-cart { width: 100%; background: var(--bordo); color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 14px; }
+    .btn-add-cart:hover { filter: brightness(1.2); }
 
-    /* Sepet Paneli (Slide-out) */
     #cart-panel { position: fixed; right: -400px; top: 0; width: 350px; height: 100%; background: white; box-shadow: -5px 0 15px rgba(0,0,0,0.1); z-index: 2000; transition: 0.4s; padding: 25px; display: flex; flex-direction: column; }
     #cart-panel.open { right: 0; }
-    .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; margin-bottom: 15px; }
-    .cart-items { flex-grow: 1; overflow-y: auto; }
-    .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; font-size: 14px; }
-    .cart-footer { margin-top: 20px; border-top: 2px solid #f4f4f4; padding-top: 15px; }
-    .total-price { font-size: 20px; font-weight: bold; text-align: right; margin-bottom: 15px; }
-    .btn-checkout { width: 100%; background: #27ae60; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
-
-    @media (max-width: 768px) { .container { flex-direction: column; } aside { width: auto; } #cart-panel { width: 100%; right: -100%; } }
+    .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f4f4f4; padding-bottom: 15px; }
+    .cart-items { flex-grow: 1; overflow-y: auto; margin: 15px 0; }
+    .cart-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 14px; }
+    .btn-checkout { width: 100%; background: #27ae60; color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -73,28 +60,17 @@
   </header>
 
   <div id="cart-panel">
-    <div class="cart-header">
-      <h2 style="margin:0; font-size: 18px;">Sepetiniz</h2>
-      <span style="cursor:pointer; font-size: 24px;" onclick="toggleCart()">×</span>
-    </div>
-    <div class="cart-items" id="cart-items">
-      </div>
+    <div class="cart-header"><h2>Sepetiniz</h2><span style="cursor:pointer; font-size: 28px;" onclick="toggleCart()">×</span></div>
+    <div class="cart-items" id="cart-items"></div>
     <div class="cart-footer">
-      <div class="total-price">Toplam: <span id="cart-total">0.00</span> TL</div>
-      <button class="btn-checkout" onclick="alert('Ödeme sistemi yakında eklenecek! Önce üyelik sistemini kuracağız.')">Siparişi Tamamla</button>
+      <div style="font-size: 18px; font-weight: bold; text-align: right; margin-bottom: 15px;">Toplam: <span id="cart-total">0.00</span> TL</div>
+      <button class="btn-checkout">Siparişi Tamamla</button>
     </div>
   </div>
 
   <div class="container">
-    <aside>
-      <ul class="category-list" id="category-menu">
-        <li class="active" onclick="location.reload()">Tüm Ürünler</li>
-      </ul>
-    </aside>
-
-    <main>
-      <div class="product-grid" id="product-list">Yükleniyor...</div>
-    </main>
+    <aside><ul class="category-list" id="category-menu"><li class="active" onclick="location.reload()">Tüm Ürünler</li></ul></aside>
+    <main><div class="product-grid" id="product-list">Yükleniyor...</div></main>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -105,7 +81,6 @@
 
     let cart = JSON.parse(localStorage.getItem('aysima_cart')) || [];
 
-    // 1. Ürünleri ve Kategorileri Yükle
     async function init() {
       const { data: cats } = await _supabase.from("categories").select("*");
       cats?.forEach(cat => {
@@ -121,97 +96,72 @@
     async function loadProducts(catId = null) {
       const container = document.getElementById("product-list");
       container.innerHTML = "Yükleniyor...";
-      
       let query = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
       if(catId) query = query.eq("category_id", catId);
-      
       const { data: products } = await query;
       container.innerHTML = "";
 
       products?.forEach(p => {
-        const card = document.createElement("div");
-        card.className = "product-card";
+        const productCard = document.createElement("div");
+        productCard.className = "product-card";
         
-        // İlk varyantı varsayılan seç
-        let selectedVariant = p.product_variants.find(v => v.stock > 0) || p.product_variants[0];
+        // Stokta olan ilk varyantı varsayılan seç
+        const activeVariants = p.product_variants.filter(v => v.is_active);
+        const defaultVariant = activeVariants.find(v => v.stock > 0) || activeVariants[0];
 
-        const updateCardPrice = (variant, cardElement) => {
-          cardElement.querySelector(".price-display").textContent = `${variant.price} TL`;
-          cardElement.querySelector(".btn-add-cart").disabled = variant.stock <= 0;
-          cardElement.querySelector(".btn-add-cart").textContent = variant.stock > 0 ? "Sepete Ekle" : "Tükendi";
-        };
-
-        let variantsButtons = p.product_variants.map(v => `
-          <div class="v-option ${v.id === selectedVariant.id ? 'selected' : ''} ${v.stock <= 0 ? 'out' : ''}" 
-               onclick="selectVariant(this, '${v.id}', ${v.price}, ${v.stock})">
+        let variantsHtml = activeVariants.map(v => `
+          <button class="v-option ${v.id === defaultVariant.id ? 'selected' : ''}" 
+                  onclick="updateVariant(this, '${v.price}', '${v.id}', '${v.variant_value}')">
             ${v.variant_value}
-          </div>
+          </button>
         `).join('');
 
-        card.innerHTML = `
+        productCard.innerHTML = `
           <div class="img-container">Görsel Hazırlanıyor</div>
           <div class="card-body">
             <div class="product-title">${p.name}</div>
-            <div class="variant-selector">${variantsButtons}</div>
-            <div class="price-display">${selectedVariant.price} TL</div>
-            <button class="btn-add-cart" ${selectedVariant.stock <= 0 ? 'disabled' : ''} 
-                    onclick="addToCart('${p.id}', '${p.name}')">
-              ${selectedVariant.stock > 0 ? 'Sepete Ekle' : 'Tükendi'}
+            <div class="variant-selector">${variantsHtml}</div>
+            <span class="price-display">${defaultVariant.price} TL</span>
+            <button class="btn-add-cart" 
+                    onclick="addToCart('${p.id}', '${p.name}', this)"
+                    data-v-id="${defaultVariant.id}" 
+                    data-v-name="${defaultVariant.variant_value}" 
+                    data-v-price="${defaultVariant.price}">
+              Sepete Ekle
             </button>
           </div>
         `;
-        
-        // Varyant seçme fonksiyonunu karta özel tanımla
-        card.querySelectorAll('.v-option').forEach(opt => {
-          opt.addEventListener('click', function() {
-            if(this.classList.contains('out')) return;
-            card.querySelectorAll('.v-option').forEach(el => el.classList.remove('selected'));
-            this.classList.add('selected');
-            const newPrice = this.getAttribute('data-price');
-            card.querySelector('.price-display').textContent = this.innerText.split('-')[1] || this.innerText; // Basitleştirilmiş
-            // Seçili varyant ID'sini saklamak için butonun üstüne yazalım
-            card.querySelector('.btn-add-cart').setAttribute('data-v-id', this.getAttribute('data-id'));
-          });
-        });
-
-        // Butona ilk varyant ID'sini ata
-        card.querySelector('.btn-add-cart').setAttribute('data-v-id', selectedVariant.id);
-        card.querySelector('.btn-add-cart').setAttribute('data-v-name', selectedVariant.variant_value);
-        card.querySelector('.btn-add-cart').setAttribute('data-v-price', selectedVariant.price);
-
-        container.appendChild(card);
+        container.appendChild(productCard);
       });
     }
 
-    // Varyant Seçimi Yardımcı Fonksiyon
-    window.selectVariant = (el, id, price, stock) => {
-      if(stock <= 0) return;
-      const card = el.closest('.product-card');
+    // Varyant değiştiğinde fiyatı ve butondaki veriyi güncelleyen fonksiyon
+    window.updateVariant = (btn, price, vId, vName) => {
+      const card = btn.closest('.product-card');
       card.querySelectorAll('.v-option').forEach(opt => opt.classList.remove('selected'));
-      el.classList.add('selected');
+      btn.classList.add('selected');
+      
+      // Fiyatı güncelle
       card.querySelector('.price-display').textContent = `${price} TL`;
-      const btn = card.querySelector('.btn-add-cart');
-      btn.setAttribute('data-v-id', id);
-      btn.setAttribute('data-v-price', price);
-      btn.setAttribute('data-v-name', el.textContent.trim());
+      
+      // Sepete ekle butonundaki gizli verileri güncelle
+      const addBtn = card.querySelector('.btn-add-cart');
+      addBtn.setAttribute('data-v-id', vId);
+      addBtn.setAttribute('data-v-name', vName);
+      addBtn.setAttribute('data-v-price', price);
     };
 
-    // 2. Sepet İşlemleri
-    function addToCart(pId, pName) {
-      const btn = event.target;
+    function addToCart(pId, pName, btn) {
       const vId = btn.getAttribute('data-v-id');
       const vName = btn.getAttribute('data-v-name');
       const vPrice = parseFloat(btn.getAttribute('data-v-price'));
 
       const existing = cart.find(item => item.vId === vId);
-      if(existing) {
-        existing.qty += 1;
-      } else {
-        cart.push({ pId, pName, vId, vName, vPrice, qty: 1 });
-      }
+      if(existing) existing.qty += 1;
+      else cart.push({ pId, pName, vId, vName, vPrice, qty: 1 });
       
       saveCart();
-      toggleCart(true); // Sepeti aç
+      toggleCart(true);
     }
 
     function saveCart() {
@@ -223,40 +173,28 @@
       const list = document.getElementById("cart-items");
       const count = document.getElementById("cart-count");
       const total = document.getElementById("cart-total");
-      
       list.innerHTML = "";
-      let totalSum = 0;
-      let totalQty = 0;
+      let totalSum = 0; let totalQty = 0;
 
       cart.forEach((item, index) => {
         totalSum += item.vPrice * item.qty;
         totalQty += item.qty;
         list.innerHTML += `
           <div class="cart-item">
-            <div>
-              <strong>${item.pName}</strong><br>
-              <small>${item.vName} x ${item.qty}</small>
-            </div>
-            <div>
-              ${(item.vPrice * item.qty).toFixed(2)} TL
-              <button onclick="removeFromCart(${index})" style="margin-left:10px; color:red; border:none; background:none; cursor:pointer;">🗑️</button>
-            </div>
-          </div>
-        `;
+            <div><strong>${item.pName}</strong><br><small>${item.vName} x ${item.qty}</small></div>
+            <div>${(item.vPrice * item.qty).toFixed(2)} TL 
+            <button onclick="removeFromCart(${index})" style="color:red; border:none; background:none; cursor:pointer; margin-left:10px;">🗑️</button></div>
+          </div>`;
       });
-
       count.textContent = totalQty;
       total.textContent = totalSum.toFixed(2);
     }
 
-    function removeFromCart(index) {
-      cart.splice(index, 1);
-      saveCart();
-    }
-
-    function toggleCart(forceOpen = false) {
+    function removeFromCart(index) { cart.splice(index, 1); saveCart(); }
+    function toggleCart(open = null) {
       const panel = document.getElementById("cart-panel");
-      if(forceOpen) panel.classList.add("open");
+      if(open === true) panel.classList.add("open");
+      else if(open === false) panel.classList.remove("open");
       else panel.classList.toggle("open");
     }
 
