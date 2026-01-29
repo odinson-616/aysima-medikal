@@ -1,21 +1,10 @@
 // ============================================
 // SUPABASE CONFIGURATION
 // ============================================
-// Sadece bir kere deklarasyon yap!
-if (typeof window.supabase === 'undefined') {
-window.supabase = null;
-}
 const SUPABASE_URL = 'https://eqpioawtdwkaeuxpfspt.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVxcGlvYXd0ZHdrYWV1eHBmc3B0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzczMTk3OTksImV4cCI6MjA1Mjg5NTc5OX0.CvcbovBdNk9gLKZ4W-WeyQkPUIf6W55D6M7QIcTzIxs';
 // Initialize Supabase
-window.supabase = window.supabase || {
-createClient: function(url, key) {
-return supabase.createClient(url, key);
-}
-};
-// Gerçek Supabase client oluştur
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-window.supabase = supabaseClient;
+window.supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // ============================================
 // APP STATE (GLOBAL)
 // ============================================
