@@ -3,90 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AYSİMA MEDİKAL | Profesyonel Sağlık Çözümleri</title>
+  <title>AYSİMA MEDİKAL | Sağlık Marketiniz</title>
   <style>
-    :root { --primary: #0066cc; --secondary: #f39c12; --bordo: #7b1e2b; --light-bg: #f8f9fa; }
-    body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff; color: #333; }
+    :root { --bordo: #7b1e2b; --mavi: #0056b3; --arka-plan: #f4f6f9; --border: #e1e4e8; }
+    body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background-color: var(--arka-plan); color: #333; }
 
-    /* Üst Duyuru Barı */
-    .top-notice { background: var(--bordo); color: white; text-align: center; padding: 8px; font-size: 13px; font-weight: bold; }
+    /* Üst Bilgi Çubuğu */
+    .top-bar { background: #000; color: #fff; text-align: center; padding: 7px 0; font-size: 12px; letter-spacing: 1px; }
 
-    /* Ana Header Alanı */
-    header { padding: 20px 5%; display: flex; align-items: center; justify-content: space-between; gap: 20px; border-bottom: 1px solid #eee; }
-    .logo { font-size: 24px; font-weight: 800; color: var(--bordo); text-decoration: none; min-width: 150px; }
+    /* Ana Header */
+    header { background: #fff; padding: 15px 5%; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 1000; }
+    .logo { font-size: 26px; font-weight: 900; color: var(--bordo); text-decoration: none; letter-spacing: -1px; }
     
-    .search-bar { flex-grow: 1; max-width: 600px; display: flex; position: relative; }
-    .search-bar input { width: 100%; padding: 12px 20px; border: 2px solid #ddd; border-radius: 5px 0 0 5px; outline: none; transition: 0.3s; }
-    .search-bar input:focus { border-color: var(--bordo); }
-    .search-btn { background: var(--bordo); color: white; border: none; padding: 0 25px; border-radius: 0 5px 5px 0; cursor: pointer; }
+    .search-box { flex-grow: 1; max-width: 550px; margin: 0 30px; display: flex; }
+    .search-box input { width: 100%; padding: 12px 15px; border: 1px solid var(--border); border-radius: 4px 0 0 4px; outline: none; background: #f9f9f9; }
+    .search-box button { background: var(--bordo); color: white; border: none; padding: 0 20px; border-radius: 0 4px 4px 0; cursor: pointer; }
 
-    .header-icons { display: flex; gap: 20px; align-items: center; }
-    .icon-box { text-align: center; cursor: pointer; color: #555; position: relative; text-decoration: none; }
-    .icon-box span { display: block; font-size: 11px; margin-top: 3px; }
-    .badge { position: absolute; top: -5px; right: 5px; background: var(--secondary); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
+    .user-actions { display: flex; gap: 25px; align-items: center; }
+    .action-item { text-align: center; cursor: pointer; text-decoration: none; color: #444; position: relative; }
+    .action-item i { font-size: 20px; display: block; }
+    .action-item span { font-size: 11px; font-weight: 600; }
+    .cart-badge { position: absolute; top: -8px; right: 0; background: var(--bordo); color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; }
 
-    /* Yatay Kategori Menüsü */
-    .nav-menu { background: #fdfdfd; border-bottom: 2px solid #eee; overflow-x: auto; white-space: nowrap; display: flex; justify-content: center; padding: 0 5%; }
-    .nav-item { padding: 15px 20px; color: #444; text-decoration: none; font-weight: 600; font-size: 14px; cursor: pointer; transition: 0.2s; border-bottom: 3px solid transparent; }
-    .nav-item:hover, .nav-item.active { color: var(--bordo); border-bottom-color: var(--bordo); }
+    /* Yatay Kategori Navigasyonu */
+    nav { background: #fff; border-bottom: 1px solid var(--border); display: flex; justify-content: center; overflow-x: auto; white-space: nowrap; }
+    .nav-link { padding: 15px 25px; text-decoration: none; color: #555; font-size: 13px; font-weight: 700; transition: 0.3s; border-bottom: 3px solid transparent; text-transform: uppercase; }
+    .nav-link:hover, .nav-link.active { color: var(--bordo); border-bottom-color: var(--bordo); }
 
-    /* Ürün Alanı */
-    .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
-    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 25px; }
+    /* Ana İçerik */
+    .content { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #ddd; padding-bottom: 10px; }
+    .section-header h2 { margin: 0; font-size: 22px; color: #222; }
 
-    /* Ürün Kartı */
-    .product-card { border: 1px solid #eee; border-radius: 8px; transition: 0.3s; padding: 15px; display: flex; flex-direction: column; position: relative; }
-    .product-card:hover { box-shadow: 0 10px 20px rgba(0,0,0,0.08); transform: translateY(-3px); }
-    .img-wrap { width: 100%; aspect-ratio: 1/1; background: #f9f9f9; border-radius: 5px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; }
-    .brand { color: #999; font-size: 11px; text-transform: uppercase; margin-bottom: 5px; }
-    .title { font-weight: 600; font-size: 14px; height: 40px; overflow: hidden; margin-bottom: 10px; }
+    /* Ürün Kartı Tasarımı (Bumedikal Tarzı) */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 15px; display: flex; flex-direction: column; transition: 0.3s; }
+    .card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-color: var(--bordo); }
     
-    .variant-btns { display: flex; gap: 5px; margin-bottom: 15px; flex-wrap: wrap; }
-    .v-btn { border: 1px solid #ddd; padding: 4px 8px; border-radius: 4px; font-size: 12px; cursor: pointer; background: white; }
-    .v-btn.active { border-color: var(--bordo); background: #fff5f6; color: var(--bordo); }
-    
-    .price { font-size: 20px; font-weight: 800; color: var(--bordo); margin-bottom: 15px; }
-    .add-btn { background: var(--bordo); color: white; border: none; padding: 10px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    .add-btn:hover { opacity: 0.9; }
+    .img-area { background: #fdfdfd; width: 100%; aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; margin-bottom: 15px; border-radius: 4px; overflow: hidden; }
+    .img-area img { max-width: 90%; max-height: 90%; object-fit: contain; }
 
-    /* Mobil Düzenlemeler */
+    .card-title { font-size: 14px; font-weight: 600; color: #333; margin-bottom: 10px; height: 38px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    
+    .variants { display: flex; gap: 6px; margin-bottom: 15px; flex-wrap: wrap; }
+    .v-btn { border: 1px solid #ddd; background: #fff; padding: 4px 8px; border-radius: 3px; font-size: 11px; cursor: pointer; font-weight: 600; color: #666; }
+    .v-btn.selected { border-color: var(--bordo); color: var(--bordo); background: #fff5f6; }
+
+    .price-area { margin-top: auto; border-top: 1px solid #f0f0f0; padding-top: 12px; display: flex; justify-content: space-between; align-items: center; }
+    .price-val { font-size: 20px; font-weight: 800; color: var(--bordo); }
+    .buy-btn { background: var(--bordo); color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px; }
+    .buy-btn:hover { background: #5a151f; }
+
+    /* Mobil */
     @media (max-width: 768px) {
-      header { flex-direction: column; padding: 15px; }
-      .search-bar { order: 3; width: 100%; margin: 10px 0; }
-      .nav-menu { justify-content: flex-start; }
-      .product-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .price { font-size: 17px; }
+      header { flex-wrap: wrap; padding: 10px 5%; }
+      .search-box { order: 3; width: 100%; margin: 15px 0 5px 0; }
+      .logo { font-size: 20px; }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .nav-link { padding: 12px 15px; font-size: 11px; }
+      .price-val { font-size: 16px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="top-notice">15.000 TL ÜZERİ ALIŞVERİŞLERDE ÜCRETSİZ KARGO!</div>
+  <div class="top-bar">STOKTAN AYNI GÜN KARGO - GÜVENLİ ALIŞVERİŞ</div>
 
   <header>
-    <a href="#" class="logo">AYSİMA MEDİKAL</a>
+    <a href="/" class="logo">AYSİMA MEDİKAL</a>
     
-    <div class="search-bar">
-      <input type="text" id="searchInp" placeholder="Aradığınız ürünü yazınız..." onkeyup="handleSearch(this.value)">
-      <button class="search-btn">🔍</button>
+    <div class="search-box">
+      <input type="text" placeholder="Ürün, marka veya kategori ara..." onkeyup="search(this.value)">
+      <button>ARA</button>
     </div>
 
-    <div class="header-icons">
-      <div class="icon-box">👤<span>Giriş Yap</span></div>
-      <div class="icon-box" onclick="alert('Sepet açılıyor...')">
-        🛒<span class="badge" id="cart-count">0</span>
-        <span>Sepetim</span>
+    <div class="user-actions">
+      <div class="action-item">👤<span>HESABIM</span></div>
+      <div class="action-item" onclick="alert('Sepet açılıyor...')">
+        🛒<span class="cart-badge" id="cart-count">0</span>
+        <span>SEPETİM</span>
       </div>
     </div>
   </header>
 
-  <nav class="nav-menu" id="cat-nav">
-    <div class="nav-item active" onclick="location.reload()">TÜM ÜRÜNLER</div>
-    </nav>
+  <nav id="navbar">
+    <a href="#" class="nav-link active" onclick="location.reload()">TÜM ÜRÜNLER</a>
+  </nav>
 
-  <div class="container">
-    <h2 id="cat-title" style="font-size: 20px; border-left: 5px solid var(--bordo); padding-left: 15px; margin-bottom: 25px;">Tüm Ürünler</h2>
-    <div class="product-grid" id="product-list">Yükleniyor...</div>
+  <div class="content">
+    <div class="section-header">
+      <h2 id="page-name">Tüm Ürünler</h2>
+    </div>
+    
+    <div class="grid" id="product-grid">Yükleniyor...</div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -94,70 +103,79 @@
     const supabaseUrl = "https://eqpioawtdwkaeuxpfspt.supabase.co";
     const supabaseKey = "sb_publishable_j1qHO04E6qvGJxoQksdHlA_p89plyCA";
     const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
-    let allProducts = [];
+    let masterData = [];
 
-    async function start() {
-      // Kategorileri çek ve yatay menüye diz
+    async function bootstrap() {
       const { data: cats } = await _supabase.from("categories").select("*");
       cats?.forEach(c => {
-        const item = document.createElement("div");
-        item.className = "nav-item";
-        item.textContent = c.name.toUpperCase();
-        item.onclick = () => {
-          document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-          item.classList.add('active');
-          load(c.id, c.name);
+        const a = document.createElement("a");
+        a.className = "nav-link";
+        a.textContent = c.name;
+        a.href = "#";
+        a.onclick = (e) => {
+          e.preventDefault();
+          document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+          a.classList.add('active');
+          fetchProducts(c.id, c.name);
         };
-        document.getElementById("cat-nav").appendChild(item);
+        document.getElementById("navbar").appendChild(a);
       });
-      load();
+      fetchProducts();
     }
 
-    async function load(catId = null, name = "Tüm Ürünler") {
-      document.getElementById("cat-title").textContent = name;
-      let q = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
-      if(catId) q = q.eq("category_id", catId);
-      const { data } = await q;
-      allProducts = data || [];
-      render(allProducts);
+    async function fetchProducts(cid = null, cname = "Tüm Ürünler") {
+      document.getElementById("page-name").textContent = cname;
+      const container = document.getElementById("product-grid");
+      container.innerHTML = "Ürünler yükleniyor...";
+      
+      let query = _supabase.from("products").select("*, product_variants(*)").eq("is_active", true);
+      if(cid) query = query.eq("category_id", cid);
+      
+      const { data } = await query;
+      masterData = data || [];
+      render(masterData);
     }
 
     function render(list) {
-      const grid = document.getElementById("product-list");
-      grid.innerHTML = "";
+      const container = document.getElementById("product-grid");
+      container.innerHTML = "";
       list.forEach(p => {
-        const vars = p.product_variants.filter(v => v.is_active);
-        const def = vars[0] || {price: 0, variant_value: '-'};
+        const activeV = p.product_variants.filter(v => v.is_active);
+        const def = activeV[0] || {price: 0, variant_value: '-'};
         
         const card = document.createElement("div");
-        card.className = "product-card";
+        card.className = "card";
         card.innerHTML = `
-          <div class="img-wrap">Görsel</div>
-          <div class="brand">Aysima Medikal</div>
-          <div class="title">${p.name}</div>
-          <div class="variant-btns">
-            ${vars.map(v => `<button class="v-btn ${v.id===def.id?'active':''}" onclick="change(this, '${v.price}')">${v.variant_value}</button>`).join('')}
+          <div class="img-area">
+            <span style="color:#ddd; font-size:12px;">Görsel Yakında</span>
           </div>
-          <div class="price">${def.price} TL</div>
-          <button class="add-btn">SEPETE EKLE</button>
+          <div class="card-title">${p.name}</div>
+          <div class="variants">
+            ${activeV.map(v => `<button class="v-btn ${v.id === def.id ? 'selected' : ''}" 
+                onclick="updatePrice(this, '${v.price}')">${v.variant_value}</button>`).join('')}
+          </div>
+          <div class="price-area">
+            <span class="price-val">${def.price} TL</span>
+            <button class="buy-btn">SEPETE EKLE</button>
+          </div>
         `;
-        grid.appendChild(card);
+        container.appendChild(card);
       });
     }
 
-    function change(btn, price) {
-      const card = btn.closest(".product-card");
-      card.querySelectorAll(".v-btn").forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      card.querySelector(".price").textContent = price + " TL";
+    function updatePrice(btn, pr) {
+      const card = btn.closest(".card");
+      card.querySelectorAll(".v-btn").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      card.querySelector(".price-val").textContent = pr + " TL";
     }
 
-    function handleSearch(val) {
-      const filtered = allProducts.filter(p => p.name.toLowerCase().includes(val.toLowerCase()));
+    function search(txt) {
+      const filtered = masterData.filter(p => p.name.toLowerCase().includes(txt.toLowerCase()));
       render(filtered);
     }
 
-    start();
+    bootstrap();
   </script>
 </body>
 </html>
