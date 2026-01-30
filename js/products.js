@@ -5,19 +5,22 @@ let activeCategoryId = null;
 // ÜRÜNLERİ YÜKLE
 // =============================
 async function loadProducts() {
+    console.log("🔄 Ürünler yükleniyor...");
+
     try {
         const { data, error } = await window.supabaseClient
             .from("products")
-            .select("*")
-            .eq("is_active", true);
+            .select("*");
 
         if (error) throw error;
+
+        console.log("✅ Ürünler alındı:", data);
 
         allProducts = data || [];
         renderProducts(allProducts);
 
     } catch (err) {
-        console.error("Ürün yükleme hatası:", err);
+        console.error("❌ Ürün yükleme hatası:", err);
         document.getElementById("product-grid").innerHTML =
             "<p style='color:red;'>Ürünler yüklenemedi</p>";
     }
@@ -38,8 +41,8 @@ function filterByCategory(id, name) {
 function applyFilters() {
     let filtered = [...allProducts];
 
-    const min = parseFloat(document.getElementById("min-price").value);
-    const max = parseFloat(document.getElementById("max-price").value);
+    const min = parseFloat(document.getElementById("min-price")?.value);
+    const max = parseFloat(document.getElementById("max-price")?.value);
 
     if (activeCategoryId) {
         filtered = filtered.filter(p => p.category_id === activeCategoryId);
@@ -60,8 +63,15 @@ function applyFilters() {
 // RENDER
 // =============================
 function renderProducts(products) {
+    console.log("🎨 Render edilen ürün sayısı:", products.length);
+
     const grid = document.getElementById("product-grid");
     const count = document.getElementById("product-count");
+
+    if (!grid) {
+        console.error("❌ product-grid bulunamadı!");
+        return;
+    }
 
     grid.innerHTML = "";
 
@@ -82,7 +92,7 @@ function renderProducts(products) {
             <div class="product-title">${p.name}</div>
             <div class="product-footer">
                 <span class="price">${p.price} ₺</span>
-                <button onclick="addToCart('${p.id}')">Sepete Ekle</button>
+                <button onclick="alert('Sepete eklendi')">Sepete Ekle</button>
             </div>
         `;
 
