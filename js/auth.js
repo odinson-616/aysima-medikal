@@ -32,7 +32,6 @@ async function handleLogin(event) {
         }
 
         window.APP.currentUser = data.user;
-        if (typeof setLocalStorage === "function") setLocalStorage('user', data.user);
         
         statusDiv.textContent = 'Giriş başarılı!';
         statusDiv.style.color = 'green';
@@ -74,14 +73,11 @@ async function handleSignup(event) {
     try {
         signupBtn.disabled = true;
         signupBtn.textContent = 'Kayıt yapılıyor...';
-        statusDiv.textContent = '';
 
         const { data, error } = await window.supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: { name: name }
-            }
+            options: { data: { name: name } }
         });
 
         if (error) {
@@ -94,16 +90,6 @@ async function handleSignup(event) {
         statusDiv.style.color = 'green';
         
         window.APP.currentUser = data.user;
-        if (typeof setLocalStorage === "function") setLocalStorage('user', data.user);
-
-        // Profil tablosu varsa kayıt ekle (Opsiyonel)
-        try {
-            await window.supabase.from('profiles').insert({
-                id: data.user.id,
-                name: name,
-                email: email
-            });
-        } catch (e) { console.log("Profil tablosu bulunamadı, geçiliyor."); }
 
         setTimeout(() => {
             closeAuth();
@@ -119,11 +105,10 @@ async function handleSignup(event) {
 }
 
 /** Çıkış İşlemi */
-async function logout() {
+async function handleLogout() {
     try {
         await window.supabase.auth.signOut();
         window.APP.currentUser = null;
-        if (typeof removeLocalStorage === "function") removeLocalStorage('user');
         location.reload();
     } catch (err) {
         console.error('Çıkış hatası:', err.message);
@@ -133,19 +118,36 @@ async function logout() {
 /** Kullanıcı Arayüzünü Güncelle */
 function updateUserUI() {
     const userDisplay = document.getElementById('user-display');
+    const userDropdown = document.getElementById('user-dropdown');
     const checkoutBtn = document.getElementById('checkout-btn');
 
     if (window.APP.currentUser) {
+        // Giriş yapmış kullanıcı
         const name = window.APP.currentUser.user_metadata?.name || window.APP.currentUser.email.split('@')[0];
         userDisplay.textContent = `👤 ${name}`;
-        userDisplay.onclick = () => { if(confirm("Çıkış yapmak istiyor musunuz?")) logout(); };
+        
+        // Basınca soru sormasın, sadece menüyü açıp kapatsın
+        userDisplay.onclick = (e) => {
+            e.stopPropagation();
+            const isVisible = userDropdown.style.display === 'block';
+            userDropdown.style.display = isVisible ? 'none' : 'block';
+        };
+
         if (checkoutBtn) checkoutBtn.disabled = false;
     } else {
+        // Giriş yapmamış kullanıcı
         userDisplay.textContent = '👤 Giriş Yap';
+        userDropdown.style.display = 'none';
         userDisplay.onclick = openAuth;
         if (checkoutBtn) checkoutBtn.disabled = true;
     }
 }
+
+/** Menü Dışına Tıklayınca Kapatma */
+document.addEventListener('click', () => {
+    const dropdown = document.getElementById('user-dropdown');
+    if (dropdown) dropdown.style.display = 'none';
+});
 
 /** Modal Kontrolleri */
 function openAuth() {
@@ -156,8 +158,6 @@ function openAuth() {
 function closeAuth() {
     document.getElementById('auth-overlay').style.display = 'none';
     document.getElementById('auth-modal').style.display = 'none';
-    const status = document.getElementById('auth-status');
-    if(status) status.textContent = '';
 }
 
 function switchAuthTab(tab) {
@@ -201,5 +201,4 @@ if (window.supabase) {
 }
 
 document.addEventListener('DOMContentLoaded', checkCurrentUser);
-console.log('✅ Auth loaded successfully');
-            
+console.log('✅ Auth system updated and loaded');
