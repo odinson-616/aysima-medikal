@@ -13,8 +13,12 @@
         #auth-modal.active { display: block !important; }
         #auth-overlay.active { display: block !important; }
         
-        /* Header Yapışkanlık Ayarı (Duyuru Bandı Altında Kalması İçin) */
+        /* Header Yapışkanlık Ayarı */
         header { top: 0 !important; }
+
+        /* Kullanıcı Menüsü Hover ve Dropdown Stili */
+        .user-menu-container:hover #user-dropdown { display: block !important; }
+        #user-dropdown li:hover { background: #f9f9f9; }
 
         /* Yatay Filtre Barı Mobil Uyumluluk */
         @media (max-width: 768px) {
@@ -26,6 +30,7 @@
             .horizontal-filter-bar div {
                 width: 100%;
                 justify-content: space-between;
+                display: flex;
             }
         }
     </style>
@@ -84,7 +89,23 @@
             <button>ARA</button>
         </div>
         <div class="header-right" style="display:flex; gap:15px; align-items:center;">
-            <button onclick="openAuth()" id="user-display" style="background:none; border:2px solid #7b1e2b; color:#7b1e2b; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">👤 Giriş Yap</button>
+            
+            <div class="user-menu-container" style="position: relative; display: inline-block;">
+                <button onclick="handleUserClick()" id="user-display" style="background:none; border:2px solid #7b1e2b; color:#7b1e2b; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">
+                    👤 Giriş Yap
+                </button>
+                <div id="user-dropdown" style="display:none; position:absolute; top:40px; right:0; background:white; border:1px solid #ddd; border-radius:8px; width:180px; box-shadow:0 5px 15px rgba(0,0,0,0.1); z-index:3005;">
+                    <ul style="list-style:none; padding:10px; margin:0;">
+                        <li onclick="location.href='profile.html'" style="padding:10px; cursor:pointer; font-size:14px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-box" style="color:#7b1e2b;"></i> Siparişlerim
+                        </li>
+                        <li onclick="handleLogout()" style="padding:10px; cursor:pointer; font-size:14px; color:red; font-weight:bold; display:flex; align-items:center; gap:8px;">
+                            <i class="fas fa-sign-out-alt"></i> Çıkış Yap
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
             <button onclick="toggleCart(true)" style="background:#7b1e2b; color:white; border:none; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">🛒 Sepet <span id="cart-count">0</span></button>
         </div>
     </header>
