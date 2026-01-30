@@ -47,12 +47,25 @@
 
 <div id="overlay" onclick="toggleCart(false)"></div>
 
+<!-- SEPET -->
 <div id="cart-sidebar">
     <div class="cart-header">
         <h2><i class="fas fa-shopping-cart"></i> Sepetim</h2>
         <button class="close-btn" onclick="toggleCart(false)">✕</button>
     </div>
+
     <div id="cart-items"></div>
+
+    <!-- 🔥 KUPON KODU ALANI -->
+    <div style="padding:10px 0;">
+        <input type="text" id="coupon-input" placeholder="İndirim kodu girin"
+            style="width:100%; padding:10px; border-radius:8px; border:1px solid #ddd;">
+        <button onclick="handleCoupon()" 
+            style="margin-top:8px; width:100%; padding:10px; background:#2c3e50; color:white; border:none; border-radius:8px; font-weight:700;">
+            Kodu Uygula
+        </button>
+    </div>
+
     <div class="cart-footer">
         <div class="cart-total">
             <strong>Toplam:</strong> <span id="cart-total">0.00</span> ₺
@@ -132,53 +145,20 @@
     
     <div id="auth-content"></div>
 </div>
-    
+
 <footer>
     <div class="footer-content">
-
-        <!-- Marka -->
         <div class="footer-section">
             <h4>AYSİMA MEDİKAL</h4>
-            <p>
-                Sağlık sektörüne yönelik kaliteli ve güvenilir medikal ürünleri,
-                uygun fiyat ve hızlı teslimat avantajıyla sunuyoruz.
-            </p>
-            <p style="margin-top:10px; font-weight:600;">
-                Güvenli alışveriş • Hızlı kargo • Müşteri memnuniyeti
-            </p>
+            <p>Sağlık sektörüne yönelik kaliteli ve güvenilir medikal ürünleri sunuyoruz.</p>
         </div>
 
-        <!-- İletişim -->
         <div class="footer-section">
             <h4>İletişim</h4>
-            <p>
-                <i class="fas fa-phone"></i>
-                <a href="tel:05054817318" style="text-decoration:none; color:inherit;">
-                    0505 481 73 18
-                </a>
-            </p>
-            <p>
-                <i class="fas fa-envelope"></i>
-                <a href="mailto:aysimamedikal@gmail.com" style="text-decoration:none; color:inherit;">
-                    aysimamedikal@gmail.com
-                </a>
-            </p>
-            <p>
-                <i class="fas fa-map-marker-alt"></i>
-                Türkiye
-            </p>
+            <p><i class="fas fa-phone"></i> 0505 481 73 18</p>
+            <p><i class="fas fa-envelope"></i> aysimamedikal@gmail.com</p>
         </div>
 
-        <!-- Müşteri Hizmetleri -->
-        <div class="footer-section">
-            <h4>Müşteri Hizmetleri</h4>
-            <p><a href="#" style="text-decoration:none; color:inherit;">Sipariş Takibi</a></p>
-            <p><a href="#" style="text-decoration:none; color:inherit;">İade & Değişim</a></p>
-            <p><a href="#" style="text-decoration:none; color:inherit;">Gizlilik Politikası</a></p>
-            <p><a href="#" style="text-decoration:none; color:inherit;">Mesafeli Satış Sözleşmesi</a></p>
-        </div>
-
-        <!-- Sosyal Medya -->
         <div class="footer-section">
             <h4>Sosyal Medya</h4>
             <div class="social-links">
@@ -189,39 +169,20 @@
                     <i class="fab fa-whatsapp"></i>
                 </a>
             </div>
-
-            <p style="margin-top:15px; font-size:13px;">
-                Sorularınız için WhatsApp hattımızdan bize ulaşabilirsiniz.
-            </p>
         </div>
-
     </div>
 
     <div class="footer-bottom">
-        <p>
-            &copy; 2026 Aysima Medikal | Tüm hakları saklıdır.
-        </p>
+        <p>&copy; 2026 Aysima Medikal | Tüm hakları saklıdır.</p>
     </div>
 </footer>
-<!-- Supabase kütüphanesi -->
+
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-<!-- Config önce yüklenmeli -->
 <script src="js/config.js"></script>
-
-<!-- Yardımcı fonksiyonlar -->
 <script src="js/utils.js"></script>
-
-<!-- Auth sistemi -->
 <script src="js/auth.js"></script>
-
-<!-- Sepet sistemi -->
 <script src="js/cart.js"></script>
-
-<!-- Ürün sistemi -->
 <script src="js/products.js"></script>
-
-<!-- Ana kontrol dosyası EN SON -->
 <script src="js/main.js"></script>
 
 </body>
