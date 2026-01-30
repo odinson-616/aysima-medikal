@@ -1,4 +1,10 @@
-// products.js - Ürün Yönetimi (FIXED)
+// products.js - Ürün Yönetimi (PRO / Safe Rendering)
+//
+// Notlar:
+// - "Sepete Ekle" butonu artık linkin içinde değil (tıklayınca sayfaya gitmez).
+// - UUID/string id uyumlu.
+// - XSS güvenli render (escapeHtml).
+// - Ürün kartına tıklayınca ürün-detay sayfasına gider.
 
 let allProducts = [];
 let activeCategoryId = null;
@@ -9,7 +15,7 @@ let activeCategoryId = null;
 async function loadProducts() {
     try {
         const client = window.supabaseClient || window.supabase;
-        if (!client) throw new Error("Supabase client yok");
+        if (!client) throw new Error("SupabaseClient bulunamadı");
 
         const { data, error } = await client
             .from("products")
@@ -19,17 +25,19 @@ async function loadProducts() {
         if (error) throw error;
 
         allProducts = data || [];
-        renderProducts(allProducts);
+        applyFilters(); // arama + kategori + fiyatı birlikte uygular
 
     } catch (err) {
         console.error("❌ Ürün yükleme hatası:", err);
+
         const grid = document.getElementById("product-grid");
         if (grid) {
             grid.innerHTML = `
-                <div style="grid-column:1/-1;text-align:center;padding:40px;color:#e74c3c;">
-                    <p style="font-size:18px;font-weight:700;">Ürünler yüklenemedi</p>
-                    <p style="color:#7f8c8d;">${err.message || ""}</p>
-                    <button onclick="loadProducts()" style="margin-top:15px;padding:10px 18px;background:#7b1e2b;color:#fff;border:none;border-radius:8px;cursor:pointer;">
+                <div style="grid-column:1/-1; text-align:center; padding:40px; color:#e74c3c;">
+                    <i class="fas fa-exclamation-triangle" style="font-size:48px; margin-bottom:15px;"></i>
+                    <p style="font-size:18px; font-weight:700;">Şu anda ürünler yüklenemiyor</p>
+                    <p style="color:#7f8c8d; margin-top:10px;">Lütfen sayfayı yenileyin veya birkaç dakika sonra tekrar deneyin.</p>
+                    <button onclick="loadProducts()" style="margin-top:18px; padding:10px 18px; background:var(--bordo); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:800;">
                         Tekrar Dene
                     </button>
                 </div>
@@ -42,9 +50,12 @@ async function loadProducts() {
 // KATEGORİ FİLTRE
 // =============================
 function filterByCategory(id, name) {
-    activeCategoryId = id;
+    activeCategoryId = id || null;
+
     const pageNameEl = document.getElementById("page-name");
-    if (pageNameEl) pageNameEl.innerText = name;
+    if (pageNameEl) pageNameEl.innerText = name || "Tüm Ürünler";
+
+    document.querySelectorAll("#category-list li").forEach(li => li.classList.remove("active"));
 
     applyFilters();
 }
@@ -52,42 +63,48 @@ function filterByCategory(id, name) {
 // =============================
 // ARAMA + FİLTRE
 // =============================
-function doSearch(query) {
-    let filtered = [...allProducts];
+function applyFilters() {
+    const searchInput = document.getElementById("search-input");
+    const query = searchInput ? searchInput.value : "";
+
+    let filtered = [...(allProducts || [])];
 
     if (query && query.trim()) {
-        const searchTerm = query.trim().toLowerCase();
+        const q = query.trim().toLowerCase();
         filtered = filtered.filter(p =>
-            (p.name || "").toLowerCase().includes(searchTerm) ||
-            ((p.description || "").toLowerCase().includes(searchTerm))
+            String(p.name || "").toLowerCase().includes(q) ||
+            String(p.description || "").toLowerCase().includes(q)
         );
     }
 
-    // Kategori filtresi (UUID/string uyumlu)
     if (activeCategoryId) {
         filtered = filtered.filter(p => String(p.category_id) === String(activeCategoryId));
     }
 
-    // Fiyat filtresi
-    const minPrice = parseFloat(document.getElementById("min-price")?.value || "");
-    const maxPrice = parseFloat(document.getElementById("max-price")?.value || "");
+    const minPriceEl = document.getElementById("min-price");
+    const maxPriceEl = document.getElementById("max-price");
 
-    if (!isNaN(minPrice)) filtered = filtered.filter(p => Number(p.price || 0) >= minPrice);
-    if (!isNaN(maxPrice)) filtered = filtered.filter(p => Number(p.price || 0) <= maxPrice);
+    const minPrice = minPriceEl ? Number(minPriceEl.value) : NaN;
+    const maxPrice = maxPriceEl ? Number(maxPriceEl.value) : NaN;
+
+    if (!Number.isNaN(minPrice) && minPrice > 0) filtered = filtered.filter(p => Number(p.price || 0) >= minPrice);
+    if (!Number.isNaN(maxPrice) && maxPrice > 0) filtered = filtered.filter(p => Number(p.price || 0) <= maxPrice);
 
     renderProducts(filtered);
 }
 
-function applyFilters() {
-    const query = document.getElementById("search-input")?.value || "";
-    doSearch(query);
+function doSearch(query) {
+    applyFilters();
 }
 
+// =============================
+// FİYAT FİLTRESİNİ TEMİZLE
+// =============================
 function clearPriceFilter() {
-    const minEl = document.getElementById("min-price");
-    const maxEl = document.getElementById("max-price");
-    if (minEl) minEl.value = "";
-    if (maxEl) maxEl.value = "";
+    const minPriceEl = document.getElementById("min-price");
+    const maxPriceEl = document.getElementById("max-price");
+    if (minPriceEl) minPriceEl.value = "";
+    if (maxPriceEl) maxPriceEl.value = "";
     applyFilters();
 }
 
@@ -97,63 +114,79 @@ function clearPriceFilter() {
 function renderProducts(products) {
     const grid = document.getElementById("product-grid");
     const countEl = document.getElementById("product-count");
+
     if (!grid) return;
 
     grid.innerHTML = "";
-    if (countEl) countEl.innerText = `${products.length} ürün`;
+
+    if (countEl) countEl.innerText = `${(products || []).length} ürün`;
 
     if (!products || products.length === 0) {
         grid.innerHTML = `
-            <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#7f8c8d;">
-                <i class="fas fa-search" style="font-size:56px;opacity:0.25;margin-bottom:16px;"></i>
-                <p style="font-size:18px;font-weight:700;margin:0;">Ürün bulunamadı</p>
-                <p style="margin-top:10px;">Filtreleri değiştirip tekrar deneyin.</p>
+            <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#7f8c8d;">
+                <i class="fas fa-search" style="font-size:64px; margin-bottom:20px; opacity:.25;"></i>
+                <p style="font-size:18px; font-weight:800;">Ürün bulunamadı</p>
+                <p style="margin-top:10px;">Farklı bir kategori veya arama terimi deneyin.</p>
             </div>
         `;
         return;
     }
 
     products.forEach(product => {
+        const idStr = String(product.id);
+        const name = String(product.name || "Ürün");
+        const priceNum = Number(product.price || 0);
+        const priceText = priceNum.toFixed(2);
+        const imageUrl = product.image_url || product.image || "https://via.placeholder.com/400x400?text=Ürün+Resmi";
+
         const card = document.createElement("div");
         card.className = "product-card";
 
-        const price = Number(product.price || 0);
-        const formattedPrice = price.toFixed(2);
-        const imageUrl = product.image_url || product.image || "https://via.placeholder.com/300x300?text=Urun";
-        const safeName = (product.name || "Ürün").replace(/'/g, "\\'");
-
-        // ✅ id UUID ise stringtir => onclick'te tırnak şart
-        const idStr = String(product.id);
-
         card.innerHTML = `
-            <a href="product-detail.html?id=${encodeURIComponent(idStr)}" style="text-decoration:none;color:inherit;">
+            <a href="product-detail.html?id=${encodeURIComponent(idStr)}" class="product-link" style="text-decoration:none; color:inherit;">
                 <div class="product-img-container">
-                    <img src="${imageUrl}" alt="${safeName}"
-                        onerror="this.src='https://via.placeholder.com/300x300?text=Resim'">
+                    <img src="${imageUrl}" alt="${escapeHtml(name)}"
+                        onerror="this.src='https://via.placeholder.com/400x400?text=Resim+Yok'">
                 </div>
-                <div class="product-title">${product.name || "Ürün"}</div>
+                <div class="product-title">${escapeHtml(name)}</div>
             </a>
 
             <div class="product-footer">
-                <span class="price">${formattedPrice} ₺</span>
-                <button class="add-cart-btn" onclick="addToCart({
-                    id: '${idStr}',
-                    name: '${safeName}',
-                    price: ${price},
-                    image_url: '${imageUrl}'
-                })">
-                    <i class="fas fa-cart-plus"></i> Ekle
+                <span class="price">${priceText} ₺</span>
+                <button type="button" class="add-cart-btn" data-product-id="${escapeHtml(idStr)}">
+                    <i class="fas fa-cart-plus"></i> Sepete Ekle
                 </button>
             </div>
         `;
+
+        const btn = card.querySelector(".add-cart-btn");
+        btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (typeof addToCart !== "function") {
+                alert("Sepet sistemi yüklenemedi!");
+                return;
+            }
+
+            addToCart({
+                id: idStr,
+                name,
+                price: priceNum,
+                image_url: imageUrl,
+                qty: 1
+            });
+        });
 
         grid.appendChild(card);
     });
 }
 
-// global yap
-window.loadProducts = loadProducts;
-window.applyFilters = applyFilters;
-window.doSearch = doSearch;
-window.filterByCategory = filterByCategory;
-window.clearPriceFilter = clearPriceFilter;
+function escapeHtml(str) {
+    return String(str || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
