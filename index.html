@@ -145,7 +145,42 @@
 <footer class="main-footer">
     <p>&copy; 2026 Aysima Medikal - Tüm Hakları Saklıdır</p>
 </footer>
+<div id="debug-box" style="
+position:fixed;
+bottom:10px;
+left:10px;
+background:black;
+color:#00ff00;
+padding:10px;
+font-size:12px;
+z-index:9999;
+max-width:90%;
+word-wrap:break-word;">
+DEBUG...
+</div>
 
+<script>
+setTimeout(async () => {
+  let debug = document.getElementById("debug-box");
+
+  if (!window.supabaseClient) {
+    debug.innerHTML = "❌ SupabaseClient YOK";
+    return;
+  }
+
+  debug.innerHTML = "✅ SupabaseClient var<br>";
+
+  try {
+    let { data: cats } = await window.supabaseClient.from("categories").select("*");
+    debug.innerHTML += "📂 Kategoriler: " + cats.length + "<br>";
+
+    let { data: prods } = await window.supabaseClient.from("products").select("*");
+    debug.innerHTML += "🛒 Ürünler: " + prods.length;
+  } catch (e) {
+    debug.innerHTML += "❌ HATA: " + e.message;
+  }
+}, 2000);
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/config.js" defer></script>
 <script src="js/utils.js" defer></script>
