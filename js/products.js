@@ -1,10 +1,11 @@
-// products.js - Ürün Yönetimi (PRO / Safe Rendering)
-//
-// Notlar:
-// - "Sepete Ekle" butonu artık linkin içinde değil (tıklayınca sayfaya gitmez).
-// - UUID/string id uyumlu.
-// - XSS güvenli render (escapeHtml).
-// - Ürün kartına tıklayınca ürün-detay sayfasına gider.
+// products.js - Ürün Yönetimi (PRO / Safe Rendering + Discount)
+// Özellikler:
+// - Güvenli render (XSS koruma)
+// - UUID uyumlu
+// - Arama / kategori / fiyat filtre
+// - Sepete ekle çalışır
+// - İndirim sistemi destekli
+// - Ürün kartına tıklayınca detay sayfasına gider
 
 let allProducts = [];
 let activeCategoryId = null;
@@ -25,7 +26,7 @@ async function loadProducts() {
         if (error) throw error;
 
         allProducts = data || [];
-        applyFilters(); // arama + kategori + fiyatı birlikte uygular
+        applyFilters();
 
     } catch (err) {
         console.error("❌ Ürün yükleme hatası:", err);
@@ -36,7 +37,6 @@ async function loadProducts() {
                 <div style="grid-column:1/-1; text-align:center; padding:40px; color:#e74c3c;">
                     <i class="fas fa-exclamation-triangle" style="font-size:48px; margin-bottom:15px;"></i>
                     <p style="font-size:18px; font-weight:700;">Şu anda ürünler yüklenemiyor</p>
-                    <p style="color:#7f8c8d; margin-top:10px;">Lütfen sayfayı yenileyin veya birkaç dakika sonra tekrar deneyin.</p>
                     <button onclick="loadProducts()" style="margin-top:18px; padding:10px 18px; background:var(--bordo); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:800;">
                         Tekrar Dene
                     </button>
@@ -54,8 +54,6 @@ function filterByCategory(id, name) {
 
     const pageNameEl = document.getElementById("page-name");
     if (pageNameEl) pageNameEl.innerText = name || "Tüm Ürünler";
-
-    document.querySelectorAll("#category-list li").forEach(li => li.classList.remove("active"));
 
     applyFilters();
 }
@@ -87,25 +85,67 @@ function applyFilters() {
     const minPrice = minPriceEl ? Number(minPriceEl.value) : NaN;
     const maxPrice = maxPriceEl ? Number(maxPriceEl.value) : NaN;
 
-    if (!Number.isNaN(minPrice) && minPrice > 0) filtered = filtered.filter(p => Number(p.price || 0) >= minPrice);
-    if (!Number.isNaN(maxPrice) && maxPrice > 0) filtered = filtered.filter(p => Number(p.price || 0) <= maxPrice);
+    if (!Number.isNaN(minPrice) && minPrice > 0)
+        filtered = filtered.filter(p => Number(p.price || 0) >= minPrice);
+
+    if (!Number.isNaN(maxPrice) && maxPrice > 0)
+        filtered = filtered.filter(p => Number(p.price || 0) <= maxPrice);
 
     renderProducts(filtered);
 }
 
-function doSearch(query) {
+function doSearch() {
     applyFilters();
 }
 
-// =============================
-// FİYAT FİLTRESİNİ TEMİZLE
-// =============================
 function clearPriceFilter() {
     const minPriceEl = document.getElementById("min-price");
     const maxPriceEl = document.getElementById("max-price");
     if (minPriceEl) minPriceEl.value = "";
     if (maxPriceEl) maxPriceEl.value = "";
     applyFilters();
+}
+
+// =============================
+// İNDİRİM HESAPLAMA
+// =============================
+function getDiscountedPrice(p) {
+    const price = Number(p.price || 0);
+
+    if (p.discount_active && p.discount_rate) {
+        const rate = Number(p.discount_rate || 0);
+        const discounted = price - (price * rate / 100);
+        return {
+            hasDiscount: true,
+            oldPrice: price.toFixed(2),
+            newPrice: discounted.toFixed(2),
+            rate
+        };
+    }
+
+    return {
+        hasDiscount: false,
+        price: price.toFixed(2)
+    };
+}
+
+// =============================
+// FİYAT HTML RENDER
+// =============================
+function renderPriceHTML(product) {
+    const d = getDiscountedPrice(product);
+
+    if (!d.hasDiscount) {
+        return `<span class="price">${d.price} ₺</span>`;
+    }
+
+    return `
+        <div class="price-box">
+            <span class="old-price">${d.oldPrice} ₺</span>
+            <span class="new-price">${d.newPrice} ₺</span>
+            <span class="discount-badge">-%${d.rate}</span>
+        </div>
+    `;
 }
 
 // =============================
@@ -126,7 +166,6 @@ function renderProducts(products) {
             <div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:#7f8c8d;">
                 <i class="fas fa-search" style="font-size:64px; margin-bottom:20px; opacity:.25;"></i>
                 <p style="font-size:18px; font-weight:800;">Ürün bulunamadı</p>
-                <p style="margin-top:10px;">Farklı bir kategori veya arama terimi deneyin.</p>
             </div>
         `;
         return;
@@ -135,9 +174,7 @@ function renderProducts(products) {
     products.forEach(product => {
         const idStr = String(product.id);
         const name = String(product.name || "Ürün");
-        const priceNum = Number(product.price || 0);
-        const priceText = priceNum.toFixed(2);
-        const imageUrl = product.image_url || product.image || "https://via.placeholder.com/400x400?text=Ürün+Resmi";
+        const imageUrl = product.image_url || "https://via.placeholder.com/400x400?text=Ürün";
 
         const card = document.createElement("div");
         card.className = "product-card";
@@ -152,8 +189,8 @@ function renderProducts(products) {
             </a>
 
             <div class="product-footer">
-                <span class="price">${priceText} ₺</span>
-                <button type="button" class="add-cart-btn" data-product-id="${escapeHtml(idStr)}">
+                ${renderPriceHTML(product)}
+                <button type="button" class="add-cart-btn">
                     <i class="fas fa-cart-plus"></i> Sepete Ekle
                 </button>
             </div>
@@ -172,7 +209,7 @@ function renderProducts(products) {
             addToCart({
                 id: idStr,
                 name,
-                price: priceNum,
+                price: Number(product.price || 0),
                 image_url: imageUrl,
                 qty: 1
             });
@@ -182,6 +219,9 @@ function renderProducts(products) {
     });
 }
 
+// =============================
+// XSS KORUMA
+// =============================
 function escapeHtml(str) {
     return String(str || "")
         .replaceAll("&", "&amp;")
