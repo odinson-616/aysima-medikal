@@ -4,23 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AYSİMA MEDİKAL | Sağlık Marketiniz</title>
+
+    <!-- SEO -->
+    <meta name="description" content="Aysima Medikal - Medikal ürünlerde güvenilir alışveriş.">
+    <meta name="keywords" content="medikal ürünler, sağlık ekipmanları, medikal sarf malzemeleri">
+    <meta name="author" content="Aysima Medikal">
+
+    <!-- Performance -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
+
     <style>
-        /* Kritik Görünürlük Kuralları */
         #cart-sidebar.open { right: 0 !important; }
         #overlay.active { display: block !important; }
         #auth-modal.active { display: block !important; }
         #auth-overlay.active { display: block !important; }
 
-        /* Header Yapışkanlık Ayarı */
         header { top: 0 !important; }
 
-        /* Kullanıcı Menüsü Hover ve Dropdown Stili */
         .user-menu-container:hover #user-dropdown { display: block !important; }
         #user-dropdown li:hover { background: #f9f9f9; }
 
-        /* Yatay Filtre Barı Mobil Uyumluluk */
         @media (max-width: 768px) {
             .horizontal-filter-bar {
                 flex-direction: column;
@@ -35,217 +45,114 @@
         }
     </style>
 </head>
+
 <body>
 
-    <div id="announcement-bar" class="announcement-wrapper">
-        <div class="announcement-content" id="announcement-text">
-            Kampanyalar yükleniyor...
-        </div>
+<div id="announcement-bar" class="announcement-wrapper">
+    <div class="announcement-content" id="announcement-text">
+        Kampanyalar yükleniyor...
+    </div>
+</div>
+
+<div id="auth-overlay" onclick="closeAuth()" style="display:none;"></div>
+<div id="auth-modal" style="display:none;">
+    <button onclick="closeAuth()">×</button>
+
+    <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')">Giriş Yap</button>
+        <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')">Kayıt Ol</button>
     </div>
 
-    <div id="auth-overlay" onclick="closeAuth()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2999;"></div>
-    <div id="auth-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:30px; border-radius:12px; z-index:3000; width:90%; max-width:400px; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
-        <button onclick="closeAuth()" style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:24px; cursor:pointer;">×</button>
-        <div class="auth-tabs" style="display:flex; margin-bottom:20px; border-bottom:1px solid #eee;">
-            <button class="auth-tab active" id="tab-login" onclick="switchAuthTab('login')" style="flex:1; padding:10px; border:none; background:none; cursor:pointer; font-weight:bold; border-bottom:2px solid #7b1e2b;">Giriş Yap</button>
-            <button class="auth-tab" id="tab-signup" onclick="switchAuthTab('signup')" style="flex:1; padding:10px; border:none; background:none; cursor:pointer; color:#999;">Kayıt Ol</button>
-        </div>
-        <form id="login-form" onsubmit="handleLogin(event)">
-            <input type="email" id="login-email" placeholder="Email" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
-            <input type="password" id="login-password" placeholder="Şifre" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px;">
-            <button type="submit" class="auth-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;">GİRİŞ YAP</button>
-        </form>
-        <form id="signup-form" onsubmit="handleSignup(event)" style="display:none;">
-            <input type="text" id="signup-name" placeholder="Ad Soyad" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
-            <input type="email" id="signup-email" placeholder="Email" required style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:4px;">
-            <input type="password" id="signup-password" placeholder="Şifre (min 6)" required style="width:100%; padding:10px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px;">
-            <button type="submit" class="auth-btn" style="width:100%; background:#7b1e2b; color:white; border:none; padding:12px; border-radius:4px; font-weight:bold; cursor:pointer;">KAYIT OL</button>
-        </form>
-        <div id="auth-status" style="margin-top:10px; font-size:13px; text-align:center;"></div>
+    <form id="login-form" onsubmit="handleLogin(event)">
+        <input type="email" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Şifre" required>
+        <button type="submit">GİRİŞ YAP</button>
+    </form>
+
+    <form id="signup-form" onsubmit="handleSignup(event)" style="display:none;">
+        <input type="text" id="signup-name" placeholder="Ad Soyad" required>
+        <input type="email" id="signup-email" placeholder="Email" required>
+        <input type="password" id="signup-password" placeholder="Şifre" required>
+        <button type="submit">KAYIT OL</button>
+    </form>
+
+    <div id="auth-status"></div>
+</div>
+
+<header>
+    <div class="header-left" onclick="location.reload()">
+        <img src="logo.png" alt="Aysima Medikal Logo">
+        <span class="brand-name">AYSİMA MEDİKAL</span>
     </div>
 
-    <div id="order-overlay" onclick="closeOrderModal()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:4000;"></div>
-    <div id="order-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:25px; border-radius:15px; z-index:4001; width:95%; max-width:450px; box-shadow:0 20px 50px rgba(0,0,0,0.3);">
-        <h3 style="margin-top:0; color:#7b1e2b;">Sipariş Bilgileri</h3>
-        <form onsubmit="submitOrder(event)">
-            <input type="text" id="order-fullname" placeholder="Ad Soyad" required style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
-            <input type="tel" id="order-phone" placeholder="Telefon (05xx)" required style="width:100%; padding:12px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
-            <textarea id="order-address" placeholder="Teslimat Adresi" required style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:6px; height:80px;"></textarea>
-            <div style="background:#f9f9f9; padding:10px; border-radius:6px; margin-bottom:15px; text-align:right; font-weight:bold;">
-                Toplam: <span id="summary-total">0.00</span> ₺
-            </div>
-            <button type="submit" id="final-submit-btn" style="width:100%; background:#27ae60; color:white; border:none; padding:15px; border-radius:6px; font-weight:bold; cursor:pointer;">SİPARİŞİ ONAYLA</button>
-            <button type="button" onclick="closeOrderModal()" style="width:100%; background:none; border:none; color:#777; margin-top:10px; cursor:pointer;">Vazgeç</button>
-        </form>
+    <div class="search-box">
+        <input type="text" placeholder="Ürün ara..." oninput="applyFilters()">
+        <button onclick="applyFilters()">ARA</button>
     </div>
 
-    <header>
-        <div class="header-left" onclick="location.reload()">
-            <img src="logo.png" alt="Logo">
-            <span class="brand-name">AYSİMA MEDİKAL</span>
-        </div>
-        <div class="search-box">
-            <input type="text" placeholder="Ürün ara..." oninput="doSearch(this.value)" aria-label="Ürün ara">
-            <button type="button" onclick="doSearch(document.querySelector('.search-box input').value)">ARA</button>
-        </div>
-        <div class="header-right" style="display:flex; gap:15px; align-items:center;">
-
-            <div class="user-menu-container" style="position: relative; display: inline-block;">
-                <button onclick="handleUserClick()" id="user-display" style="background:none; border:2px solid #7b1e2b; color:#7b1e2b; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">
-                    👤 Giriş Yap
-                </button>
-                <div id="user-dropdown" style="display:none; position:absolute; top:40px; right:0; background:white; border:1px solid #ddd; border-radius:8px; width:180px; box-shadow:0 5px 15px rgba(0,0,0,0.1); z-index:3005;">
-                    <ul style="list-style:none; padding:10px; margin:0;">
-                        <li onclick="location.href='profile.html'" style="padding:10px; cursor:pointer; font-size:14px; border-bottom:1px solid #eee; display:flex; align-items:center; gap:8px;">
-                            <i class="fas fa-box" style="color:#7b1e2b;"></i> Siparişlerim
-                        </li>
-                        <li onclick="handleLogout()" style="padding:10px; cursor:pointer; font-size:14px; color:red; font-weight:bold; display:flex; align-items:center; gap:8px;">
-                            <i class="fas fa-sign-out-alt"></i> Çıkış Yap
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <button onclick="toggleCart(true)" style="background:#7b1e2b; color:white; border:none; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">🛒 Sepet <span id="cart-count">0</span></button>
-        </div>
-    </header>
-
-    <div id="overlay" onclick="toggleCart(false)"></div>
-    <div id="cart-sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px;">
-            <h2 style="margin:0; font-size:20px;">Sepetim</h2>
-            <button onclick="toggleCart(false)" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
-        </div>
-        <div id="cart-items" style="flex:1; overflow-y:auto; padding:20px 0;"></div>
-        <div style="border-top:1px solid #eee; padding-top:20px;">
-            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:18px; margin-bottom:20px;">
-                <span>Toplam:</span>
-                <span><span id="cart-total">0.00</span> ₺</span>
-            </div>
-            <button id="checkout-btn" onclick="handleCheckout()" style="width:100%; background:#7b1e2b; color:white; border:none; padding:15px; border-radius:4px; font-weight:bold; cursor:pointer;">SİPARİŞİ TAMAMLA</button>
-        </div>
-    </div>
-
-    <div class="main-layout" style="display:flex; max-width:1400px; margin:20px auto; padding:0 20px; gap:20px;">
-        <aside style="width:260px; flex-shrink:0;">
-            <div style="background:#7b1e2b; color:white; padding:12px; font-weight:bold; border-radius:4px 4px 0 0;">☰ TÜM KATEGORİLER</div>
-            <ul id="category-list" style="list-style:none; padding:0; margin:0; background:white; border:1px solid #eee; border-top:none;">
-                <li style="padding:15px; color:#999;">Yükleniyor...</li>
-            </ul>
-        </aside>
-
-        <main style="flex:1;">
-            <div class="page-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <h2 id="page-name" style="margin:0; font-size:20px;">Tüm Ürünler</h2>
-                <span id="product-count" style="color:#777; font-size:14px;">0 ürün</span>
-            </div>
-
-            <div class="horizontal-filter-bar" style="background: white; padding: 12px 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 15px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 13px; font-weight: bold; color: #555;">Fiyat:</span>
-                    <input type="number" id="min-price" placeholder="Min ₺" oninput="applyFilters()" style="width: 85px; padding: 7px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; outline: none;">
-                    <input type="number" id="max-price" placeholder="Max ₺" oninput="applyFilters()" style="width: 85px; padding: 7px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; outline: none;">
-                </div>
-
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 13px; font-weight: bold; color: #555;">Sıralama:</span>
-                    <select id="sort-select" onchange="applyFilters()" style="padding: 7px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; outline: none; background: white; cursor: pointer; min-width: 140px;">
-                        <option value="default">Varsayılan</option>
-                        <option value="price-asc">Fiyat: Artan</option>
-                        <option value="price-desc">Fiyat: Azalan</option>
-                        <option value="name-asc">İsim: A-Z</option>
-                    </select>
-
-                    <button onclick="resetAllFilters()" style="background: #f8f9fa; border: 1px solid #ddd; color: #666; padding: 7px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s;">
-                        <i class="fas fa-sync-alt"></i> Sıfırla
-                    </button>
-                </div>
-            </div>
-
-            <div id="product-grid" class="grid"></div>
-        </main>
-    </div>
-
-    <a href="https://wa.me/905054817318" class="wa-float" target="_blank" rel="noopener noreferrer">
-        <i class="fab fa-whatsapp"></i>
-    </a>
-
-    <!-- ✅ DÜZELTİLDİ: footer sadece 1 adet -->
-    <footer class="main-footer" style="background: #2c3e50; color: white; padding: 60px 0 20px; margin-top: 50px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
-        <div class="footer-container" style="max-width: 1400px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px;">
-
-            <div class="footer-section">
-                <h3 style="color: #7b1e2b; margin-bottom: 20px; font-size: 20px; border-left: 4px solid #7b1e2b; padding-left: 12px; font-weight: bold;">AYSİMA MEDİKAL</h3>
-                <p style="font-size: 14px; line-height: 1.7; color: #bdc3c7; text-align: justify;">
-                    Beşeri ve Veteriner sağlık ürünlerinde güvenilir çözüm ortağınız. En kaliteli medikal cihaz ve sarf malzemeleri, profesyonel hizmet anlayışıyla kapınıza getiriyoruz.
-                </p>
-                <div class="social-links" style="margin-top: 25px; display: flex; gap: 15px;">
-                    <a href="https://www.instagram.com/aysimamedikal/" target="_blank" style="color: white; font-size: 22px; transition: 0.3s;"><i class="fab fa-instagram"></i></a>
-                    <a href="#" style="color: white; font-size: 22px; transition: 0.3s;"><i class="fab fa-facebook"></i></a>
-                    <a href="#" style="color: white; font-size: 22px; transition: 0.3s;"><i class="fab fa-linkedin"></i></a>
-                </div>
-            </div>
-
-            <div class="footer-section">
-                <h3 style="color: #fff; margin-bottom: 20px; font-size: 17px; font-weight: 600;">Hızlı Menü</h3>
-                <ul style="list-style: none; padding: 0; font-size: 14px; line-height: 2.2;">
-                    <li><a href="index.html" style="color: #bdc3c7; text-decoration: none; transition: 0.2s;">Anasayfa</a></li>
-                    <li><a href="#" style="color: #bdc3c7; text-decoration: none;">Hakkımızda</a></li>
-                    <li><a href="#" style="color: #bdc3c7; text-decoration: none;">Sıkça Sorulan Sorular</a></li>
-                    <li><a href="#" style="color: #bdc3c7; text-decoration: none;">İletişim</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h3 style="color: #fff; margin-bottom: 20px; font-size: 17px; font-weight: 600;">Yasal Bilgiler</h3>
-                <ul style="list-style: none; padding: 0; font-size: 14px; line-height: 2.2;">
-                    <li><a href="#" style="color: #bdc3c7; text-decoration: none;">Mesafeli Satış Sözleşmesi</a></li>
-                    <li><a href="#" style="color: #bdc3c7; text-decoration: none;">İade ve İptal Şartları</a></li>
-                    <li><a href="#" style="color: #bdc3c7; text-decoration: none;">KVKK Aydınlatma Metni</a></li>
-                    <li><a href="#" style="color: #bdc3c7; text-decoration: none;">Çerez Politikası</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h3 style="color: #fff; margin-bottom: 20px; font-size: 17px; font-weight: 600;">İletişim Bilgileri</h3>
-                <ul style="list-style: none; padding: 0; font-size: 14px; color: #bdc3c7; line-height: 1.8;">
-                    <li style="margin-bottom: 12px; display: flex; align-items: flex-start;">
-                        <i class="fas fa-map-marker-alt" style="margin-right: 12px; color: #7b1e2b; margin-top: 5px;"></i>
-                        <span>Çıplaklı Mahallesi, Osman Gazi Caddesi 418/D Döşemealtı / ANTALYA</span>
-                    </li>
-                    <li style="margin-bottom: 12px;">
-                        <i class="fas fa-phone-alt" style="margin-right: 12px; color: #7b1e2b;"></i>
-                        <a href="tel:905054817318" style="color: #bdc3c7; text-decoration: none;">0505 481 73 18</a>
-                    </li>
-                    <li style="margin-bottom: 12px;">
-                        <i class="fas fa-envelope" style="margin-right: 12px; color: #7b1e2b;"></i>
-                        <a href="mailto:aysimamedikal@gmail.com" style="color: #bdc3c7; text-decoration: none;">aysimamedikal@gmail.com</a>
-                    </li>
+    <div class="header-right">
+        <div class="user-menu-container">
+            <button onclick="handleUserClick()" id="user-display">👤 Giriş Yap</button>
+            <div id="user-dropdown">
+                <ul>
+                    <li onclick="location.href='profile.html'">Siparişlerim</li>
+                    <li onclick="handleLogout()">Çıkış Yap</li>
                 </ul>
             </div>
         </div>
 
-        <div class="medical-notice" style="max-width: 1400px; margin: 40px auto 10px; padding: 20px; border-top: 1px solid #3e4f5f; font-size: 12px; color: #95a5a6; text-align: center; line-height: 1.6; font-style: italic;">
-            <p><strong>YASAL UYARI:</strong> Sitemizde satışa sunulan ürünler profesyonel kullanım gerektirebilir. Ürün görselleri ve açıklamaları sadece bilgilendirme amaçlıdır. Teşhis, tedavi veya tıbbi bir öneri yerine geçmez. Kullanmadan önce mutlaka ürün prospektüsünü okuyunuz.</p>
+        <button onclick="toggleCart(true)">🛒 Sepet <span id="cart-count">0</span></button>
+    </div>
+</header>
+
+<div id="overlay" onclick="toggleCart(false)"></div>
+
+<div id="cart-sidebar">
+    <h2>Sepetim</h2>
+    <div id="cart-items"></div>
+    <div class="cart-total">
+        Toplam: <span id="cart-total">0.00</span> ₺
+    </div>
+    <button onclick="handleCheckout()">Siparişi Tamamla</button>
+</div>
+
+<div class="main-layout">
+    <aside>
+        <ul id="category-list"></ul>
+    </aside>
+
+    <main>
+        <div class="page-header">
+            <h2 id="page-name">Tüm Ürünler</h2>
+            <span id="product-count">0 ürün</span>
         </div>
 
-        <div class="footer-bottom" style="background: #243342; text-align: center; padding: 25px 0; margin-top: 20px; font-size: 13px; color: #bdc3c7;">
-            <p style="margin-bottom: 15px;">&copy; 2026 <strong>AYSİMA MEDİKAL</strong>. Tüm Hakları Saklıdır.</p>
-            <div class="payment-methods" style="display: flex; justify-content: center; gap: 20px; font-size: 26px; opacity: 0.7;">
-                <i class="fab fa-cc-visa" title="Visa"></i>
-                <i class="fab fa-cc-mastercard" title="Mastercard"></i>
-                <i class="fab fa-cc-apple-pay" title="Apple Pay"></i>
-                <i class="fab fa-cc-stripe" title="Stripe"></i>
-            </div>
+        <div class="horizontal-filter-bar">
+            <input type="number" id="min-price" placeholder="Min ₺" oninput="applyFilters()">
+            <input type="number" id="max-price" placeholder="Max ₺" oninput="applyFilters()">
+            <select id="sort-select" onchange="applyFilters()">
+                <option value="default">Varsayılan</option>
+                <option value="price-asc">Fiyat Artan</option>
+                <option value="price-desc">Fiyat Azalan</option>
+            </select>
+            <button onclick="resetAllFilters()">Sıfırla</button>
         </div>
-    </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/cart.js"></script>
-    <script src="js/products.js"></script>
-    <script src="js/main.js"></script>
+        <div id="product-grid"></div>
+    </main>
+</div>
+
+<footer class="main-footer">
+    <p>&copy; 2026 Aysima Medikal - Tüm Hakları Saklıdır</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js" defer></script>
+<script src="js/utils.js" defer></script>
+<script src="js/auth.js" defer></script>
+<script src="js/cart.js" defer></script>
+<script src="js/products.js" defer></script>
+<script src="js/main.js" defer></script>
+
 </body>
 </html>
