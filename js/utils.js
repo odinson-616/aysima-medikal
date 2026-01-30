@@ -1,86 +1,75 @@
-// utils.js - Yardımcı Fonksiyonlar
+// ========================================
+// UTILS.JS - Utility Functions
+// ========================================
 
-// =============================
-// FİYAT FORMATLAMA
-// =============================
-function formatPrice(price) {
-    if (typeof price !== 'number') {
-        price = parseFloat(price) || 0;
-    }
-    return price.toFixed(2) + " ₺";
+// Toast Notification System
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.className = `toast ${type}`;
+    toast.classList.add('show');
+
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
 }
 
-// =============================
-// TARİH FORMATLAMA
-// =============================
+// Loading Spinner
+function showLoading(message = 'Yükleniyor...') {
+    const existingSpinner = document.querySelector('.loading-spinner');
+    if (existingSpinner) return;
+
+    const spinner = document.createElement('div');
+    spinner.className = 'loading-spinner';
+    spinner.innerHTML = `
+        <div class="spinner"></div>
+        <p>${message}</p>
+    `;
+    document.body.appendChild(spinner);
+}
+
+function hideLoading() {
+    const spinner = document.querySelector('.loading-spinner');
+    if (spinner) {
+        spinner.remove();
+    }
+}
+
+// Format Price
+function formatPrice(price) {
+    if (!price && price !== 0) return '0.00 ₺';
+    return parseFloat(price).toFixed(2) + ' ₺';
+}
+
+// Format Date
 function formatDate(dateString) {
-    if (!dateString) return "";
-    
+    if (!dateString) return '';
     const date = new Date(dateString);
-    const options = { 
-        year: 'numeric', 
-        month: 'long', 
+    return date.toLocaleDateString('tr-TR', {
+        year: 'numeric',
+        month: 'long',
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit'
-    };
-    
-    return date.toLocaleDateString('tr-TR', options);
+    });
 }
 
-// =============================
-// TELEFON FORMATLAMA
-// =============================
-function formatPhone(phone) {
-    if (!phone) return "";
-    
-    // Sadece rakamları al
-    const cleaned = phone.replace(/\D/g, '');
-    
-    // 0555 123 45 67 formatına dönüştür
-    if (cleaned.length === 11 && cleaned.startsWith('0')) {
-        return cleaned.replace(/(\d{4})(\d{3})(\d{2})(\d{2})/, '$1 $2 $3 $4');
-    }
-    
-    return phone;
-}
-
-// =============================
-// TELEFON DOĞRULAMA
-// =============================
-function validatePhone(phone) {
-    if (!phone) return false;
-    
-    const cleaned = phone.replace(/\D/g, '');
-    
-    // Türkiye telefon numarası: 05XX XXX XX XX
-    return cleaned.length === 11 && cleaned.startsWith('0');
-}
-
-// =============================
-// EMAIL DOĞRULAMA
-// =============================
+// Validate Email
 function validateEmail(email) {
-    if (!email) return false;
-    
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
 }
 
-// =============================
-// METİN KISALTMA
-// =============================
-function truncateText(text, maxLength = 100) {
-    if (!text) return "";
-    if (text.length <= maxLength) return text;
-    
-    return text.substring(0, maxLength) + "...";
+// Validate Phone
+function validatePhone(phone) {
+    const cleaned = phone.replace(/\D/g, '');
+    return cleaned.length === 10 || cleaned.length === 11;
 }
 
-// =============================
-// DEBOUNCE (Arama için kullanışlı)
-// =============================
-function debounce(func, wait = 300) {
+// Debounce Function
+function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
         const later = () => {
@@ -92,323 +81,170 @@ function debounce(func, wait = 300) {
     };
 }
 
-// =============================
-// TOAST BİLDİRİM
-// =============================
-function showToast(message, type = 'info', duration = 3000) {
-    // Varsa önceki toast'ı kaldır
-    const existingToast = document.querySelector('.toast-notification');
-    if (existingToast) {
-        existingToast.remove();
+// Generate Random ID
+function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+// Sanitize HTML
+function sanitizeHTML(str) {
+    const temp = document.createElement('div');
+    temp.textContent = str;
+    return temp.innerHTML;
+}
+
+// Check if user is admin
+async function isAdmin() {
+    if (!window.supabaseClient) return false;
+
+    try {
+        const { data: { user }, error } = await window.supabaseClient.auth.getUser();
+        
+        if (error || !user) return false;
+
+        // Check if user has admin role
+        const { data: profile, error: profileError } = await window.supabaseClient
+            .from('user_profiles')
+            .select('is_admin')
+            .eq('user_id', user.id)
+            .single();
+
+        if (profileError) {
+            console.warn("Admin check failed:", profileError);
+            return false;
+        }
+
+        return profile?.is_admin === true;
+    } catch (err) {
+        console.error("Admin check error:", err);
+        return false;
     }
-
-    const colors = {
-        success: '#27ae60',
-        error: '#e74c3c',
-        warning: '#f39c12',
-        info: '#3498db'
-    };
-
-    const icons = {
-        success: 'fa-check-circle',
-        error: 'fa-exclamation-circle',
-        warning: 'fa-exclamation-triangle',
-        info: 'fa-info-circle'
-    };
-
-    const toast = document.createElement('div');
-    toast.className = 'toast-notification';
-    toast.style.cssText = `
-        position: fixed;
-        top: 100px;
-        right: 20px;
-        background: ${colors[type] || colors.info};
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        z-index: 99999;
-        animation: slideInRight 0.3s ease;
-        min-width: 250px;
-        max-width: 400px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    `;
-
-    toast.innerHTML = `
-        <i class="fas ${icons[type] || icons.info}" style="font-size: 20px;"></i>
-        <span style="flex: 1;">${message}</span>
-        <button onclick="this.parentElement.remove()" style="
-            background: none;
-            border: none;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            opacity: 0.7;
-            padding: 0;
-            width: 24px;
-            height: 24px;
-        ">×</button>
-    `;
-
-    document.body.appendChild(toast);
-
-    // Belirtilen süre sonra kaldır
-    setTimeout(() => {
-        toast.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => toast.remove(), 300);
-    }, duration);
 }
 
-// Toast animasyonları için CSS ekle
-if (!document.getElementById('toast-animations')) {
-    const style = document.createElement('style');
-    style.id = 'toast-animations';
-    style.textContent = `
-        @keyframes slideInRight {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
+// Get Current User
+async function getCurrentUser() {
+    if (!window.supabaseClient) return null;
+
+    try {
+        const { data: { user }, error } = await window.supabaseClient.auth.getUser();
+        if (error) throw error;
+        return user;
+    } catch (err) {
+        console.error("Get current user error:", err);
+        return null;
+    }
 }
 
-// =============================
-// ONAY DİYALOĞU
-// =============================
-function confirmDialog(message, onConfirm, onCancel) {
+// Calculate Discount
+function calculateDiscount(subtotal, coupon = null) {
+    let discount = 0;
+    let couponDiscount = 0;
+    
+    // Auto discount
+    if (subtotal >= APP_CONFIG.autoDiscountThreshold) {
+        discount = APP_CONFIG.autoDiscountAmount;
+    }
+    
+    // Coupon discount
+    if (coupon && coupon.is_active) {
+        const now = new Date();
+        const expiryDate = new Date(coupon.expiry_date);
+        
+        if (expiryDate >= now) {
+            if (coupon.discount_type === 'percentage') {
+                couponDiscount = (subtotal * coupon.discount_value) / 100;
+            } else {
+                couponDiscount = coupon.discount_value;
+            }
+        }
+    }
+    
+    return {
+        autoDiscount: discount,
+        couponDiscount: couponDiscount,
+        totalDiscount: discount + couponDiscount
+    };
+}
+
+// Confirm Dialog
+function confirm Modal(message, callback) {
     if (confirm(message)) {
-        if (typeof onConfirm === 'function') {
-            onConfirm();
+        callback();
+    }
+}
+
+// Error Handler
+function handleError(error, context = '') {
+    console.error(`Error in ${context}:`, error);
+    
+    let message = 'Bir hata oluştu. Lütfen tekrar deneyin.';
+    
+    if (error.message) {
+        message = error.message;
+    }
+    
+    showToast(message, 'error');
+}
+
+// Local Storage Helpers
+const Storage = {
+    set: (key, value) => {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch (err) {
+            console.error("Storage set error:", err);
+            return false;
         }
-    } else {
-        if (typeof onCancel === 'function') {
-            onCancel();
+    },
+    
+    get: (key, defaultValue = null) => {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : defaultValue;
+        } catch (err) {
+            console.error("Storage get error:", err);
+            return defaultValue;
+        }
+    },
+    
+    remove: (key) => {
+        try {
+            localStorage.removeItem(key);
+            return true;
+        } catch (err) {
+            console.error("Storage remove error:", err);
+            return false;
+        }
+    },
+    
+    clear: () => {
+        try {
+            localStorage.clear();
+            return true;
+        } catch (err) {
+            console.error("Storage clear error:", err);
+            return false;
         }
     }
-}
+};
 
-// =============================
-// LOADING SPINNER
-// =============================
-function showLoading(message = 'Yükleniyor...') {
-    // Varsa önceki loading'i kaldır
-    const existingLoader = document.getElementById('loading-overlay');
-    if (existingLoader) {
-        existingLoader.remove();
-    }
-
-    const loader = document.createElement('div');
-    loader.id = 'loading-overlay';
-    loader.style.cssText = `
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.7);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 999999;
-        backdrop-filter: blur(3px);
-    `;
-
-    loader.innerHTML = `
-        <div style="
-            width: 60px;
-            height: 60px;
-            border: 5px solid rgba(255,255,255,0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        "></div>
-        <p style="
-            color: white;
-            margin-top: 20px;
-            font-size: 16px;
-            font-weight: 600;
-        ">${message}</p>
-    `;
-
-    document.body.appendChild(loader);
-}
-
-function hideLoading() {
-    const loader = document.getElementById('loading-overlay');
-    if (loader) {
-        loader.remove();
-    }
-}
-
-// Spinner animasyonu için CSS ekle
-if (!document.getElementById('spinner-animation')) {
-    const style = document.createElement('style');
-    style.id = 'spinner-animation';
-    style.textContent = `
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// =============================
-// COPY TO CLIPBOARD
-// =============================
-async function copyToClipboard(text) {
-    try {
-        await navigator.clipboard.writeText(text);
-        showToast('Panoya kopyalandı!', 'success', 2000);
-        return true;
-    } catch (err) {
-        console.error('Kopyalama hatası:', err);
-        showToast('Kopyalama başarısız!', 'error', 2000);
-        return false;
-    }
-}
-
-// =============================
-// SCROLL TO TOP
-// =============================
-function scrollToTop(smooth = true) {
-    window.scrollTo({
-        top: 0,
-        behavior: smooth ? 'smooth' : 'auto'
-    });
-}
-
-// =============================
-// LOCAL STORAGE HELPERS
-// =============================
-function setLocalStorage(key, value) {
-    try {
-        localStorage.setItem(key, JSON.stringify(value));
-        return true;
-    } catch (err) {
-        console.error('localStorage kayıt hatası:', err);
-        return false;
-    }
-}
-
-function getLocalStorage(key, defaultValue = null) {
-    try {
-        const item = localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
-    } catch (err) {
-        console.error('localStorage okuma hatası:', err);
-        return defaultValue;
-    }
-}
-
-function removeLocalStorage(key) {
-    try {
-        localStorage.removeItem(key);
-        return true;
-    } catch (err) {
-        console.error('localStorage silme hatası:', err);
-        return false;
-    }
-}
-
-// =============================
-// RANDOM ID OLUŞTURMA
-// =============================
-function generateId(prefix = 'id') {
-    return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-}
-
-// =============================
-// URL PARAMETRELER
-// =============================
-function getUrlParameter(name) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(name);
-}
-
-function setUrlParameter(name, value) {
-    const url = new URL(window.location);
-    url.searchParams.set(name, value);
-    window.history.pushState({}, '', url);
-}
-
-// =============================
-// SAYFA GÖRÜNÜRLÜĞÜ
-// =============================
-function isElementInViewport(element) {
-    if (!element) return false;
-    
-    const rect = element.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
-}
-
-// =============================
-// RAKAM FORMATLAMA (1000 -> 1.000)
-// =============================
-function formatNumber(number) {
-    if (typeof number !== 'number') {
-        number = parseFloat(number) || 0;
-    }
-    return number.toLocaleString('tr-TR');
-}
-
-// =============================
-// CONSOLE LOG HELPER (Development)
-// =============================
-function log(message, type = 'info') {
-    const isDevelopment = window.location.hostname === 'localhost' || 
-                         window.location.hostname === '127.0.0.1';
-    
-    if (!isDevelopment) return; // Production'da log gösterme
-    
-    const styles = {
-        info: 'color: #3498db; font-weight: bold;',
-        success: 'color: #27ae60; font-weight: bold;',
-        error: 'color: #e74c3c; font-weight: bold;',
-        warning: 'color: #f39c12; font-weight: bold;'
-    };
-    
-    console.log(`%c[${type.toUpperCase()}] ${message}`, styles[type] || styles.info);
-}
-
-// =============================
-// PERFORMANCE TIMER
-// =============================
-class Timer {
-    constructor(name) {
-        this.name = name;
-        this.start = performance.now();
-    }
-    
-    end() {
-        const duration = performance.now() - this.start;
-        log(`${this.name} tamamlandı: ${duration.toFixed(2)}ms`, 'info');
-        return duration;
-    }
-}
-
-// Kullanım: 
-// const timer = new Timer('Veri yükleme');
-// // ... işlemler
-// timer.end();
+// Export utilities
+window.utils = {
+    showToast,
+    showLoading,
+    hideLoading,
+    formatPrice,
+    formatDate,
+    validateEmail,
+    validatePhone,
+    debounce,
+    generateId,
+    sanitizeHTML,
+    isAdmin,
+    getCurrentUser,
+    calculateDiscount,
+    confirmModal,
+    handleError,
+    Storage
+};
