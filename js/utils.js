@@ -1,91 +1,82 @@
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
+// utils.js - PROFESSIONAL VERSION
 
-/** Fiyat Biçimlendirme */
-function formatPrice(price) {
-    return new Intl.NumberFormat('tr-TR', {
-        style: 'currency',
-        currency: 'TRY'
-    }).format(price);
+// =============================
+// XSS GÜVENLİ METİN DÖNÜŞÜMÜ
+// =============================
+function escapeHTML(text) {
+    if (!text) return "";
+    const div = document.createElement("div");
+    div.innerText = text;
+    return div.innerHTML;
 }
 
-/** Sepet Sidebar Kontrolü (YENİ EKLENDİ - KRİTİK) */
-function toggleCart(show) {
-    const sidebar = document.getElementById('cart-sidebar');
-    const overlay = document.getElementById('overlay');
-    if (!sidebar || !overlay) return;
-
-    if (show) {
-        sidebar.classList.add('open');
-        overlay.classList.add('active');
-    } else {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-    }
+// =============================
+// PARA FORMATLAMA
+// =============================
+function formatPrice(value) {
+    return Number(value).toFixed(2) + " ₺";
 }
 
-/** LocalStorage İşlemleri */
-function setLocalStorage(key, value) {
+// =============================
+// DEBOUNCE (Arama optimizasyonu)
+// =============================
+function debounce(func, delay = 300) {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// =============================
+// LOADING GÖSTER / GİZLE
+// =============================
+function showLoading(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) el.innerHTML = "<p>Yükleniyor...</p>";
+}
+
+function hideLoading(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) el.innerHTML = "";
+}
+
+// =============================
+// TARİH FORMATLAMA
+// =============================
+function formatDate(dateStr) {
+    return new Date(dateStr).toLocaleDateString("tr-TR");
+}
+
+// =============================
+// SCROLL LOCK
+// =============================
+function lockScroll() {
+    document.body.style.overflow = "hidden";
+}
+
+function unlockScroll() {
+    document.body.style.overflow = "auto";
+}
+
+// =============================
+// LOCAL STORAGE YARDIMCILARI
+// =============================
+function saveToStorage(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
 }
 
-function getLocalStorage(key) {
+function loadFromStorage(key) {
     const data = localStorage.getItem(key);
     return data ? JSON.parse(data) : null;
 }
 
-function removeLocalStorage(key) {
-    localStorage.removeItem(key);
-}
-
-/** Bildirim Sistemi (Güzelleştirildi) */
-function showNotification(message, type = 'info') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.textContent = message;
-    
-    // Sabit stil ekledik ki ekranda düzgün görünsün
-    notification.style.cssText = `
-        position: fixed; top: 20px; right: 20px; padding: 15px 25px; 
-        border-radius: 5px; color: white; z-index: 9999; font-weight: bold;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
-    `;
-    
-    document.body.appendChild(notification);
-    setTimeout(() => notification.remove(), 3000);
-}
-
-/** Yükleme Ekranı */
-function showLoading(show = true) {
-    let loader = document.getElementById('loader');
-    if (!loader) {
-        loader = document.createElement('div');
-        loader.id = 'loader';
-        document.body.appendChild(loader);
+// =============================
+// MODAL KAPAMA ESC
+// =============================
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+        const modal = document.querySelector(".modal");
+        if (modal) modal.style.display = "none";
     }
-    loader.style.cssText = show ? `
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(255,255,255,0.8); z-index: 9999;
-        display: flex; align-items: center; justify-content: center;
-    ` : 'display: none;';
-    loader.innerHTML = show ? '<div style="color:var(--bordo); font-weight:bold;">Yükleniyor...</div>' : '';
-}
-
-/** Diğer Yardımcılar */
-function getUrlParam(param) {
-    const params = new URLSearchParams(window.location.search);
-    return params.get(param);
-}
-
-function generateId() {
-    return '_' + Math.random().toString(36).substr(2, 9);
-}
-
-function isValidEmail(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-}
-
-console.log('✅ Utils loaded successfully');
+});
