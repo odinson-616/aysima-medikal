@@ -313,3 +313,26 @@ if (!document.getElementById("category-active-style")) {
     `;
     document.head.appendChild(style);
 }
+// HERO SECTION LOAD
+async function loadHeroSection() {
+    const hero = document.getElementById("hero-section");
+
+    hero.innerHTML = `
+        <div class="hero-content">
+            <h1>AYSİMA MEDİKAL'e Hoş Geldiniz</h1>
+            <p>Profesyonel medikal ürünler, hızlı teslimat ve güvenli alışveriş</p>
+            <button class="hero-btn" onclick="scrollToProducts()">Ürünleri Keşfet</button>
+        </div>
+        <div>
+            <i class="fas fa-heartbeat" style="font-size:80px; opacity:0.3;"></i>
+        </div>
+    `;
+}
+
+function scrollToProducts() {
+    document.getElementById("product-grid").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+loadHeroSection();
