@@ -81,7 +81,6 @@ window.supabaseClient = supabase.createClient(
 );
 </script>
 
-<!-- 3️⃣ Debug test -->
 <script>
 setTimeout(async () => {
   let debug = document.getElementById("debug-box");
@@ -94,11 +93,14 @@ setTimeout(async () => {
   debug.innerHTML = "✅ SupabaseClient var<br>";
 
   try {
-    let { data: cats } = await window.supabaseClient.from("categories").select("*");
-    debug.innerHTML += "📂 Kategoriler: " + (cats ? cats.length : 0) + "<br>";
+    let catRes = await window.supabaseClient.from("categories").select("*");
+    debug.innerHTML += "📂 Kategoriler: " + (catRes.data ? catRes.data.length : "null") + "<br>";
+    if (catRes.error) debug.innerHTML += "⚠️ Cat Error: " + catRes.error.message + "<br>";
 
-    let { data: prods } = await window.supabaseClient.from("products").select("*");
-    debug.innerHTML += "🛒 Ürünler: " + (prods ? prods.length : 0);
+    let prodRes = await window.supabaseClient.from("products").select("*");
+    debug.innerHTML += "🛒 Ürünler: " + (prodRes.data ? prodRes.data.length : "null") + "<br>";
+    if (prodRes.error) debug.innerHTML += "⚠️ Prod Error: " + prodRes.error.message;
+
   } catch (e) {
     debug.innerHTML += "❌ HATA: " + e.message;
   }
