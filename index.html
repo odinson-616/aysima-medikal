@@ -7,13 +7,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
+        /* Kritik Görünürlük Kuralları */
         #cart-sidebar.open { right: 0 !important; }
         #overlay.active { display: block !important; }
         #auth-modal.active { display: block !important; }
         #auth-overlay.active { display: block !important; }
+        
+        /* Header Yapışkanlık Ayarı (Duyuru Bandı Altında Kalması İçin) */
+        header { top: 0 !important; }
     </style>
 </head>
 <body>
+
+    <div id="announcement-bar" class="announcement-wrapper">
+        <div class="announcement-content" id="announcement-text">
+            Kampanyalar yükleniyor...
+        </div>
+    </div>
+
     <div id="auth-overlay" onclick="closeAuth()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2999;"></div>
     <div id="auth-modal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:30px; border-radius:12px; z-index:3000; width:90%; max-width:400px; box-shadow:0 10px 40px rgba(0,0,0,0.2);">
         <button onclick="closeAuth()" style="position:absolute; top:10px; right:15px; border:none; background:none; font-size:24px; cursor:pointer;">×</button>
@@ -50,14 +61,14 @@
         </form>
     </div>
 
-    <header style="background:#fff; padding:15px 5%; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #eee; position:sticky; top:0; z-index:1000;">
-        <div class="header-left" style="display:flex; align-items:center; gap:10px; cursor:pointer;" onclick="location.reload()">
-            <img src="logo.png" alt="Logo" style="height:45px;">
-            <span style="font-size:22px; font-weight:800; color:#7b1e2b;">AYSİMA MEDİKAL</span>
+    <header>
+        <div class="header-left" onclick="location.reload()">
+            <img src="logo.png" alt="Logo">
+            <span class="brand-name">AYSİMA MEDİKAL</span>
         </div>
-        <div class="search-box" style="flex:1; max-width:500px; margin:0 20px; display:flex;">
-            <input type="text" placeholder="Ürün ara..." onkeyup="doSearch(this.value)" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:4px 0 0 4px; outline:none;">
-            <button style="background:#7b1e2b; color:white; border:none; padding:0 20px; border-radius:0 4px 4px 0; cursor:pointer; font-weight:bold;">ARA</button>
+        <div class="search-box">
+            <input type="text" placeholder="Ürün ara..." onkeyup="doSearch(this.value)">
+            <button>ARA</button>
         </div>
         <div class="header-right" style="display:flex; gap:15px; align-items:center;">
             <button onclick="openAuth()" id="user-display" style="background:none; border:2px solid #7b1e2b; color:#7b1e2b; padding:8px 15px; border-radius:20px; font-weight:bold; cursor:pointer;">👤 Giriş Yap</button>
@@ -65,8 +76,8 @@
         </div>
     </header>
 
-    <div id="overlay" onclick="toggleCart(false)" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000;"></div>
-    <div id="cart-sidebar" style="position:fixed; right:-400px; top:0; width:350px; height:100%; background:white; z-index:2001; transition:0.3s ease-in-out; padding:20px; display:flex; flex-direction:column; box-shadow:-5px 0 15px rgba(0,0,0,0.1);">
+    <div id="overlay" onclick="toggleCart(false)"></div>
+    <div id="cart-sidebar">
         <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:15px;">
             <h2 style="margin:0; font-size:20px;">Sepetim</h2>
             <button onclick="toggleCart(false)" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
@@ -89,11 +100,11 @@
             </ul>
         </aside>
         <main style="flex:1;">
-            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; margin-bottom:20px; padding-bottom:10px;">
+            <div class="page-header">
                 <h2 id="page-name" style="margin:0; font-size:20px;">Tüm Ürünler</h2>
                 <span id="product-count" style="color:#777; font-size:14px;">0 ürün</span>
             </div>
-            <div id="product-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:20px;"></div>
+            <div id="product-grid" class="grid"></div>
         </main>
     </div>
 
