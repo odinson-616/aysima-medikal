@@ -1348,3 +1348,88 @@ footer {
         page-break-inside: avoid;
     }
 }
+/* HERO SECTION */
+.hero-section {
+    margin: 20px;
+    padding: 40px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #7B1E2B, #9F2D3D);
+    color: white;
+    animation: fadeIn 0.8s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hero-content h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.hero-content p {
+    font-size: 18px;
+    opacity: 0.9;
+}
+
+.hero-btn {
+    background: white;
+    color: #7B1E2B;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+
+.hero-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+/* HEADER MODERN */
+header {
+    position: sticky;
+    top: 0;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    z-index: 999;
+}
+
+/* SIDEBAR CARD STYLE */
+aside {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.05);
+}
+
+/* PRODUCT CARD MODERN */
+.product-card {
+    border-radius: 12px;
+    background: white;
+    padding: 15px;
+    transition: 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+}
+
+/* BUTTON STYLE */
+button {
+    background: linear-gradient(135deg, #7B1E2B, #9F2D3D);
+    color: white;
+    border-radius: 8px;
+    padding: 10px 16px;
+    border: none;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+    from {opacity:0; transform:translateY(10px);}
+    to {opacity:1; transform:translateY(0);}
+}
