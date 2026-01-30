@@ -15,6 +15,19 @@
         
         /* Header Yapışkanlık Ayarı (Duyuru Bandı Altında Kalması İçin) */
         header { top: 0 !important; }
+
+        /* Yatay Filtre Barı Mobil Uyumluluk */
+        @media (max-width: 768px) {
+            .horizontal-filter-bar {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 10px !important;
+            }
+            .horizontal-filter-bar div {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
     </style>
 </head>
 <body>
@@ -99,11 +112,35 @@
                 <li style="padding:15px; color:#999;">Yükleniyor...</li>
             </ul>
         </aside>
+        
         <main style="flex:1;">
-            <div class="page-header">
+            <div class="page-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
                 <h2 id="page-name" style="margin:0; font-size:20px;">Tüm Ürünler</h2>
                 <span id="product-count" style="color:#777; font-size:14px;">0 ürün</span>
             </div>
+
+            <div class="horizontal-filter-bar" style="background: white; padding: 12px 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 13px; font-weight: bold; color: #555;">Fiyat:</span>
+                    <input type="number" id="min-price" placeholder="Min ₺" oninput="applyFilters()" style="width: 85px; padding: 7px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; outline: none;">
+                    <input type="number" id="max-price" placeholder="Max ₺" oninput="applyFilters()" style="width: 85px; padding: 7px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; outline: none;">
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 13px; font-weight: bold; color: #555;">Sıralama:</span>
+                    <select id="sort-select" onchange="applyFilters()" style="padding: 7px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; outline: none; background: white; cursor: pointer; min-width: 140px;">
+                        <option value="default">Varsayılan</option>
+                        <option value="price-asc">Fiyat: Artan</option>
+                        <option value="price-desc">Fiyat: Azalan</option>
+                        <option value="name-asc">İsim: A-Z</option>
+                    </select>
+                    
+                    <button onclick="resetAllFilters()" style="background: #f8f9fa; border: 1px solid #ddd; color: #666; padding: 7px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.2s;">
+                        <i class="fas fa-sync-alt"></i> Sıfırla
+                    </button>
+                </div>
+            </div>
+
             <div id="product-grid" class="grid"></div>
         </main>
     </div>
