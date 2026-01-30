@@ -165,3 +165,36 @@ header { background: #fff; padding: 12px 5%; display: flex; align-items: center;
     .header-right button { padding: 6px 12px; font-size: 12px; }
     .wa-float { width: 55px; height: 55px; bottom: 20px; right: 20px; font-size: 30px; }
 }
+/* DUYURU BANDI STİLLERİ */
+.announcement-wrapper {
+    background-color: #ff0000;
+    color: white;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    font-weight: bold;
+    font-size: 14px;
+    z-index: 1001;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.announcement-content {
+    white-space: nowrap;
+    position: absolute;
+    padding-left: 100%;
+    animation: marquee-scroll 25s linear infinite;
+}
+
+@keyframes marquee-scroll {
+    0%   { transform: translate(0, 0); }
+    100% { transform: translate(-100%, 0); }
+}
+
+.announcement-wrapper:hover .announcement-content {
+    animation-play-state: paused;
+}
+
+/* Header'ın yapışkan (sticky) pozisyonunu duyuru bandına göre ayarla */
+header { top: 0; }
