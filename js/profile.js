@@ -1,35 +1,62 @@
-async function loadMyOrders() {
-    const { data: { user } } = await window.supabase.auth.getUser();
-    
-    if (!user) {
-        location.href = 'index.html'; // Giriş yapmamışsa ana sayfaya at
+// profile.js - PROFESSIONAL VERSION
+
+async function loadUserProfile() {
+    try {
+        const { data: { user } } = await window.supabaseClient.auth.getUser();
+
+        if (!user) {
+            document.getElementById("profile-content").innerHTML =
+                "<p>Lütfen giriş yapınız</p>";
+            return;
+        }
+
+        document.getElementById("user-email").innerText = user.email;
+        loadOrders(user.id);
+
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function loadOrders(userId) {
+    try {
+        const { data, error } = await window.supabaseClient
+            .from("orders")
+            .select("*")
+            .eq("user_id", userId)
+            .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        renderOrders(data);
+
+    } catch (err) {
+        console.error("Sipariş yükleme hatası:", err);
+    }
+}
+
+function renderOrders(orders) {
+    const container = document.getElementById("orders-container");
+    container.innerHTML = "";
+
+    if (!orders.length) {
+        container.innerHTML = "<p>Henüz sipariş yok</p>";
         return;
     }
 
-    const { data: orders, error } = await window.supabase
-        .from('orders')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+    orders.forEach(order => {
+        const card = document.createElement("div");
+        card.className = "order-card";
 
-    const listDiv = document.getElementById('orders-list');
-    
-    if (orders && orders.length > 0) {
-        listDiv.innerHTML = orders.map(order => `
-            <div style="background:white; border:1px solid #ddd; padding:15px; border-radius:8px; margin-bottom:15px;">
-                <div style="display:flex; justify-content:space-between; font-weight:bold;">
-                    <span>Sipariş No: #${order.id.slice(0,8)}</span>
-                    <span style="color:#7b1e2b;">${order.total_price.toFixed(2)} ₺</span>
-                </div>
-                <div style="font-size:13px; color:#666; margin-top:5px;">
-                    Tarih: ${new Date(order.created_at).toLocaleDateString('tr-TR')}
-                </div>
-                <div style="margin-top:10px; font-weight:bold;">
-                    Durum: <span style="color:#27ae60;">${order.status || 'Onay Bekliyor'}</span>
-                </div>
-            </div>
-        `).join('');
-    } else {
-        listDiv.innerHTML = '<p>Henüz bir siparişiniz bulunmuyor.</p>';
-    }
+        card.innerHTML = `
+            <h3>Sipariş #${order.id}</h3>
+            <p>Tarih: ${new Date(order.created_at).toLocaleDateString()}</p>
+            <p>Durum: ${order.status}</p>
+            <p>Toplam: ${order.total_amount.toFixed(2)} ₺</p>
+        `;
+
+        container.appendChild(card);
+    });
 }
+
+document.addEventListener("DOMContentLoaded", loadUserProfile);
