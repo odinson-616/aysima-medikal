@@ -9,53 +9,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        .detail-wrapper { 
-            max-width: 1200px; margin: 40px auto; padding: 30px; 
-            display: flex; gap: 60px; background: white; 
+        .detail-wrapper {
+            max-width: 1200px; margin: 40px auto; padding: 30px;
+            display: flex; gap: 60px; background: white;
             border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             overflow: hidden;
         }
-        .image-section { 
+        .image-section {
             flex: 1; display: flex; align-items: center; justify-content: center;
             background: #fdfdfd; border-radius: 15px; padding: 20px;
         }
-        .product-image { 
-            max-width: 100%; height: auto; border-radius: 10px; 
+        .product-image {
+            max-width: 100%; height: auto; border-radius: 10px;
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .product-image:hover { transform: scale(1.05); }
-        
+
         .info-section { flex: 1; padding: 10px; }
-        .back-link { 
+        .back-link {
             display: inline-flex; align-items: center; gap: 8px;
             color: #64748b; text-decoration: none; font-weight: 600;
             margin-bottom: 25px; transition: color 0.3s;
         }
         .back-link:hover { color: #7b1e2b; }
-        
+
         .product-title { font-size: 32px; font-weight: 800; color: #1e293b; margin: 0 0 15px 0; }
-        .price-tag { 
-            font-size: 42px; font-weight: 800; color: #7b1e2b; 
+        .price-tag {
+            font-size: 42px; font-weight: 800; color: #7b1e2b;
             margin: 25px 0; display: flex; align-items: baseline; gap: 5px;
         }
         .price-tag span { font-size: 20px; }
-        
-        .description-box { 
-            color: #475569; line-height: 1.7; font-size: 16px; 
-            padding: 20px; background: #f1f5f9; border-radius: 12px; 
+
+        .description-box {
+            color: #475569; line-height: 1.7; font-size: 16px;
+            padding: 20px; background: #f1f5f9; border-radius: 12px;
             margin-bottom: 30px; border-left: 5px solid #7b1e2b;
         }
-        
-        .add-btn { 
-            width: 100%; background: #7b1e2b; color: white; border: none; 
-            padding: 20px; border-radius: 12px; font-size: 18px; font-weight: 700; 
+
+        .add-btn {
+            width: 100%; background: #7b1e2b; color: white; border: none;
+            padding: 20px; border-radius: 12px; font-size: 18px; font-weight: 700;
             cursor: pointer; transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(123, 30, 43, 0.3);
         }
         .add-btn:hover { background: #962535; transform: translateY(-3px); box-shadow: 0 8px 25px rgba(123, 30, 43, 0.4); }
         .add-btn:active { transform: translateY(-1px); }
 
-        /* Mobil Uyumluluk */
         @media (max-width: 992px) {
             .detail-wrapper { flex-direction: column; margin: 20px; gap: 30px; }
             .product-title { font-size: 26px; }
@@ -64,82 +63,103 @@
 </head>
 <body>
 
-    <header style="background:#fff; padding:15px 5%; display:flex; align-items:center; border-bottom:1px solid #e2e8f0; position: sticky; top:0; z-index:100;">
-        <div onclick="window.location.href='index.html'" style="cursor:pointer; font-weight:800; color:#7b1e2b; font-size:20px;">AYSİMA MEDİKAL</div>
-    </header>
+<header style="background:#fff; padding:15px 5%; display:flex; align-items:center; border-bottom:1px solid #e2e8f0; position: sticky; top:0; z-index:100;">
+    <div onclick="window.location.href='index.html'" style="cursor:pointer; font-weight:800; color:#7b1e2b; font-size:20px;">AYSİMA MEDİKAL</div>
+</header>
 
-    <div class="detail-wrapper animate__animated animate__fadeIn">
-        <div class="image-section">
-            <img id="main-img" class="product-image" src="" alt="Ürün Resmi">
-        </div>
-        
-        <div class="info-section">
-            <a href="index.html" class="back-link">← Alışverişe Dön</a>
-            <h1 id="main-title" class="product-title">Yükleniyor...</h1>
-            
-            <div id="desc-container" style="display: none;" class="description-box">
-                <p id="main-desc" style="margin: 0;"></p>
-            </div>
-            
-            <div id="main-price" class="price-tag">0.00 <span>₺</span></div>
-            
-            <button id="add-btn" class="add-btn">SEPETE EKLE</button>
-        </div>
+<div class="detail-wrapper animate__animated animate__fadeIn">
+    <div class="image-section">
+        <img id="main-img" class="product-image" src="" alt="Ürün Resmi">
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/config.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/cart.js"></script> 
+    <div class="info-section">
+        <a href="index.html" class="back-link">← Alışverişe Dön</a>
+        <h1 id="main-title" class="product-title">Yükleniyor...</h1>
 
-    <script>
-        async function loadProduct() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const productId = urlParams.get('id');
+        <div id="desc-container" style="display: none;" class="description-box">
+            <p id="main-desc" style="margin: 0;"></p>
+        </div>
 
-            if (!productId) return window.location.href = 'index.html';
+        <div id="main-price" class="price-tag">0.00 <span>₺</span></div>
 
-            try {
-                const { data: p, error } = await window.supabase
-                    .from('products')
-                    .select('*')
-                    .eq('id', productId)
-                    .single();
+        <button id="add-btn" class="add-btn">SEPETE EKLE</button>
+    </div>
+</div>
 
-                if (error || !p) throw error;
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/cart.js"></script>
 
-                // Bilgileri Doldur
-                document.getElementById('main-title').textContent = p.name;
-                document.getElementById('main-img').src = p.image || p.image_url;
-                document.getElementById('main-price').innerHTML = `${p.price.toFixed(2)} <span>₺</span>`;
-                
-                // Açıklama varsa göster, yoksa kutuyu gizle
-                if (p.description && p.description.trim() !== "") {
-                    document.getElementById('main-desc').textContent = p.description;
-                    document.getElementById('desc-container').style.display = 'block';
-                }
+<script>
+    async function loadProduct() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
 
-                // Sepete Ekleme Fonksiyonu
-                document.getElementById('add-btn').onclick = () => {
-                    if (typeof addToCart === "function") {
-                        addToCart(p.id);
-                        // Küçük bir görsel geri bildirim
-                        const btn = document.getElementById('add-btn');
-                        btn.textContent = "BAŞARIYLA EKLENDİ!";
-                        btn.style.background = "#27ae60";
-                        setTimeout(() => {
-                            btn.textContent = "SEPETE EKLE";
-                            btn.style.background = "#7b1e2b";
-                        }, 2000);
-                    }
-                };
-
-            } catch (err) {
-                console.error(err);
-                document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px;'>Ürün yüklenirken bir hata oluştu.</h2>";
-            }
+        if (!productId) {
+            window.location.href = 'index.html';
+            return;
         }
-        window.onload = loadProduct;
-    </script>
+
+        // ✅ hem window.supabaseClient hem window.supabase destekle
+        const client = window.supabaseClient || window.supabase;
+        if (!client) {
+            document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px;'>Supabase bağlantısı yok (client bulunamadı).</h2>";
+            return;
+        }
+
+        try {
+            const { data: p, error } = await client
+                .from('products')
+                .select('*')
+                .eq('id', productId)
+                .single();
+
+            if (error || !p) throw (error || new Error("Ürün bulunamadı"));
+
+            document.getElementById('main-title').textContent = p.name || "Ürün";
+            const img = p.image_url || p.image || "https://via.placeholder.com/600x600?text=Urun";
+            document.getElementById('main-img').src = img;
+
+            const price = Number(p.price || 0);
+            document.getElementById('main-price').innerHTML = `${price.toFixed(2)} <span>₺</span>`;
+
+            if (p.description && p.description.trim() !== "") {
+                document.getElementById('main-desc').textContent = p.description;
+                document.getElementById('desc-container').style.display = 'block';
+            } else {
+                document.getElementById('desc-container').style.display = 'none';
+            }
+
+            // ✅ Sepete EKLE: product objesi gönder
+            document.getElementById('add-btn').onclick = () => {
+                if (typeof window.addToCart === "function") {
+                    window.addToCart({
+                        id: p.id,
+                        name: p.name,
+                        price: price,
+                        image_url: img
+                    });
+
+                    const btn = document.getElementById('add-btn');
+                    btn.textContent = "BAŞARIYLA EKLENDİ!";
+                    btn.style.background = "#27ae60";
+                    setTimeout(() => {
+                        btn.textContent = "SEPETE EKLE";
+                        btn.style.background = "#7b1e2b";
+                    }, 1500);
+                } else {
+                    alert("Sepet sistemi yüklenemedi (addToCart yok).");
+                }
+            };
+
+        } catch (err) {
+            console.error(err);
+            document.body.innerHTML = "<h2 style='text-align:center; margin-top:100px;'>Ürün yüklenirken bir hata oluştu.</h2>";
+        }
+    }
+
+    window.addEventListener("DOMContentLoaded", loadProduct);
+</script>
 </body>
 </html>
