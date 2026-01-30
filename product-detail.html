@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ürün Detayı | AYSİMA MEDİKAL</title>
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+
+    <style>
+        /* Product Detail - page local styles (mevcut sistemi bozmaz) */
+        .pd-container { max-width: 1400px; margin: 24px auto 60px; padding: 0 20px; }
+        .pd-breadcrumb { display:flex; align-items:center; gap:8px; color:#7f8c8d; font-size:13px; margin: 10px 0 16px; }
+        .pd-breadcrumb a { color:#7f8c8d; text-decoration:none; }
+        .pd-breadcrumb a:hover { color: var(--bordo); }
+
+        .pd-card { background:#fff; border:1px solid var(--border); border-radius:14px; overflow:hidden; box-shadow: 0 8px 25px rgba(0,0,0,0.06); }
+        .pd-grid { display:grid; grid-template-columns: 1.05fr 0.95fr; gap: 0; }
+
+        .pd-left { padding: 22px; border-right: 1px solid #f0f2f5; }
+        .pd-right { padding: 22px; }
+
+        .pd-gallery { display:flex; gap: 14px; }
+        .pd-thumbs { width: 92px; display:flex; flex-direction:column; gap:10px; }
+        .pd-thumb { border: 1px solid #e6e9ee; border-radius: 12px; padding: 6px; background:#fff; cursor:pointer; transition:.15s; }
+        .pd-thumb:hover { transform: translateY(-1px); border-color: var(--bordo); }
+        .pd-thumb.active { border-color: var(--bordo); box-shadow: 0 6px 18px rgba(123,30,43,.12); }
+        .pd-thumb img { width: 100%; height: 70px; object-fit: contain; display:block; }
+
+        .pd-mainimg-wrap { flex:1; border: 1px solid #e6e9ee; border-radius: 14px; background: #fbfbfd; padding: 14px; display:flex; align-items:center; justify-content:center; min-height: 420px; position:relative; overflow:hidden; }
+        .pd-mainimg { width: 100%; max-height: 420px; object-fit: contain; transition: transform .25s ease; }
+        .pd-mainimg-wrap:hover .pd-mainimg { transform: scale(1.03); }
+
+        .pd-badges { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+        .pd-badge { display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:12px; background:#f8fafc; border:1px solid #eef2f7; color:#2c3e50; font-size:12px; font-weight:700; }
+        .pd-badge i { color: var(--bordo); }
+
+        .pd-title { font-size: 26px; font-weight: 900; color: #1f2d3d; margin: 0 0 10px; line-height: 1.15; }
+        .pd-subline { display:flex; align-items:center; flex-wrap:wrap; gap:10px; color:#7f8c8d; font-size:13px; }
+        .pd-stock { padding: 6px 10px; border-radius: 999px; font-weight:800; }
+        .pd-stock.ok { background: rgba(39,174,96,.12); color: #1f7a45; border:1px solid rgba(39,174,96,.25); }
+        .pd-stock.no { background: rgba(231,76,60,.10); color: #b23b2f; border:1px solid rgba(231,76,60,.25); }
+
+        .pd-pricebox { margin-top: 16px; padding: 16px; border-radius: 14px; background: linear-gradient(180deg, #fff, #fff7f8); border: 1px solid #f2d7dc; }
+        .pd-price { font-size: 34px; font-weight: 1000; color: var(--bordo); display:flex; align-items:baseline; gap:8px; }
+        .pd-price small { font-size: 14px; color: #7f8c8d; font-weight:800; }
+
+        .pd-actions { display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+        .pd-btn { border:none; border-radius: 12px; padding: 14px 14px; font-weight: 900; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:10px; transition:.15s; }
+        .pd-btn.primary { background: var(--bordo); color:#fff; box-shadow: 0 10px 24px rgba(123,30,43,.22); }
+        .pd-btn.primary:hover { transform: translateY(-1px); }
+        .pd-btn.secondary { background:#fff; border:1px solid #e1e4e8; color:#2c3e50; }
+        .pd-btn.secondary:hover { border-color: var(--bordo); color: var(--bordo); transform: translateY(-1px); }
+
+        .pd-qty { display:flex; align-items:center; gap:10px; margin-top: 14px; }
+        .pd-qty label { font-size: 13px; font-weight: 900; color:#2c3e50; }
+        .pd-qtybox { display:flex; align-items:center; border:1px solid #e1e4e8; border-radius: 12px; overflow:hidden; background:#fff; }
+        .pd-qtybox button { width: 44px; height: 40px; border:none; background:#fff; cursor:pointer; font-weight:900; }
+        .pd-qtybox input { width: 58px; height: 40px; border:none; outline:none; text-align:center; font-weight:900; }
+        .pd-qtybox button:hover { background:#f8fafc; }
+
+        .pd-variants { margin-top: 18px; padding-top: 16px; border-top:1px dashed #eef2f7; }
+        .pd-vrow { margin-top: 12px; }
+        .pd-vlabel { font-size: 13px; font-weight: 900; color:#2c3e50; margin-bottom: 8px; display:flex; align-items:center; gap:8px; }
+        .pd-vchips { display:flex; flex-wrap:wrap; gap:8px; }
+        .pd-chip { padding: 10px 12px; border-radius: 12px; border:1px solid #e1e4e8; background:#fff; cursor:pointer; font-weight: 800; font-size: 13px; }
+        .pd-chip:hover { border-color: var(--bordo); color: var(--bordo); }
+        .pd-chip.active { border-color: var(--bordo); background: rgba(123,30,43,.06); color: var(--bordo); box-shadow: 0 8px 18px rgba(123,30,43,.10); }
+        .pd-chip.disabled { opacity: .45; cursor: not-allowed; text-decoration: line-through; }
+
+        .pd-tabs { margin-top: 18px; }
+        .pd-tabbar { display:flex; gap:10px; border-bottom:1px solid #eef2f7; }
+        .pd-tabbtn { border:none; background:none; cursor:pointer; padding: 10px 6px; font-weight: 900; color:#7f8c8d; border-bottom: 3px solid transparent; }
+        .pd-tabbtn.active { color: var(--bordo); border-bottom-color: var(--bordo); }
+        .pd-tabpanel { padding: 16px 0 0; color:#2c3e50; line-height: 1.7; font-size: 14px; }
+        .pd-specs { width:100%; border-collapse: collapse; margin-top: 10px; overflow:hidden; border-radius: 12px; border:1px solid #eef2f7; }
+        .pd-specs td { padding: 12px 14px; border-bottom:1px solid #eef2f7; }
+        .pd-specs tr:last-child td { border-bottom:none; }
+        .pd-specs td:first-child { width: 38%; font-weight: 900; color:#1f2d3d; background:#fafbfc; }
+
+        .pd-related { margin-top: 22px; }
+        .pd-related h3 { margin: 0 0 12px; font-size: 18px; color:#1f2d3d; }
+        .pd-related-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+        .pd-r-card { border:1px solid #eef2f7; border-radius: 14px; background:#fff; overflow:hidden; transition:.15s; }
+        .pd-r-card:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(0,0,0,.08); border-color: var(--bordo); }
+        .pd-r-img { height: 170px; background:#fbfbfd; display:flex; align-items:center; justify-content:center; padding: 12px; }
+        .pd-r-img img { width: 100%; height: 100%; object-fit: contain; }
+        .pd-r-body { padding: 12px; }
+        .pd-r-name { font-weight: 900; color:#1f2d3d; font-size: 14px; height: 38px; overflow:hidden; }
+        .pd-r-foot { display:flex; align-items:center; justify-content:space-between; margin-top: 10px; }
+        .pd-r-price { font-weight: 1000; color: var(--bordo); }
+        .pd-r-btn { border:none; background: var(--bordo); color:#fff; font-weight: 900; padding: 9px 10px; border-radius: 10px; cursor:pointer; }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .pd-grid { grid-template-columns: 1fr; }
+            .pd-left { border-right: none; border-bottom: 1px solid #f0f2f5; }
+            .pd-thumbs { flex-direction: row; width: 100%; }
+            .pd-gallery { flex-direction: column-reverse; }
+            .pd-mainimg-wrap { min-height: 340px; }
+            .pd-related-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+        }
+        @media (max-width: 520px) {
+            .pd-container { padding: 0 12px; }
+            .pd-actions { grid-template-columns: 1fr; }
+            .pd-mainimg-wrap { min-height: 280px; }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="announcement-bar" class="announcement-wrapper">
+        <div class="announcement-content" id="announcement-text">Kampanyalar yükleniyor...</div>
+    </div>
+
+    <!-- Header (index ile aynı) -->
+    <header>
+        <div class="header-left" onclick="location.href='index.html'">
+            <img src="logo.png" alt="Aysima Medikal Logo" />
+            <span class="brand-name">AYSİMA MEDİKAL</span>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Ürün ara..." />
+            <button type="button" onclick="goSearch()"><i class="fas fa-search"></i> ARA</button>
+        </div>
+
+        <div class="header-actions">
+            <button id="user-display" class="header-btn" onclick="handleUserClick()">
+                <i class="fas fa-user"></i> Giriş Yap
+            </button>
+            <button class="header-btn" onclick="toggleCart(true)">
+                <i class="fas fa-shopping-cart"></i> Sepet <span id="cart-count">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- User Dropdown -->
+    <div id="user-dropdown" class="user-dropdown" style="display:none;">
+        <a href="profile.html"><i class="fas fa-user"></i> Profilim</a>
+        <a href="#" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i> Çıkış Yap</a>
+    </div>
+
+    <div id="overlay" onclick="toggleCart(false)"></div>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar">
+        <div class="cart-header">
+            <h2><i class="fas fa-shopping-cart"></i> Sepetim</h2>
+            <button class="close-btn" onclick="toggleCart(false)">✕</button>
+        </div>
+        <div id="cart-items"></div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <strong>Toplam:</strong> <span id="cart-total">0.00</span> ₺
+            </div>
+            <button class="checkout-btn" onclick="handleCheckout()">
+                <i class="fas fa-check"></i> Siparişi Tamamla
+            </button>
+        </div>
+    </div>
+
+    <div class="pd-container">
+        <div class="pd-breadcrumb">
+            <a href="index.html"><i class="fas fa-home"></i> Anasayfa</a>
+            <span>›</span>
+            <a href="index.html" id="bc-category">Ürünler</a>
+            <span>›</span>
+            <span id="bc-product">Yükleniyor...</span>
+        </div>
+
+        <div class="pd-card">
+            <div class="pd-grid">
+                <div class="pd-left">
+                    <div class="pd-gallery">
+                        <div class="pd-thumbs" id="pd-thumbs"></div>
+
+                        <div class="pd-mainimg-wrap">
+                            <img id="pd-mainimg" class="pd-mainimg" src="https://via.placeholder.com/800x600?text=Y%C3%BCkleniyor" alt="Ürün görseli" />
+                        </div>
+                    </div>
+
+                    <div class="pd-badges">
+                        <div class="pd-badge"><i class="fas fa-truck"></i> Hızlı kargo</div>
+                        <div class="pd-badge"><i class="fas fa-shield-alt"></i> Güvenli alışveriş</div>
+                        <div class="pd-badge"><i class="fas fa-headset"></i> Canlı destek</div>
+                    </div>
+
+                    <div class="pd-related" id="pd-related" style="display:none;">
+                        <h3>Benzer Ürünler</h3>
+                        <div class="pd-related-grid" id="pd-related-grid"></div>
+                    </div>
+                </div>
+
+                <div class="pd-right">
+                    <h1 class="pd-title" id="pd-title">Yükleniyor...</h1>
+
+                    <div class="pd-subline">
+                        <span id="pd-category-text">Kategori: -</span>
+                        <span id="pd-stock" class="pd-stock ok" style="display:none;">Stokta</span>
+                    </div>
+
+                    <div class="pd-pricebox">
+                        <div class="pd-price" id="pd-price">0.00 ₺ <small id="pd-price-note"></small></div>
+
+                        <div class="pd-qty">
+                            <label>Adet</label>
+                            <div class="pd-qtybox">
+                                <button type="button" onclick="qtyChange(-1)">-</button>
+                                <input id="pd-qty" type="number" value="1" min="1" />
+                                <button type="button" onclick="qtyChange(1)">+</button>
+                            </div>
+                        </div>
+
+                        <div class="pd-variants" id="pd-variants" style="display:none;">
+                            <div class="pd-vrow" id="v-color-row" style="display:none;">
+                                <div class="pd-vlabel"><i class="fas fa-palette"></i> Renk</div>
+                                <div class="pd-vchips" id="v-colors"></div>
+                            </div>
+
+                            <div class="pd-vrow" id="v-size-row" style="display:none;">
+                                <div class="pd-vlabel"><i class="fas fa-ruler-combined"></i> Beden</div>
+                                <div class="pd-vchips" id="v-sizes"></div>
+                            </div>
+                        </div>
+
+                        <div class="pd-actions">
+                            <button class="pd-btn primary" id="pd-add-btn" type="button">
+                                <i class="fas fa-cart-plus"></i> Sepete Ekle
+                            </button>
+                            <button class="pd-btn secondary" id="pd-buy-btn" type="button">
+                                <i class="fas fa-bolt"></i> Hemen Satın Al
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="pd-tabs">
+                        <div class="pd-tabbar">
+                            <button class="pd-tabbtn active" type="button" data-tab="desc">Açıklama</button>
+                            <button class="pd-tabbtn" type="button" data-tab="specs">Özellikler</button>
+                            <button class="pd-tabbtn" type="button" data-tab="shipping">Kargo & İade</button>
+                        </div>
+
+                        <div class="pd-tabpanel" id="tab-desc"></div>
+                        <div class="pd-tabpanel" id="tab-specs" style="display:none;"></div>
+                        <div class="pd-tabpanel" id="tab-shipping" style="display:none;">
+                            <ul style="margin:0; padding-left:18px;">
+                                <li><b>Hızlı gönderim:</b> Siparişleriniz aynı gün kargoya verilebilir (stok durumuna göre).</li>
+                                <li><b>Kolay iade:</b> Ürünün kullanılmamış olması koşuluyla iade/değişim yapılabilir.</li>
+                                <li><b>Destek:</b> Sorularınız için WhatsApp veya telefon ile ulaşabilirsiniz.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Modal (index ile aynı id'ler) -->
+    <div id="order-overlay" class="modal-overlay" onclick="closeOrderModal()"></div>
+    <div id="order-modal" class="order-modal">
+        <div class="modal-header">
+            <h2><i class="fas fa-clipboard-list"></i> Sipariş Bilgileri</h2>
+            <button class="close-btn" onclick="closeOrderModal()">✕</button>
+        </div>
+
+        <form onsubmit="submitOrder(event)">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Ad Soyad</label>
+                <input type="text" id="order-fullname" placeholder="Adınız ve soyadınız" required />
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Telefon</label>
+                <input type="tel" id="order-phone" placeholder="0555 123 45 67" required />
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-map-marker-alt"></i> Adres</label>
+                <textarea id="order-address" placeholder="Teslimat adresiniz" rows="3" required></textarea>
+            </div>
+
+            <div class="order-summary">
+                <strong>Toplam Tutar:</strong> <span id="summary-total">0.00</span> ₺
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-check-circle"></i> Siparişi Onayla
+            </button>
+        </form>
+    </div>
+
+    <!-- Auth Modal (index ile aynı id'ler) -->
+    <div id="auth-overlay" class="modal-overlay" onclick="closeAuth()"></div>
+    <div id="auth-modal" class="auth-modal">
+        <div class="modal-header">
+            <h2 id="auth-title">Giriş Yap</h2>
+            <button class="close-btn" onclick="closeAuth()">✕</button>
+        </div>
+        <div id="auth-content"></div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>AYSİMA MEDİKAL</h4>
+                <p>Sağlıklı yaşam için güvenilir çözümler</p>
+            </div>
+            <div class="footer-section">
+                <h4>İletişim</h4>
+                <p><i class="fas fa-phone"></i> 0505 481 73 18</p>
+                <p><i class="fas fa-envelope"></i> aysimamedikal@gmail.com</p>
+            </div>
+            <div class="footer-section">
+                <h4>Sosyal Medya</h4>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/aysimamedikal/" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Aysima Medikal - Tüm hakları saklıdır</p>
+        </div>
+    </footer>
+
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!-- Core -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+
+    <script>
+        function goSearch() {
+            const q = (document.getElementById("search-input")?.value || "").trim();
+            if (!q) return (window.location.href = "index.html");
+            window.location.href = "index.html?search=" + encodeURIComponent(q);
+        }
+
+        function qtyChange(delta) {
+            const el = document.getElementById("pd-qty");
+            if (!el) return;
+            const v = Math.max(1, Number(el.value || 1) + Number(delta || 0));
+            el.value = v;
+        }
+
+        document.addEventListener("click", (e) => {
+            const btn = e.target.closest(".pd-tabbtn");
+            if (!btn) return;
+
+            document.querySelectorAll(".pd-tabbtn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            const tab = btn.dataset.tab;
+
+            document.getElementById("tab-desc").style.display = tab === "desc" ? "block" : "none";
+            document.getElementById("tab-specs").style.display = tab === "specs" ? "block" : "none";
+            document.getElementById("tab-shipping").style.display = tab === "shipping" ? "block" : "none";
+        });
+
+        let PD = {
+            product: null,
+            variants: [],
+            selectedColor: null,
+            selectedSize: null,
+            selectedVariant: null
+        };
+
+        async function loadAnnouncement() {
+            try {
+                const { data, error } = await window.supabaseClient
+                    .from("site_settings")
+                    .select("announcement")
+                    .single();
+
+                if (error) throw error;
+
+                const el = document.getElementById("announcement-text");
+                if (el) el.innerText = data?.announcement || "";
+            } catch (_) {}
+        }
+
+        function safeText(v, fallback = "") { return (v === null || v === undefined) ? fallback : String(v); }
+        function money(v) { return Number(v || 0).toFixed(2); }
+        function uniq(arr) { return [...new Set((arr || []).filter(Boolean).map(x => String(x)))]; }
+
+        function buildThumbs(images) {
+            const thumbs = document.getElementById("pd-thumbs");
+            if (!thumbs) return;
+            thumbs.innerHTML = "";
+
+            images.forEach((src, idx) => {
+                const div = document.createElement("div");
+                div.className = "pd-thumb" + (idx === 0 ? " active" : "");
+                div.innerHTML = `<img src="${src}" alt="thumb" onerror="this.src='https://via.placeholder.com/200x200?text=Resim+Yok'">`;
+                div.addEventListener("click", () => {
+                    document.querySelectorAll(".pd-thumb").forEach(t => t.classList.remove("active"));
+                    div.classList.add("active");
+                    const main = document.getElementById("pd-mainimg");
+                    if (main) main.src = src;
+                });
+                thumbs.appendChild(div);
+            });
+        }
+
+        function setPriceAndStock() {
+            const p = PD.product;
+            if (!p) return;
+
+            const priceEl = document.getElementById("pd-price");
+            const stockEl = document.getElementById("pd-stock");
+
+            let price = Number(p.price || 0);
+            let stock = null;
+
+            if (PD.selectedVariant) {
+                if (PD.selectedVariant.price !== null && PD.selectedVariant.price !== undefined) {
+                    price = Number(PD.selectedVariant.price || price);
+                }
+                stock = PD.selectedVariant.stock ?? null;
+            } else {
+                stock = p.stock ?? null;
+            }
+
+            if (priceEl) priceEl.innerHTML = `${money(price)} ₺ <small></small>`;
+
+            if (stockEl) {
+                if (stock === null || stock === undefined) {
+                    stockEl.style.display = "none";
+                } else if (Number(stock) > 0) {
+                    stockEl.style.display = "inline-flex";
+                    stockEl.className = "pd-stock ok";
+                    stockEl.innerText = "Stokta";
+                } else {
+                    stockEl.style.display = "inline-flex";
+                    stockEl.className = "pd-stock no";
+                    stockEl.innerText = "Stok yok";
+                }
+            }
+        }
+
+        function buildVariantUI() {
+            const wrap = document.getElementById("pd-variants");
+            if (!wrap) return;
+
+            const variants = PD.variants || [];
+            if (!variants.length) {
+                wrap.style.display = "none";
+                PD.selectedVariant = null;
+                setPriceAndStock();
+                return;
+            }
+
+            wrap.style.display = "block";
+
+            const colors = uniq(variants.map(v => v.color));
+            const sizes = uniq(variants.map(v => v.size));
+
+            const colorRow = document.getElementById("v-color-row");
+            const sizeRow = document.getElementById("v-size-row");
+
+            const colorBox = document.getElementById("v-colors");
+            const sizeBox = document.getElementById("v-sizes");
+
+            if (colors.length) {
+                colorRow.style.display = "block";
+                colorBox.innerHTML = "";
+                colors.forEach(c => {
+                    const b = document.createElement("button");
+                    b.type = "button";
+                    b.className = "pd-chip" + (PD.selectedColor === c ? " active" : "");
+                    b.textContent = c;
+                    b.addEventListener("click", () => {
+                        PD.selectedColor = c;
+                        if (sizes.length) PD.selectedSize = null;
+                        refreshVariantSelection();
+                    });
+                    colorBox.appendChild(b);
+                });
+            } else {
+                colorRow.style.display = "none";
+            }
+
+            if (sizes.length) {
+                sizeRow.style.display = "block";
+                sizeBox.innerHTML = "";
+
+                sizes.forEach(s => {
+                    const allowed = PD.selectedColor
+                        ? variants.some(v => String(v.color) === String(PD.selectedColor) && String(v.size) === String(s))
+                        : true;
+
+                    const b = document.createElement("button");
+                    b.type = "button";
+                    b.className = "pd-chip" + (PD.selectedSize === s ? " active" : "") + (allowed ? "" : " disabled");
+                    b.textContent = s;
+
+                    b.addEventListener("click", () => {
+                        if (!allowed) return;
+                        PD.selectedSize = s;
+                        refreshVariantSelection();
+                    });
+
+                    sizeBox.appendChild(b);
+                });
+            } else {
+                sizeRow.style.display = "none";
+            }
+
+            refreshVariantSelection();
+        }
+
+        function refreshVariantSelection() {
+            document.querySelectorAll("#v-colors .pd-chip").forEach(b => {
+                b.classList.toggle("active", b.textContent === PD.selectedColor);
+            });
+
+            document.querySelectorAll("#v-sizes .pd-chip").forEach(b => {
+                b.classList.toggle("active", b.textContent === PD.selectedSize);
+            });
+
+            const variants = PD.variants || [];
+            let selected = null;
+
+            if (PD.selectedColor && PD.selectedSize) {
+                selected = variants.find(v => String(v.color) === String(PD.selectedColor) && String(v.size) === String(PD.selectedSize));
+            } else if (PD.selectedColor && !PD.selectedSize) {
+                selected = variants.find(v => String(v.color) === String(PD.selectedColor));
+            } else if (!PD.selectedColor && PD.selectedSize) {
+                selected = variants.find(v => String(v.size) === String(PD.selectedSize));
+            }
+
+            PD.selectedVariant = selected || null;
+
+            if (PD.selectedVariant && PD.selectedVariant.image_url) {
+                const main = document.getElementById("pd-mainimg");
+                if (main) main.src = PD.selectedVariant.image_url;
+            }
+
+            setPriceAndStock();
+        }
+
+        function parseSpecs(p) {
+            const raw = p?.specs || p?.features || p?.details || "";
+            const text = safeText(raw).trim();
+            if (!text) return [];
+
+            const lines = text.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+            const rows = [];
+
+            for (const line of lines) {
+                const m = line.split(":");
+                if (m.length >= 2) {
+                    const k = m.shift().trim();
+                    const v = m.join(":").trim();
+                    if (k && v) rows.push([k, v]);
+                } else {
+                    rows.push(["Bilgi", line]);
+                }
+            }
+            return rows.slice(0, 30);
+        }
+
+        function setTabsContent(p) {
+            const descEl = document.getElementById("tab-desc");
+            const specsEl = document.getElementById("tab-specs");
+
+            const desc = safeText(p.description || p.short_description || "").trim();
+            descEl.innerHTML = desc
+                ? `<p style="margin:0;">${escapeHtml(desc).replaceAll("\n", "<br>")}</p>`
+                : `<div style="color:#7f8c8d;">Bu ürün için açıklama yakında eklenecektir.</div>`;
+
+            const rows = parseSpecs(p);
+            if (rows.length) {
+                const trows = rows.map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(v)}</td></tr>`).join("");
+                specsEl.innerHTML = `<table class="pd-specs">${trows}</table>`;
+            } else {
+                specsEl.innerHTML = `<div style="color:#7f8c8d;">Bu ürün için özellikler yakında eklenecektir.</div>`;
+            }
+        }
+
+        async function loadProduct() {
+            const params = new URLSearchParams(window.location.search);
+            const productId = params.get("id");
+            if (!productId) return (window.location.href = "index.html");
+
+            try {
+                const { data: p, error } = await window.supabaseClient
+                    .from("products")
+                    .select("*")
+                    .eq("id", productId)
+                    .single();
+
+                if (error) throw error;
+                PD.product = p;
+
+                document.getElementById("pd-title").innerText = safeText(p.name, "Ürün");
+                document.getElementById("bc-product").innerText = safeText(p.name, "Ürün");
+
+                const catText = p.category_name ? `Kategori: ${p.category_name}` : "Kategori: Ürünler";
+                document.getElementById("pd-category-text").innerText = catText;
+
+                const baseImg = p.image_url || p.image || "https://via.placeholder.com/800x600?text=Resim+Yok";
+
+                const { data: vs } = await window.supabaseClient
+                    .from("product_variants")
+                    .select("*")
+                    .eq("product_id", productId);
+
+                PD.variants = vs || [];
+
+                const variantImgs = (PD.variants || []).map(v => v.image_url).filter(Boolean);
+                const images = [baseImg, ...variantImgs].filter(Boolean);
+                const uniqueImages = [...new Set(images)];
+
+                const main = document.getElementById("pd-mainimg");
+                if (main) main.src = uniqueImages[0] || baseImg;
+
+                buildThumbs(uniqueImages.length ? uniqueImages : [baseImg]);
+
+                setTabsContent(p);
+                buildVariantUI();
+                setPriceAndStock();
+
+                document.getElementById("pd-add-btn").addEventListener("click", () => {
+                    addSelectedToCart(false);
+                });
+
+                document.getElementById("pd-buy-btn").addEventListener("click", () => {
+                    addSelectedToCart(true);
+                });
+
+                await loadRelated(p);
+
+            } catch (err) {
+                console.error("❌ Product detail yükleme hatası:", err);
+                document.querySelector(".pd-container").innerHTML = `
+                    <div style="background:#fff; border:1px solid #eef2f7; border-radius:14px; padding:30px; text-align:center;">
+                        <div style="font-size:40px; color:#e74c3c;"><i class="fas fa-exclamation-triangle"></i></div>
+                        <div style="font-weight:900; margin-top:10px;">Ürün yüklenemedi</div>
+                        <div style="color:#7f8c8d; margin-top:6px;">Lütfen daha sonra tekrar deneyin.</div>
+                        <a href="index.html" style="display:inline-block; margin-top:14px; color:var(--bordo); font-weight:900; text-decoration:none;">Anasayfaya dön</a>
+                    </div>
+                `;
+            }
+        }
+
+        function addSelectedToCart(goCheckout) {
+            const p = PD.product;
+            if (!p) return;
+
+            const qty = Math.max(1, Number(document.getElementById("pd-qty")?.value || 1));
+
+            if (PD.variants && PD.variants.length) {
+                const hasColor = PD.variants.some(v => v.color);
+                const hasSize = PD.variants.some(v => v.size);
+
+                if (hasColor && !PD.selectedColor) return alert("Lütfen renk seçin.");
+                if (hasSize && !PD.selectedSize) return alert("Lütfen beden seçin.");
+
+                if (!PD.selectedVariant) return alert("Seçilen varyant bulunamadı. Lütfen seçimi değiştirin.");
+                if (PD.selectedVariant.stock !== null && PD.selectedVariant.stock !== undefined && Number(PD.selectedVariant.stock) <= 0) {
+                    return alert("Bu varyant stokta yok.");
+                }
+            }
+
+            const variant = PD.selectedVariant;
+
+            const imageUrl = (variant && variant.image_url) ? variant.image_url : (p.image_url || p.image);
+
+            const itemName = safeText(p.name, "Ürün");
+            const variantTitleParts = [];
+            if (variant?.color) variantTitleParts.push("Renk: " + variant.color);
+            if (variant?.size) variantTitleParts.push("Beden: " + variant.size);
+            const variantTitle = variantTitleParts.length ? variantTitleParts.join(" • ") : null;
+
+            const finalPrice = variant && variant.price !== null && variant.price !== undefined ? Number(variant.price) : Number(p.price || 0);
+
+            addToCart({
+                id: p.id,
+                name: itemName,
+                price: finalPrice,
+                image_url: imageUrl,
+                qty: qty,
+                variant_id: variant ? variant.id : null,
+                variant_title: variantTitle
+            });
+
+            if (goCheckout) {
+                handleCheckout();
+            }
+        }
+
+        async function loadRelated(p) {
+            try {
+                if (!p?.category_id) return;
+                const { data, error } = await window.supabaseClient
+                    .from("products")
+                    .select("id,name,price,image_url,category_id")
+                    .eq("category_id", p.category_id)
+                    .neq("id", p.id)
+                    .limit(8);
+
+                if (error) throw error;
+
+                const wrap = document.getElementById("pd-related");
+                const grid = document.getElementById("pd-related-grid");
+                if (!wrap || !grid) return;
+
+                if (!data || !data.length) {
+                    wrap.style.display = "none";
+                    return;
+                }
+
+                wrap.style.display = "block";
+                grid.innerHTML = "";
+
+                data.forEach(x => {
+                    const card = document.createElement("div");
+                    card.className = "pd-r-card";
+
+                    const img = x.image_url || "https://via.placeholder.com/400x400?text=Resim+Yok";
+                    const name = safeText(x.name, "Ürün");
+                    const price = money(x.price || 0);
+
+                    card.innerHTML = `
+                        <a href="product-detail.html?id=${encodeURIComponent(x.id)}" style="text-decoration:none; color:inherit;">
+                            <div class="pd-r-img">
+                                <img src="${img}" alt="${escapeHtml(name)}" onerror="this.src='https://via.placeholder.com/400x400?text=Resim+Yok'">
+                            </div>
+                            <div class="pd-r-body">
+                                <div class="pd-r-name">${escapeHtml(name)}</div>
+                                <div class="pd-r-foot">
+                                    <div class="pd-r-price">${price} ₺</div>
+                                    <button type="button" class="pd-r-btn" data-id="${escapeHtml(x.id)}"><i class="fas fa-cart-plus"></i></button>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+
+                    const btn = card.querySelector(".pd-r-btn");
+                    btn.addEventListener("click", (ev) => {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                        addToCart({ id: x.id, name, price: Number(x.price || 0), image_url: img, qty: 1 });
+                    });
+
+                    grid.appendChild(card);
+                });
+
+            } catch (err) {
+                console.warn("Related load failed", err);
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str || "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            await loadAnnouncement();
+
+            try {
+                const { data } = await window.supabaseClient.auth.getUser();
+                if (data?.user) {
+                    const btn = document.getElementById("user-display");
+                    if (btn) btn.innerHTML = '<i class="fas fa-user"></i> Hesabım';
+                }
+            } catch (_) {}
+
+            await loadProduct();
+        });
+    </script>
+</body>
+</html>
