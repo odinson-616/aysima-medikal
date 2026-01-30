@@ -1,4 +1,140 @@
-// cart.js - Sepet Yönetimi (PRO / Variant Ready)
+// cart.js - Sepet Yönetimi (Discount Engine Dahil)
+
+let cart = [];
+let appliedCoupon = null;
+
+const CART_STORAGE_KEY = "cart";
+
+// =============================
+// BAŞLANGIÇ
+// =============================
+function initCart() {
+    try {
+        const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+        cart = savedCart ? JSON.parse(savedCart) : [];
+        updateCartUI();
+    } catch {
+        cart = [];
+    }
+}
+
+// =============================
+// SEPET KAYDET
+// =============================
+function saveCart() {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+}
+
+// =============================
+// SEPETE EKLE
+// =============================
+function addToCart(product) {
+    const existing = cart.find(i => i.id === product.id);
+
+    if (existing) existing.qty += product.qty || 1;
+    else cart.push({ ...product, qty: product.qty || 1 });
+
+    saveCart();
+    updateCartUI();
+    toggleCart(true);
+}
+
+// =============================
+// SEPET SAYISI
+// =============================
+function updateCartCount() {
+    const total = cart.reduce((sum, i) => sum + i.qty, 0);
+    const el = document.getElementById("cart-count");
+    if (el) el.innerText = total;
+}
+
+// =============================
+// İNDİRİM HESAPLAMA
+// =============================
+async function calculateDiscount(total) {
+    let discount = 0;
+
+    const { data } = await window.supabaseClient
+        .from("cart_discounts")
+        .select("*")
+        .eq("active", true);
+
+    data?.forEach(rule => {
+        if (total >= rule.min_total) {
+            if (rule.discount_type === "percentage")
+                discount += total * rule.discount_value / 100;
+            else
+                discount += rule.discount_value;
+        }
+    });
+
+    return discount;
+}
+
+// =============================
+// KUPON DOĞRULAMA
+// =============================
+async function applyCoupon(code, total) {
+    const { data } = await window.supabaseClient
+        .from("coupons")
+        .select("*")
+        .eq("code", code)
+        .eq("active", true)
+        .single();
+
+    if (!data) return 0;
+
+    if (total < data.min_cart_total) return 0;
+
+    if (data.discount_type === "percentage")
+        return total * data.discount_value / 100;
+    else
+        return data.discount_value;
+}
+
+// =============================
+// SEPET RENDER
+// =============================
+async function renderCart() {
+    const container = document.getElementById("cart-items");
+    const totalEl = document.getElementById("cart-total");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+    let total = 0;
+
+    cart.forEach(item => {
+        const itemTotal = item.price * item.qty;
+        total += itemTotal;
+
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <div>
+                <strong>${item.name}</strong>
+                <p>${item.qty} x ${item.price.toFixed(2)} ₺</p>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    const autoDiscount = await calculateDiscount(total);
+    const couponDiscount = appliedCoupon
+        ? await applyCoupon(appliedCoupon, total)
+        : 0;
+
+    const finalTotal = total - autoDiscount - couponDiscount;
+
+    if (totalEl) totalEl.innerText = finalTotal.toFixed(2);
+}
+
+// =============================
+function updateCartUI() {
+    updateCartCount();
+    renderCart();
+}
+
+initCart();// cart.js - Sepet Yönetimi (PRO / Variant Ready)
 // Notlar:
 // - Eski akışı bozmaz (variants opsiyonel)
 // - Ürün detaydan qty/variant ile eklemeyi destekler
