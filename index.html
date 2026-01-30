@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYSİMA MEDİKAL </title>
+    <title>AYSİMA MEDİKAL | Profesyonel Medikal Ürünler ve Ekipmanlar</title>
     <meta name="description" content="AYSİMA MEDİKAL - Sağlık sektörüne yönelik kaliteli ve güvenilir medikal ürünler. Hızlı teslimat, güvenli alışveriş.">
-    
+
     <!-- CSS -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,7 +20,7 @@
     </div>
 
     <!-- HEADER -->
-    <header>
+    <header class="site-header">
         <div class="header-left" onclick="location.reload()" style="cursor: pointer;">
             <img src="images/logo.png" alt="Aysima Medikal Logo" onerror="this.style.display='none'">
             <span class="brand-name">AYSİMA MEDİKAL</span>
@@ -41,15 +41,75 @@
         </div>
     </header>
 
-    <!-- HERO SECTION -->
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>Profesyonel Medikal Ürünler</h1>
-            <p>Kaliteli ekipmanlar, güvenilir alışveriş ve hızlı teslimat</p>
-            <button class="hero-btn" onclick="scrollToProducts()">Ürünleri Keşfet</button>
+    <!-- HERO + FEATURE BAR (YENİ) -->
+    <section class="hero-wrap">
+        <div class="hero-card">
+            <div class="hero-left">
+                <div class="hero-badge">
+                    <i class="fas fa-star"></i>
+                    <span>Kurumsal • Güvenli • Hızlı</span>
+                </div>
+
+                <h1 class="hero-title">Profesyonel Medikal Ürünler</h1>
+                <p class="hero-subtitle">Kaliteli ekipmanlar, güvenilir alışveriş ve hızlı teslimat</p>
+
+                <div class="hero-actions">
+                    <button class="hero-primary" onclick="scrollToProducts()">
+                        <i class="fas fa-bag-shopping"></i> Ürünleri Keşfet
+                    </button>
+                    <button class="hero-secondary" onclick="scrollToCategories()">
+                        <i class="fas fa-layer-group"></i> Kategoriler
+                    </button>
+                </div>
+
+                <!-- Kampanya alanı: JS ile doldurmak istersen hazır -->
+                <div class="hero-promo" id="hero-promo">
+                    <div class="promo-icon"><i class="fas fa-tag"></i></div>
+                    <div class="promo-text">
+                        <div class="promo-title">Günün Önerisi</div>
+                        <div class="promo-desc">Popüler kategorileri inceleyin ve ihtiyacınıza uygun ürünü bulun.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <!-- Ana dizindeki logo.png -->
+                <img src="logo.png" alt="Aysima Medikal" class="hero-logo" onerror="this.style.display='none'">
+                <div class="hero-ornament">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+            </div>
         </div>
-        <div>
-            <i class="fas fa-heartbeat" style="font-size:80px; opacity:0.3;"></i>
+
+        <div class="feature-bar">
+            <div class="feature-item">
+                <i class="fas fa-truck-fast"></i>
+                <div>
+                    <div class="feature-title">Hızlı Kargo</div>
+                    <div class="feature-desc">Hızlı hazırlık & gönderim</div>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-shield-halved"></i>
+                <div>
+                    <div class="feature-title">Güvenli Alışveriş</div>
+                    <div class="feature-desc">Güvenilir süreç</div>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-certificate"></i>
+                <div>
+                    <div class="feature-title">Orijinal Ürün</div>
+                    <div class="feature-desc">Kalite odaklı ürünler</div>
+                </div>
+            </div>
+            <div class="feature-item">
+                <i class="fas fa-headset"></i>
+                <div>
+                    <div class="feature-title">Destek</div>
+                    <div class="feature-desc">Hızlı iletişim</div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -71,10 +131,28 @@
 
         <div id="cart-items"></div>
 
+        <!-- COUPON CODE -->
+        <div class="coupon-section">
+            <input type="text" id="coupon-input" placeholder="İndirim kodu girin">
+            <button onclick="handleCoupon()" class="apply-coupon-btn">
+                <i class="fas fa-tag"></i> Kodu Uygula
+            </button>
+            <div id="coupon-message" class="coupon-message"></div>
+        </div>
+
+        <!-- CART SUMMARY -->
         <div class="cart-summary">
             <div class="summary-row">
                 <span>Ara Toplam:</span>
                 <span id="cart-subtotal">0.00 ₺</span>
+            </div>
+            <div class="summary-row discount-row" id="cart-discount-row" style="display: none;">
+                <span>İndirim:</span>
+                <span id="cart-discount">0.00 ₺</span>
+            </div>
+            <div class="summary-row coupon-row" id="coupon-discount-row" style="display: none;">
+                <span>Kupon İndirimi:</span>
+                <span id="coupon-discount">0.00 ₺</span>
             </div>
             <div class="summary-row total-row">
                 <strong>Toplam:</strong>
@@ -90,25 +168,49 @@
     </div>
 
     <!-- MAIN LAYOUT -->
-    <div class="main-layout">
-        <aside>
+    <div class="main-layout" id="main-layout">
+        <!-- SIDEBAR -->
+        <aside id="sidebar">
             <h3 class="sidebar-title">Kategoriler</h3>
             <ul id="category-list">
                 <li class="skeleton-item"></li>
                 <li class="skeleton-item"></li>
                 <li class="skeleton-item"></li>
             </ul>
+
+            <div class="price-filter">
+                <h3 class="sidebar-title">Fiyat Aralığı</h3>
+                <div class="filter-inputs">
+                    <input type="number" id="min-price" placeholder="Min ₺" oninput="applyFilters()">
+                    <span>-</span>
+                    <input type="number" id="max-price" placeholder="Max ₺" oninput="applyFilters()">
+                </div>
+                <button class="filter-clear" onclick="clearPriceFilter()">
+                    <i class="fas fa-times"></i> Temizle
+                </button>
+            </div>
         </aside>
 
+        <!-- MAIN CONTENT -->
         <main>
             <div class="page-header">
                 <div>
                     <h2 id="page-name">Tüm Ürünler</h2>
                     <span id="product-count" class="product-count">Yükleniyor...</span>
                 </div>
+                <div class="view-toggle">
+                    <button onclick="setViewMode('grid')" id="grid-view-btn" class="view-btn active">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button onclick="setViewMode('list')" id="list-view-btn" class="view-btn">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
             </div>
 
             <div id="product-grid" class="grid">
+                <!-- Skeleton loaders -->
+                <div class="product-skeleton"></div>
                 <div class="product-skeleton"></div>
                 <div class="product-skeleton"></div>
                 <div class="product-skeleton"></div>
@@ -116,26 +218,123 @@
         </main>
     </div>
 
+    <!-- ORDER MODAL -->
+    <div id="order-overlay" class="modal-overlay" onclick="closeOrderModal()"></div>
+    <div id="order-modal" class="order-modal">
+        <div class="modal-header">
+            <h2><i class="fas fa-clipboard-list"></i> Sipariş Bilgileri</h2>
+            <button class="close-btn" onclick="closeOrderModal()">✕</button>
+        </div>
+
+        <form onsubmit="submitOrder(event)">
+            <div class="form-group">
+                <label><i class="fas fa-user"></i> Ad Soyad</label>
+                <input type="text" id="order-fullname" placeholder="Adınız ve soyadınız" required>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-phone"></i> Telefon</label>
+                <input type="tel" id="order-phone" placeholder="0555 123 45 67" required pattern="[0-9]{10,11}">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-map-marker-alt"></i> Adres</label>
+                <textarea id="order-address" placeholder="Teslimat adresiniz" rows="4" required></textarea>
+            </div>
+
+            <div class="order-summary">
+                <div class="summary-item">
+                    <span>Ara Toplam:</span>
+                    <span id="summary-subtotal">0.00 ₺</span>
+                </div>
+                <div class="summary-item" id="summary-discount-row" style="display: none;">
+                    <span>İndirim:</span>
+                    <span id="summary-discount">0.00 ₺</span>
+                </div>
+                <div class="summary-item total">
+                    <strong>Toplam:</strong>
+                    <strong id="summary-total">0.00 ₺</strong>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                <i class="fas fa-check-circle"></i> Siparişi Onayla
+            </button>
+        </form>
+    </div>
+
+    <!-- AUTH MODAL -->
+    <div id="auth-overlay" class="modal-overlay" onclick="closeAuth()"></div>
+    <div id="auth-modal" class="auth-modal">
+        <div class="modal-header">
+            <h2 id="auth-title">Giriş Yap</h2>
+            <button class="close-btn" onclick="closeAuth()">✕</button>
+        </div>
+
+        <div id="auth-content"></div>
+    </div>
+
     <!-- FOOTER -->
     <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>AYSİMA MEDİKAL</h4>
+                <p>Sağlık sektörüne yönelik kaliteli ve güvenilir medikal ürünleri sunuyoruz. Müşteri memnuniyeti önceliğimizdir.</p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Hızlı Linkler</h4>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Hakkımızda</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Kargo & Teslimat</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> İade & Değişim</a></li>
+                    <li><a href="#"><i class="fas fa-angle-right"></i> Gizlilik Politikası</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>İletişim</h4>
+                <p><i class="fas fa-phone"></i> <a href="tel:+905054817318">0505 481 73 18</a></p>
+                <p><i class="fas fa-envelope"></i> <a href="mailto:aysimamedikal@gmail.com">aysimamedikal@gmail.com</a></p>
+                <div class="social-links">
+                    <a href="https://www.instagram.com/aysimamedikal/" target="_blank" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://wa.me/905054817318" target="_blank" aria-label="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <div class="footer-bottom">
             <p>&copy; 2026 Aysima Medikal | Tüm hakları saklıdır.</p>
         </div>
     </footer>
 
-<script>
-function scrollToProducts(){
-    document.getElementById("product-grid").scrollIntoView({behavior:"smooth"});
-}
-</script>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast"></div>
 
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-<script src="js/config.js"></script>
-<script src="js/utils.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/cart.js"></script>
-<script src="js/products.js"></script>
-<script src="js/main.js"></script>
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/main.js"></script>
+
+    <!-- Küçük yardımcılar (mevcut sistemi bozmaz) -->
+    <script>
+        function scrollToProducts() {
+            const el = document.getElementById("product-grid");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        function scrollToCategories() {
+            const el = document.getElementById("sidebar");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    </script>
 
 </body>
 </html>
